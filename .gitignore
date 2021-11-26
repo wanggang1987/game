@@ -1,8 +1,15 @@
 # Compiled class file
 *.class
 
+#ide file
+.factorypath
+.classpath
+.project
+.settings
+
 # Log file
 *.log
+**/logs
 
 # BlueJ files
 *.ctxt
@@ -11,6 +18,7 @@
 .mtj.tmp/
 
 # Package Files #
+**target
 *.jar
 *.war
 *.nar

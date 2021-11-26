@@ -1,0 +1,10 @@
+role:
+    warrior:
+        baseHealth: 1
+        baseResource: 1
+        baseAttack: 1
+        baseDeffence: 1
+        growthHealth: 1
+        growthResource: 1
+        growthAttack: 1
+        growthDefense: 1

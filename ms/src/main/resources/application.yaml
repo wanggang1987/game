@@ -1,0 +1,36 @@
+server:
+    port: 8080
+spring:
+    application:
+        name: 0906
+    datasource:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://127.0.0.1:3306/ms?useUnicode=true&characterEncoding=utf-8&createDatabaseIfNotExist=true&serverTimezone=GMT%2B8
+        username: root
+        password: 
+        druid:
+            initialSize: 20
+            maxActive: 50
+            testOnBorrow: true
+            validation-query: SELECT 1;
+            stat-view-servlet.login-username: admin
+            stat-view-servlet.login-password: admin
+    liquibase:
+        change-log: classpath:db/master.xml
+    jackson:
+        time-zone: GMT+8
+        date-format: yyyy-MM-dd HH:mm:ss
+        serialization:
+            indent_output: true
+mybatis:
+    configuration:
+        map-underscore-to-camel-case: true
+pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
+logging:
+    level:
+        org.game.ms: DEBUG
