@@ -3,20 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.game.ms.role;
+package org.game.ms.role.template;
 
+import org.game.ms.func.YamlPropertySourceFactory;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.stereotype.Component;
 
 /**
  *
  * @author wanggang
  */
 @Data
-@Component
-@PropertySource("classpath:initdata.yaml")
+@Configuration
+@PropertySource(factory = YamlPropertySourceFactory.class, value = "classpath:initdata.yaml")
 @ConfigurationProperties(prefix = "role.warrior")
 public class WarriorTample extends RoleTemplate {
 

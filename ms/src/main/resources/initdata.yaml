@@ -1,10 +1,10 @@
 role:
     warrior:
-        baseHealth: 1
+        baseHealth: 1000
         baseResource: 1
-        baseAttack: 1
-        baseDeffence: 1
-        growthHealth: 1
+        baseAttack: 10
+        baseDeffence: 5
+        growthHealth: 100
         growthResource: 1
-        growthAttack: 1
-        growthDefense: 1
+        growthAttack: 20
+        growthDefense: 5

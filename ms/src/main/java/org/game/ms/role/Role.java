@@ -18,10 +18,11 @@ import org.game.ms.BasicPO;
 public class Role extends BasicPO {
 
     private List<Profession> profession = new ArrayList<>();
-    private Integer level;
-    private Double healthPoint;
-    private Double resourcePoint;
-    private Double attack;
-    private Double defense;
+    private String name;
+    private int level = 0;
+    private double healthPoint = 0;
+    private double resourcePoint = 0;
+    private double attack = 0;
+    private double defense = 0;
 
 }

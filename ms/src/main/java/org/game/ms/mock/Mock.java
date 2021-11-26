@@ -5,7 +5,9 @@
  */
 package org.game.ms.mock;
 
+import cn.hutool.json.JSONUtil;
 import javax.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.game.ms.role.Profession;
 import org.game.ms.role.Role;
 import org.game.ms.role.RoleCaculate;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Component;
  *
  * @author wanggang
  */
+@Slf4j
 @Component
 public class Mock {
 
@@ -25,9 +28,11 @@ public class Mock {
     @PostConstruct
     private void init() {
 
-        Role play = new Role();
-        play.getProfession().add(Profession.warrior);
-        play.setLevel(1);
-        roleCaculate.initRole(play);
+        Role player = new Role();
+        player.setName("战士");
+        player.getProfession().add(Profession.warrior);
+        player.setLevel(1);
+        roleCaculate.initRole(player);
+        log.debug("init play {}", JSONUtil.toJsonStr(player));
     }
 }
