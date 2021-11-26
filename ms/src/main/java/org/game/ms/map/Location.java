@@ -9,5 +9,10 @@ package org.game.ms.map;
  *
  * @author wanggang
  */
-public class Map {
+public class Location {
+
+    private Map map;
+    private long x;
+    private long y;
+    private long z;
 }

@@ -5,9 +5,13 @@
  */
 package org.game.ms.map;
 
+import org.springframework.stereotype.Component;
+
 /**
  *
  * @author wanggang
  */
-public class Map {
+@Component
+public class WorldMap extends Map {
+
 }
