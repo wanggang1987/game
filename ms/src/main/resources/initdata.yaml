@@ -14,6 +14,7 @@ monster:
     wolf:
         level: 1
         health: 100
+        resource: 0
         attack: 10
         deffence: 5
         speed: 10

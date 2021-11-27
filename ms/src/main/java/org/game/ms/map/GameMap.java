@@ -7,6 +7,7 @@ package org.game.ms.map;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.game.ms.monster.Monster;
 import org.game.ms.player.Player;
 
 /**
@@ -19,5 +20,15 @@ public class GameMap {
 
     protected Location playerComeInMap(Player player) {
         return new Location(0, 0, 0);
+    }
+
+    protected void flushAndRrmoveMonsterForPlayer() {
+    }
+
+    protected void destoryFarAyayMonster(Player player, List<Monster> monsters) {
+    }
+
+    protected void createMonsterAroundPlayer(Player player, List<Monster> monsters, int num) {
+
     }
 }

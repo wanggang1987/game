@@ -4,20 +4,19 @@
  */
 package org.game.ms.player;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.Table;
 import lombok.Data;
-import org.game.ms.map.Location;
-import org.game.ms.map.GameMap;
-import org.game.ms.role.Role;
+import org.game.ms.db.BasicPO;
 
 /**
  *
  * @author gangwang
  */
 @Data
-public class Player {
+@Table(name = "t_player")
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class PlayerPO extends BasicPO {
 
-    private long id;
-    private Role role;
-    private GameMap map;
-    private Location location;
+    private String str;
 }

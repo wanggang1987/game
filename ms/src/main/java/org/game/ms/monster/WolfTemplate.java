@@ -5,7 +5,7 @@
 package org.game.ms.monster;
 
 import lombok.Data;
-import org.game.ms.func.YamlPropertySourceFactory;
+import org.game.ms.config.YamlPropertySourceFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;

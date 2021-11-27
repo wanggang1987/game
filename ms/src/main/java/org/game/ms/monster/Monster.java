@@ -4,22 +4,20 @@
  */
 package org.game.ms.monster;
 
+import cn.hutool.core.bean.BeanUtil;
 import lombok.Data;
-import org.game.ms.config.YamlPropertySourceFactory;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.game.ms.map.Location;
 
 /**
  *
  * @author gangwang
  */
 @Data
-@Configuration
-@PropertySource(factory = YamlPropertySourceFactory.class, value = "classpath:initdata.yaml")
-@ConfigurationProperties(prefix = "monster")
-public class MonsterTemplate {
+public class Monster {
 
+    private MonsterTemplate template;
+
+    private long id;
     private int level;
     private double speed;
     private double health;
@@ -27,4 +25,14 @@ public class MonsterTemplate {
     private double attack;
     private double deffence;
 
+    private Location location;
+
+    public Monster(MonsterTemplate monsterTemplate) {
+        this.template = monsterTemplate;
+        BeanUtil.copyProperties(monsterTemplate, this);
+    }
+
+    public boolean canDestory() {
+        return true;
+    }
 }

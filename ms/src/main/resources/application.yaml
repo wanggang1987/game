@@ -2,7 +2,7 @@ server:
     port: 8080
 spring:
     application:
-        name: 0906
+        name: ms
     datasource:
         type: com.alibaba.druid.pool.DruidDataSource
         driver-class-name: com.mysql.cj.jdbc.Driver

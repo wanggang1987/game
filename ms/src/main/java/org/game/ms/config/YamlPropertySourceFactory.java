@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.game.ms.func;
+package org.game.ms.config;
 
 import java.io.IOException;
 import java.util.List;

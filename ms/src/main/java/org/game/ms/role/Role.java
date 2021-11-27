@@ -8,14 +8,13 @@ package org.game.ms.role;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
-import org.game.ms.BasicPO;
 
 /**
  *
  * @author wanggang
  */
 @Data
-public class Role extends BasicPO {
+public class Role {
 
     private List<Profession> profession = new ArrayList<>();
     private String name;

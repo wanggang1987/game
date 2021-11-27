@@ -5,7 +5,7 @@
  */
 package org.game.ms.role.template;
 
-import org.game.ms.func.YamlPropertySourceFactory;
+import org.game.ms.config.YamlPropertySourceFactory;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
