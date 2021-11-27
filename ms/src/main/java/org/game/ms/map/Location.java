@@ -5,14 +5,18 @@
  */
 package org.game.ms.map;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 /**
  *
  * @author wanggang
  */
+@Data
+@AllArgsConstructor
 public class Location {
 
-    private Map map;
-    private long x;
-    private long y;
-    private long z;
+    private double x;
+    private double y;
+    private double z;
 }

@@ -1,4 +1,5 @@
 role:
+    speed: 10
     warrior:
         baseHealth: 1000
         baseResource: 1
@@ -8,3 +9,11 @@ role:
         growthResource: 1
         growthAttack: 20
         growthDefense: 5
+
+monster:
+    wolf:
+        level: 1
+        health: 100
+        attack: 10
+        deffence: 5
+        speed: 10

@@ -6,21 +6,29 @@
 package org.game.ms.role.template;
 
 import lombok.Data;
+import org.game.ms.func.YamlPropertySourceFactory;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
 /**
  *
  * @author wanggang
  */
 @Data
+@Configuration
+@PropertySource(factory = YamlPropertySourceFactory.class, value = "classpath:initdata.yaml")
+@ConfigurationProperties(prefix = "role")
 public class RoleTemplate {
-    
-    private Double baseHealth;
-    private Double baseResource;
-    private Double baseAttack;
-    private Double baseDeffence;
-    private Double growthHealth;
-    private Double growthResource;
-    private Double growthAttack;
-    private Double growthDefense;
+
+    private double speed;
+    private double baseHealth;
+    private double baseResource;
+    private double baseAttack;
+    private double baseDeffence;
+    private double growthHealth;
+    private double growthResource;
+    private double growthAttack;
+    private double growthDefense;
 
 }

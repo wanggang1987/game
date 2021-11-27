@@ -5,6 +5,8 @@
  */
 package org.game.ms.map;
 
+import org.game.ms.func.FuncUtils;
+import org.game.ms.player.Player;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,6 +14,14 @@ import org.springframework.stereotype.Component;
  * @author wanggang
  */
 @Component
-public class WorldMap extends Map {
+public class WorldMap extends GameMap {
 
+    private String name = "艾泽拉斯";
+    final protected int randomRange = 200;
+
+    @Override
+    public Location playerComeInMap(Player player) {
+        players.add(player);
+        return new Location(FuncUtils.randomInRange(0, randomRange), FuncUtils.randomInRange(0, randomRange), 0);
+    }
 }

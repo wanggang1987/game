@@ -5,12 +5,10 @@
  */
 package org.game.ms.mock;
 
-import cn.hutool.json.JSONUtil;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.game.ms.role.Profession;
-import org.game.ms.role.Role;
-import org.game.ms.role.RoleCaculate;
+import org.game.ms.player.Player;
+import org.game.ms.player.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,16 +21,11 @@ import org.springframework.stereotype.Component;
 public class Mock {
 
     @Autowired
-    private RoleCaculate roleCaculate;
-    
+    private PlayerService playerService;
+
     @PostConstruct
     private void init() {
-
-        Role player = new Role();
-        player.setName("战士");
-        player.getProfession().add(Profession.warrior);
-        player.setLevel(1);
-        roleCaculate.initRole(player);
-        log.debug("init play {}", JSONUtil.toJsonStr(player));
+        Player player = playerService.createPlayer("战士");
+        
     }
 }

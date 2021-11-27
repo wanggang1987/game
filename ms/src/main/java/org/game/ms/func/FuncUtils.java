@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.TimeZone;
 
 /**
@@ -17,6 +18,12 @@ import java.util.TimeZone;
  * @author wanggang
  */
 public class FuncUtils {
+
+    private static Random randomSeed = new Random(10);
+
+    public static double randomInRange(double base, double range) {
+        return randomSeed.nextBoolean() == true ? base + randomSeed.nextDouble() * range : base - randomSeed.nextDouble() * range;
+    }
 
     public static String todayString() {
         Calendar day = Calendar.getInstance();
