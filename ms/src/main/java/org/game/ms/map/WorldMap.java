@@ -25,12 +25,11 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class WorldMap extends GameMap {
+public class WorldMap extends RootMap {
 
     private String name = "艾泽拉斯";
-    final protected int locationRandomRange = 200;
-    final private int monsterAroundNum = 20;
-    final private int monsterFlushDistance = 20;
+    final protected int comeInLocationRandomRange = 200;
+    final private int flushMonsterAroundNum = 20;
 
     private Map<Long, List<Monster>> playerMonsters = new HashMap<>();
     @Autowired
@@ -39,7 +38,9 @@ public class WorldMap extends GameMap {
     @Override
     public Location playerComeInMap(Player player) {
         players.add(player);
-        return new Location(FuncUtils.randomInRange(0, locationRandomRange), FuncUtils.randomInRange(0, locationRandomRange), 0);
+        Location location = new Location(FuncUtils.randomInRange(0, comeInLocationRandomRange), FuncUtils.randomInRange(0, comeInLocationRandomRange), 0);
+        location.setGrid(locationInGrid(location));
+        return location;
     }
 
     @Override
@@ -52,7 +53,7 @@ public class WorldMap extends GameMap {
                 playerMonsters.put(player.getId(), monsters);
             }
             destoryFarAyayMonster(player, monsters);
-            int addNum = monsterAroundNum - monsters.size();
+            int addNum = flushMonsterAroundNum - monsters.size();
             createMonsterAroundPlayer(player, monsters, addNum);
             return addNum;
         }).mapToInt(Integer::intValue).sum();
@@ -60,27 +61,23 @@ public class WorldMap extends GameMap {
         log.debug("flushMonsterForPlayer add {} monsters", totalNum);
     }
 
-    private boolean isFarAway(Location playerLocation, Location monsterLocation) {
-        double x = playerLocation.getX() - monsterLocation.getX();
-        double y = playerLocation.getY() - monsterLocation.getY();
-        return x * x + y * y >= monsterFlushDistance * monsterFlushDistance;
-    }
-
     @Override
     protected void destoryFarAyayMonster(Player player, List<Monster> monsters) {
         List<Monster> farAyayMonsters = monsters.stream().filter(monster -> isFarAway(player.getLocation(), monster.getLocation()))
                 .collect(Collectors.toList());
         monsters.removeAll(farAyayMonsters);
-        log.debug("destoryFarAyayMonster id:{} remove monsters:{} left:{}", player.getId(), farAyayMonsters.size(), monsters.size());
+        log.debug("destoryFarAyayMonster playerid:{} remove monsters:{} left:{}", player.getId(), farAyayMonsters.size(), monsters.size());
     }
 
     @Override
     protected void createMonsterAroundPlayer(Player player, List<Monster> monsters, int num) {
         for (int i = 0; i < num; i++) {
             Monster monster = new Monster(wolfTemplate);
-            monster.setLocation(new Location(
-                    FuncUtils.randomInRange(player.getLocation().getX(), monsterFlushDistance),
-                    FuncUtils.randomInRange(player.getLocation().getY(), monsterFlushDistance), 0));
+            Location location = new Location(
+                    FuncUtils.randomInRange(player.getLocation().getX(), gridSize),
+                    FuncUtils.randomInRange(player.getLocation().getY(), gridSize), 0);
+            location.setGrid(locationInGrid(location));
+            monster.setLocation(location);
             monsters.add(monster);
             log.debug("createMonsterAroundPlayer id:{}  monster:{} ", player.getId(), monster);
         }

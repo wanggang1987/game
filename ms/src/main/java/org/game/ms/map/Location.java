@@ -19,4 +19,12 @@ public class Location {
     private double x;
     private double y;
     private double z;
+    private String grid;
+
+    public Location(double x, double y, double z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
 }

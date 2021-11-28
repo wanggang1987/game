@@ -6,7 +6,7 @@ package org.game.ms.player;
 
 import lombok.Data;
 import org.game.ms.map.Location;
-import org.game.ms.map.GameMap;
+import org.game.ms.map.RootMap;
 import org.game.ms.role.Role;
 
 /**
@@ -18,6 +18,6 @@ public class Player {
 
     private long id;
     private Role role;
-    private GameMap map;
+    private RootMap map;
     private Location location;
 }

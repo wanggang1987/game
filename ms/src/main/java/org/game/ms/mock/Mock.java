@@ -32,10 +32,4 @@ public class Mock {
         player = playerService.createPlayer("战士");
 
     }
-
-    @Scheduled(fixedRate = 1000 * 6)
-    private void move() {
-        player.setLocation(new Location(FuncUtils.randomInRange(0, 100), FuncUtils.randomInRange(0, 100), 0));
-        log.debug("move to {}", player.getLocation());
-    }
 }
