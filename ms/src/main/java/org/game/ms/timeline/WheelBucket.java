@@ -5,7 +5,11 @@
  */
 package org.game.ms.timeline;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.func.SpringContextUtils;
+import org.game.ms.lifecycle.AutoPlay;
 
 /**
  *
@@ -14,8 +18,23 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WheelBucket {
 
-    public void work() {
+    private AutoPlay autoPlay;
 
-//        log.debug("currentTimeMillis {}", System.currentTimeMillis());
+    public WheelBucket() {
+        this.autoPlay = SpringContextUtils.getBean(AutoPlay.class);
+    }
+
+    private final List<TickTask> realTimeTasks = new ArrayList<>();
+
+    public void addTaskToRealTime(TickTask task) {
+        realTimeTasks.add(task);
+    }
+
+    private void autoPlaytask() {
+        autoPlay.autoPlayForTick();
+    }
+
+    public void work() {
+        autoPlaytask();
     }
 }

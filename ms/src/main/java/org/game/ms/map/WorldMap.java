@@ -5,15 +5,13 @@
  */
 package org.game.ms.map;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import cn.hutool.json.JSONUtil;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.monster.Monster;
-import org.game.ms.monster.WolfTemplate;
+import org.game.ms.monster.template.WolfTemplate;
 import org.game.ms.player.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,49 +25,42 @@ import org.springframework.stereotype.Component;
 @Component
 public class WorldMap extends RootMap {
 
-    private String name = "艾泽拉斯";
+    @Autowired
+    private WolfTemplate wolfTemplate;
     final protected int comeInLocationRandomRange = 200;
     final private int flushMonsterAroundNum = 20;
 
-    private Map<Long, List<Monster>> playerMonsters = new HashMap<>();
-    @Autowired
-    private WolfTemplate wolfTemplate;
-
     @Override
-    public Location playerComeInMap(Player player) {
-        players.add(player);
+    public void playerComeInMap(Player player) {
+        super.playerComeInMap(player);
         Location location = new Location(FuncUtils.randomInRange(0, comeInLocationRandomRange), FuncUtils.randomInRange(0, comeInLocationRandomRange), 0);
         location.setGrid(locationInGrid(location));
-        return location;
+        player.setLocation(location);
     }
 
-    @Override
     @Scheduled(fixedRate = 1000 * 20)
     protected void flushAndRrmoveMonsterForPlayer() {
-        int totalNum = players.stream().map(player -> {
-            List<Monster> monsters = playerMonsters.get(player.getId());
-            if (monsters == null) {
-                monsters = new ArrayList<>();
-                playerMonsters.put(player.getId(), monsters);
-            }
-            destoryFarAyayMonster(player, monsters);
+        log.debug("start to flushAndRrmoveMonsterForPlayer");
+        int totalNum = inMapPlayerList.stream().map(player -> {
+            List<Monster> monsters = playerMonsterMap.get(player.getId());
+            destoryFarAyayMonsters(player, monsters);
             int addNum = flushMonsterAroundNum - monsters.size();
             createMonsterAroundPlayer(player, monsters, addNum);
             return addNum;
         }).mapToInt(Integer::intValue).sum();
-
-        log.debug("flushMonsterForPlayer add {} monsters", totalNum);
+        log.debug("flushAndRrmoveMonsterForPlayer add {} monsters", totalNum);
     }
 
-    @Override
-    protected void destoryFarAyayMonster(Player player, List<Monster> monsters) {
-        List<Monster> farAyayMonsters = monsters.stream().filter(monster -> isFarAway(player.getLocation(), monster.getLocation()))
+    protected void destoryFarAyayMonsters(Player player, List<Monster> monsters) {
+        List<String> nearGrids = nearByGrids(player.getLocation());
+        List<Monster> farAyayMonsters = monsters.stream()
+                .filter(monster -> !nearGrids.contains(monster.getLocation().getGrid()))
                 .collect(Collectors.toList());
         monsters.removeAll(farAyayMonsters);
+
         log.debug("destoryFarAyayMonster playerid:{} remove monsters:{} left:{}", player.getId(), farAyayMonsters.size(), monsters.size());
     }
 
-    @Override
     protected void createMonsterAroundPlayer(Player player, List<Monster> monsters, int num) {
         for (int i = 0; i < num; i++) {
             Monster monster = new Monster(wolfTemplate);
@@ -79,7 +70,8 @@ public class WorldMap extends RootMap {
             location.setGrid(locationInGrid(location));
             monster.setLocation(location);
             monsters.add(monster);
-            log.debug("createMonsterAroundPlayer id:{}  monster:{} ", player.getId(), monster);
+            insertMonsterToGrid(monster);
+            log.debug("createMonsterAroundPlayer id:{}  monster:{}", player.getId(), JSONUtil.toJsonStr(monster));
         }
     }
 }

@@ -1,5 +1,5 @@
-role:
-    speed: 10
+player:
+    speed: 2
     warrior:
         baseHealth: 1000
         baseResource: 1
@@ -13,8 +13,8 @@ role:
 monster:
     wolf:
         level: 1
+        speed: 1
         health: 100
         resource: 0
         attack: 10
         deffence: 5
-        speed: 10

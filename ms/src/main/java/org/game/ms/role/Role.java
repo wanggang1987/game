@@ -5,23 +5,29 @@
  */
 package org.game.ms.role;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import org.game.ms.map.Location;
+import org.game.ms.map.RootMap;
 
 /**
  *
  * @author wanggang
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Role {
 
-    private List<Profession> profession = new ArrayList<>();
+    private long id;
     private String name;
-    private int level = 0;
-    private double healthPoint = 0;
-    private double resourcePoint = 0;
-    private double attack = 0;
-    private double defense = 0;
-
+    private int level;
+    private double speed;
+    private double healthPoint;
+    private double resourcePoint;
+    private double attack;
+    private double defense;
+    private RootMap map;
+    private Location location;
+    private transient Role target;
+    private MoveStatus moveStatus;
 }

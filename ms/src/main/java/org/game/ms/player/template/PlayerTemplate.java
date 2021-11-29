@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.game.ms.role.template;
+package org.game.ms.player.template;
 
 import lombok.Data;
 import org.game.ms.config.YamlPropertySourceFactory;
@@ -18,8 +18,8 @@ import org.springframework.context.annotation.PropertySource;
 @Data
 @Configuration
 @PropertySource(factory = YamlPropertySourceFactory.class, value = "classpath:initdata.yaml")
-@ConfigurationProperties(prefix = "role")
-public class RoleTemplate {
+@ConfigurationProperties(prefix = "player")
+public class PlayerTemplate {
 
     private double speed;
     private double baseHealth;

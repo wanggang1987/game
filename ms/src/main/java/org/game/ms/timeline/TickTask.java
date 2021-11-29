@@ -3,13 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.game.ms.role;
+package org.game.ms.timeline;
+
+import org.game.ms.role.Role;
 
 /**
  *
  * @author wanggang
  */
-public enum Profession {
-    warrior,
-    
+public class TickTask {
+
+    private Role role;
 }

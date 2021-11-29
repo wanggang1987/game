@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package org.game.ms.monster;
+package org.game.ms.monster.template;
 
 import lombok.Data;
 import org.game.ms.config.YamlPropertySourceFactory;
@@ -17,7 +17,14 @@ import org.springframework.context.annotation.PropertySource;
 @Data
 @Configuration
 @PropertySource(factory = YamlPropertySourceFactory.class, value = "classpath:initdata.yaml")
-@ConfigurationProperties(prefix = "monster.wolf")
-public class WolfTemplate extends MonsterTemplate{
-    
+@ConfigurationProperties(prefix = "monster")
+public class MonsterTemplate {
+
+    private int level;
+    private double speed;
+    private double health;
+    private double resource;
+    private double attack;
+    private double deffence;
+
 }

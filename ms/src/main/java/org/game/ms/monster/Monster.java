@@ -4,35 +4,24 @@
  */
 package org.game.ms.monster;
 
+import org.game.ms.monster.template.MonsterTemplate;
 import cn.hutool.core.bean.BeanUtil;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-import org.game.ms.map.Location;
+import org.game.ms.role.Role;
 
 /**
  *
  * @author gangwang
  */
 @Data
-public class Monster {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Monster extends Role {
 
     private MonsterTemplate template;
-
-    private long id;
-    private int level;
-    private double speed;
-    private double health;
-    private double resource;
-    private double attack;
-    private double deffence;
-
-    private Location location;
 
     public Monster(MonsterTemplate monsterTemplate) {
         this.template = monsterTemplate;
         BeanUtil.copyProperties(monsterTemplate, this);
-    }
-
-    public boolean canDestory() {
-        return true;
     }
 }

@@ -4,9 +4,10 @@
  */
 package org.game.ms.player;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Data;
-import org.game.ms.map.Location;
-import org.game.ms.map.RootMap;
 import org.game.ms.role.Role;
 
 /**
@@ -14,10 +15,8 @@ import org.game.ms.role.Role;
  * @author gangwang
  */
 @Data
-public class Player {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Player extends Role{
 
-    private long id;
-    private Role role;
-    private RootMap map;
-    private Location location;
+    private List<Profession> profession = new ArrayList<>();
 }

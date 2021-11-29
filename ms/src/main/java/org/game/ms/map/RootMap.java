@@ -5,19 +5,58 @@
  */
 package org.game.ms.map;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.json.JSONUtil;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.game.ms.monster.Monster;
 import org.game.ms.player.Player;
+import org.game.ms.role.Role;
+import org.game.ms.timeline.TimeWheel;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
  * @author wanggang
  */
+@Slf4j
 public class RootMap {
 
-    protected List<Player> players = new ArrayList<>();
+    @Autowired
+    private TimeWheel timeWheel;
+
     final protected int gridSize = 20;
+    protected final List<Player> inMapPlayerList = new ArrayList<>();
+    protected final Map<Long, List<Monster>> playerMonsterMap = new HashMap<>();
+    protected final Map<String, List<Monster>> gridMonsterMap = new HashMap<>();
+
+    protected void playerComeInMap(Player player) {
+        List<Monster> monsters = playerMonsterMap.get(player.getId());
+        if (monsters == null) {
+            playerMonsterMap.put(player.getId(), new ArrayList<>());
+        }
+        inMapPlayerList.add(player);
+    }
+
+    protected void insertMonsterToGrid(Monster monster) {
+        List<Monster> gridMonsters = gridMonsterMap.get(monster.getLocation().getGrid());
+        if (gridMonsters == null) {
+            gridMonsters = new ArrayList<>();
+            gridMonsterMap.put(monster.getLocation().getGrid(), gridMonsters);
+        }
+        gridMonsters.add(monster);
+    }
+
+    protected void destoryMonsters(List<Monster> monsters) {
+        monsters.forEach(monster -> {
+            List<Monster> gridMonsters = gridMonsterMap.get(monster.getLocation().getGrid());
+            gridMonsters.remove(monster);
+        });
+    }
 
     private String gridStr(double lx, double ly, double lz) {
         int x = (int) (lx / gridSize);
@@ -32,33 +71,53 @@ public class RootMap {
     }
 
     protected List<String> nearByGrids(Location location) {
-
-        return null;
+        List<String> grids = new ArrayList<>();
+        grids.add(gridStr(location.getX(), location.getY(), location.getZ()));
+        grids.add(gridStr(location.getX() + 20, location.getY(), location.getZ()));
+        grids.add(gridStr(location.getX(), location.getY() - 20, location.getZ()));
+        grids.add(gridStr(location.getX() - 20, location.getY(), location.getZ()));
+        grids.add(gridStr(location.getX(), location.getY() + 20, location.getZ()));
+        grids.add(gridStr(location.getX() + 20, location.getY() - 20, location.getZ()));
+        grids.add(gridStr(location.getX() - 20, location.getY() - 20, location.getZ()));
+        grids.add(gridStr(location.getX() - 20, location.getY() + 20, location.getZ()));
+        grids.add(gridStr(location.getX() + 20, location.getY() + 20, location.getZ()));
+        return grids;
     }
 
-    protected boolean isFarAway(Location playerLocation, Location monsterLocation) {
-        double x = playerLocation.getX() - monsterLocation.getX();
-        double y = playerLocation.getY() - monsterLocation.getY();
-        return x * x + y * y >= gridSize * gridSize;
+    public Role findNearByMonsterForPlayer(Player player) {
+        Monster monster = null;
+        List<String> grids = nearByGrids(player.getLocation());
+        for (String grid : grids) {
+            List<Monster> gridMonsters = gridMonsterMap.get(grid);
+            if (CollectionUtil.isNotEmpty(gridMonsters)) {
+                monster = gridMonsters.stream().findAny().orElse(null);
+                break;
+            }
+        }
+        if (monster == null) {
+            return null;
+        }
+        log.info("findNearByMonsterForPlayer player {}  monster {}", player.getId(), JSONUtil.toJsonStr(monster));
+        return monster;
     }
 
-    protected Location playerComeInMap(Player player) {
-        Location location = new Location(0, 0, 0);
-        location.setGrid(locationInGrid(location));
-        return location;
+    public void playerMoveToTargetInTick(Player player) {
+        double xDistance = player.getTarget().getLocation().getX() - player.getLocation().getX();
+        double yDistance = player.getTarget().getLocation().getY() - player.getLocation().getY();
+        double preDistance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
+        double moveDistance = player.getSpeed() / timeWheel.getTicksPerWheel();
+        if (moveDistance > preDistance) {
+            movePlayerToLocation(player, player.getTarget().getLocation());
+        } else {
+            double x = player.getLocation().getX() + (xDistance / preDistance) * moveDistance;
+            double y = player.getLocation().getY() + (yDistance / preDistance) * moveDistance;
+            Location location = new Location(x, y, 0);
+            location.setGrid(locationInGrid(location));
+            movePlayerToLocation(player, location);
+        }
     }
 
-    protected void move(Player play, Location target) {
-
-    }
-
-    protected void flushAndRrmoveMonsterForPlayer() {
-    }
-
-    protected void destoryFarAyayMonster(Player player, List<Monster> monsters) {
-    }
-
-    protected void createMonsterAroundPlayer(Player player, List<Monster> monsters, int num) {
-
+    private void movePlayerToLocation(Player player, Location location) {
+        player.setLocation(location);
     }
 }

@@ -18,15 +18,25 @@ import org.springframework.stereotype.Service;
 @Service
 public class TimeWheel {
 
-    final private Integer ticksPerWheel = 10;
-    final private Integer tickDuration = 100;
-    final private WheelBucket[] wheel = new WheelBucket[ticksPerWheel];
+    final private int ticksPerWheel = 10;
+    final private int tickDuration = 100;
+    final private WheelBucket[] wheels = new WheelBucket[ticksPerWheel];
     private ForkJoinPool threadPool;
+    private int tick = 0;
+
+    public int getTicksPerWheel(){
+        return ticksPerWheel;
+    }
+    
+    public void addTaskNextTick(TickTask task) {
+        int nextTick = tick == ticksPerWheel ? 0 : tick + 1;
+        wheels[nextTick].addTaskToRealTime(task);
+    }
 
     @PostConstruct
     private void init() {
         for (int i = 0; i < ticksPerWheel; i++) {
-            wheel[i] = new WheelBucket();
+            wheels[i] = new WheelBucket();
         }
         threadPool = new ForkJoinPool(1);
 
@@ -36,10 +46,9 @@ public class TimeWheel {
                 try {
                     cycleManager();
                 } catch (Exception e) {
-                    log.error(e.getMessage());
+                    e.printStackTrace();
                 }
             }
-
         });
     }
 
@@ -49,8 +58,8 @@ public class TimeWheel {
         long deadLine = (start / 1000 + 1) * 1000;
 //        log.debug("cycleManager from {} to {},wheelStart {} ", start, deadLine, wheelStart);
 
-        for (int tick = 0; tick < ticksPerWheel; tick++) {
-            wheel[tick].work();
+        for (tick = 0; tick < ticksPerWheel; tick++) {
+            wheels[tick].work();
             long now = System.currentTimeMillis();
             long target = wheelStart + ((tick + 1) * tickDuration);
             long sleepTimeMs = target - now;
