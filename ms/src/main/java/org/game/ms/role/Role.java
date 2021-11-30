@@ -22,6 +22,7 @@ public class Role {
     private String name;
     private int level;
     private double speed;
+    private double attackRange;
     private double healthPoint;
     private double resourcePoint;
     private double attack;
@@ -29,5 +30,7 @@ public class Role {
     private RootMap map;
     private Location location;
     private transient Role target;
+    private LivingStatus livingStatus;
     private MoveStatus moveStatus;
+    private AttackStatus attackStatus;
 }

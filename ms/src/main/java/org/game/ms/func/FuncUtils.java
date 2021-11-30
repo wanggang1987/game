@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.TimeZone;
+import org.game.ms.map.Location;
 
 /**
  *
@@ -23,6 +24,17 @@ public class FuncUtils {
 
     public static double randomInRange(double base, double range) {
         return randomSeed.nextBoolean() == true ? base + randomSeed.nextDouble() * range : base - randomSeed.nextDouble() * range;
+    }
+
+    private static double precision = 0.001;
+
+    public static int distanceCompare(double a, double b) {
+        if (a - b > precision) {
+            return 1;
+        } else if (b - a > precision) {
+            return -1;
+        }
+        return 0;
     }
 
     public static String todayString() {

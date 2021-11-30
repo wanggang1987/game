@@ -4,7 +4,6 @@
  */
 package org.game.ms.monster.template;
 
-import org.game.ms.monster.template.MonsterTemplate;
 import lombok.Data;
 import org.game.ms.config.YamlPropertySourceFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;

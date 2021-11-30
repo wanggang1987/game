@@ -24,10 +24,10 @@ public class TimeWheel {
     private ForkJoinPool threadPool;
     private int tick = 0;
 
-    public int getTicksPerWheel(){
+    public int getTicksPerWheel() {
         return ticksPerWheel;
     }
-    
+
     public void addTaskNextTick(TickTask task) {
         int nextTick = tick == ticksPerWheel ? 0 : tick + 1;
         wheels[nextTick].addTaskToRealTime(task);
@@ -46,6 +46,7 @@ public class TimeWheel {
                 try {
                     cycleManager();
                 } catch (Exception e) {
+                    log.error(e.getMessage());
                     e.printStackTrace();
                 }
             }

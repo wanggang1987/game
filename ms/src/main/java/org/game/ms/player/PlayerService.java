@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.role.AttackStatus;
+import org.game.ms.role.LivingStatus;
+import org.game.ms.role.MoveStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,6 +58,9 @@ public class PlayerService {
     }
     
     private void initPlayer(Player player) {
+        player.setAttackStatus(AttackStatus.NOT_ATTACK);
+        player.setMoveStatus(MoveStatus.STANDING);
+        player.setLivingStatus(LivingStatus.LIVING);
         player.setSpeed(playerTemplate.getSpeed());
         player.getProfession().stream().forEach(profession -> {
             PlayerTemplate template = mapProfessionRole.get(profession);

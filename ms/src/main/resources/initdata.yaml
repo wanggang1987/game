@@ -1,5 +1,6 @@
 player:
     speed: 2
+    attackRange: 3
     warrior:
         baseHealth: 1000
         baseResource: 1
@@ -18,3 +19,9 @@ monster:
         resource: 0
         attack: 10
         deffence: 5
+        attackRange: 3
+        
+map:
+    gridSize: 20
+    world:
+        name: "霍格沃兹"
