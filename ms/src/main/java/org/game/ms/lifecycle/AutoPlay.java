@@ -23,23 +23,23 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class AutoPlay {
-    
+
     @Autowired
     private FightService fightService;
     @Autowired
     private LifeCycle lifeCycle;
-    
-    private List<Player> autoPlayers = new ArrayList<>();
-    
+
+    private final List<Player> autoPlayers = new ArrayList<>();
+
     public void startPlayerAutoPlay(Player player) {
         autoPlayers.add(player);
         log.debug("startPlayerAutoPlay player {} ", player.getId());
     }
-    
+
     public void removePlayerAutoPlay(Player player) {
         autoPlayers.remove(player);
     }
-    
+
     private void playerAuto(Player player) {
         if (player.getTarget() == null) {
             Long targetId = player.getMap().findNearByMonsterIdForPlayer(player);
@@ -53,27 +53,28 @@ public class AutoPlay {
             return;
         }
         autoAttack(player);
-        if (AttackStatus.OUT_RANGE.equals(player.getAttackStatus())) {
-            MoveStatus pre = player.getMoveStatus();
-            autoMove(player);
-            MoveStatus after = player.getMoveStatus();
-            if (MoveStatus.STANDING.equals(pre) && MoveStatus.MOVEING.equals(after)) {
-                log.debug("player {} move to target {}", player.getId(), player.getTarget().getId());
-            }
-        } else {
-            player.setMoveStatus(MoveStatus.STANDING);
-        }
+        autoMove(player);
     }
-    
+
     public void autoPlayForTick() {
         autoPlayers.forEach(player -> playerAuto(player));
     }
-    
+
     private void autoAttack(Player player) {
         fightService.fight(player);
     }
-    
+
     private void autoMove(Player player) {
-        player.getMap().playerMoveToTargetInTick(player);
+        if (AttackStatus.OUT_RANGE.equals(player.getAttackStatus())
+                && MoveStatus.STANDING.equals(player.getMoveStatus())) {
+            log.debug("player {} start move to location {}", player.getId(), player.getTarget().getLocation());
+            player.setMoveStatus(MoveStatus.MOVEING);
+        }
+        if (!AttackStatus.OUT_RANGE.equals(player.getAttackStatus())) {
+            player.setMoveStatus(MoveStatus.STANDING);
+        }
+        if (MoveStatus.MOVEING.equals(player.getMoveStatus())) {
+            player.getMap().playerMoveToTargetInTick(player);
+        }
     }
 }

@@ -5,7 +5,6 @@
  */
 package org.game.ms.mock;
 
-import cn.hutool.json.JSONUtil;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.lifecycle.AutoPlay;
@@ -13,7 +12,6 @@ import org.game.ms.lifecycle.LifeCycle;
 import org.game.ms.map.WorldMap;
 import org.game.ms.player.Player;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**

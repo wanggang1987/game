@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.game.ms.player.template;
+package org.game.ms.timeline;
 
 import lombok.Data;
 import org.game.ms.config.YamlPropertySourceFactory;
@@ -18,19 +18,9 @@ import org.springframework.context.annotation.PropertySource;
 @Data
 @Configuration
 @PropertySource(factory = YamlPropertySourceFactory.class, value = "classpath:initdata.yaml")
-@ConfigurationProperties(prefix = "player")
-public class PlayerTemplate {
+@ConfigurationProperties(prefix = "timewheel")
+public class WheelConfig {
 
-    private double speed;
-    private double attackRange;
-    private double attackCooldown;
-    private double baseHealth;
-    private double baseResource;
-    private double baseAttack;
-    private double baseDeffence;
-    private double growthHealth;
-    private double growthResource;
-    private double growthAttack;
-    private double growthDefense;
-
+    private int ticksPerWheel;
+    private int tickDuration;
 }

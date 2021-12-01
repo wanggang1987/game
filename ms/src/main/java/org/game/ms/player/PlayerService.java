@@ -24,21 +24,21 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class PlayerService {
-    
+
     @Autowired
     private PlayerMapper playerMapper;
     @Autowired
     private PlayerTemplate playerTemplate;
     @Autowired
     private WarriorTample warriorTample;
-    
+
     Map<Profession, PlayerTemplate> mapProfessionRole = new HashMap<>();
-    
+
     @PostConstruct
     private void init() {
         mapProfessionRole.put(Profession.warrior, warriorTample);
     }
-    
+
     public Player createPlayer(String name) {
         //init role
         Player player = new Player();
@@ -52,22 +52,26 @@ public class PlayerService {
         ppo.setStr(JSONUtil.toJsonStr(player));
         playerMapper.insertUseGeneratedKeys(ppo);
         player.setId(ppo.getId());
-        
+
         log.debug("init player {}", JSONUtil.toJsonStr(player));
         return player;
     }
-    
+
     private void initPlayer(Player player) {
-        player.setAttackStatus(AttackStatus.NOT_ATTACK);
-        player.setMoveStatus(MoveStatus.STANDING);
-        player.setLivingStatus(LivingStatus.LIVING);
-        player.setSpeed(playerTemplate.getSpeed());
+        player.setSpeed(playerTemplate.getSpeed() / 1000);
+        player.setAttackRange(playerTemplate.getAttackRange());
+        player.setAttackCooldownMax(playerTemplate.getAttackCooldown() * 1000);
         player.getProfession().stream().forEach(profession -> {
             PlayerTemplate template = mapProfessionRole.get(profession);
-            player.setHealthPoint(player.getHealthPoint() + template.getBaseHealth() + template.getGrowthHealth() * player.getLevel());
-            player.setResourcePoint(player.getResourcePoint() + template.getBaseResource() + template.getGrowthResource() * player.getLevel());
+            player.setHealthMax(player.getHealthMax() + template.getBaseHealth() + template.getGrowthHealth() * player.getLevel());
+            player.setHealthPoint(player.getHealthMax());
+            player.setResourceMax(player.getResourceMax() + template.getBaseResource() + template.getGrowthResource() * player.getLevel());
+            player.setResourcePoint(player.getResourceMax());
             player.setAttack(player.getAttack() + template.getBaseAttack() + template.getGrowthAttack() * player.getLevel());
             player.setDefense(player.getDefense() + template.getBaseDeffence() + template.getGrowthDefense() * player.getLevel());
         });
+        player.setAttackStatus(AttackStatus.NOT_ATTACK);
+        player.setMoveStatus(MoveStatus.STANDING);
+        player.setLivingStatus(LivingStatus.LIVING);
     }
 }

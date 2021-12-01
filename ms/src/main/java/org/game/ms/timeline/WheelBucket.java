@@ -10,6 +10,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.func.SpringContextUtils;
 import org.game.ms.lifecycle.AutoPlay;
+import org.game.ms.lifecycle.LifeCycle;
 
 /**
  *
@@ -19,9 +20,11 @@ import org.game.ms.lifecycle.AutoPlay;
 public class WheelBucket {
 
     private AutoPlay autoPlay;
+    private LifeCycle lifeCycle;
 
     public WheelBucket() {
         this.autoPlay = SpringContextUtils.getBean(AutoPlay.class);
+        this.lifeCycle = SpringContextUtils.getBean(LifeCycle.class);
     }
 
     private final List<TickTask> realTimeTasks = new ArrayList<>();
@@ -34,7 +37,12 @@ public class WheelBucket {
         autoPlay.autoPlayForTick();
     }
 
+    private void cooldownTimer() {
+        lifeCycle.cooldownTimer();
+    }
+
     public void work() {
+        cooldownTimer();
         autoPlaytask();
     }
 }

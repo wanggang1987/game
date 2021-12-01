@@ -6,19 +6,16 @@
 package org.game.ms.map;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.json.JSONUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.game.ms.func.FuncUtils;
-import org.game.ms.lifecycle.LifeCycle;
 import org.game.ms.monster.Monster;
 import org.game.ms.player.Player;
 import org.game.ms.role.MoveStatus;
 import org.game.ms.role.Role;
-import org.game.ms.timeline.TimeWheel;
+import org.game.ms.timeline.WheelConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -29,9 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class RootMap {
 
     @Autowired
-    private TimeWheel timeWheel;
-    @Autowired
-    private LifeCycle licCycle;
+    private WheelConfig wheelConfig;
 
     final protected int gridSize = 20;
     protected final List<Long> inMapPlayerIdList = new ArrayList<>();
@@ -119,21 +114,22 @@ public class RootMap {
         double xDistance = player.getTarget().getLocation().getX() - player.getLocation().getX();
         double yDistance = player.getTarget().getLocation().getY() - player.getLocation().getY();
         double preDistance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
-        double moveDistance = player.getSpeed() / timeWheel.getTicksPerWheel();
+        double moveDistance = player.getSpeed() * wheelConfig.getTickDuration();
         if (moveDistance > preDistance) {
             player.setMoveStatus(MoveStatus.STANDING);
-            movePlayerToLocation(player, player.getTarget().getLocation());
+            movePlayerToLocation(player, player.getTarget().getLocation().getX(), player.getTarget().getLocation().getY());
         } else {
             double x = player.getLocation().getX() + (xDistance / preDistance) * moveDistance;
             double y = player.getLocation().getY() + (yDistance / preDistance) * moveDistance;
-            Location location = new Location(x, y, 0);
-            location.setGrid(locationInGrid(location));
             player.setMoveStatus(MoveStatus.MOVEING);
-            movePlayerToLocation(player, location);
+            movePlayerToLocation(player, x, y);
         }
     }
 
-    private void movePlayerToLocation(Player player, Location location) {
+    private void movePlayerToLocation(Player player, double x, double y) {
+        Location location = new Location(x, y, 0);
+        location.setGrid(locationInGrid(location));
         player.setLocation(location);
+        log.debug("player move to location {}", location);
     }
 }

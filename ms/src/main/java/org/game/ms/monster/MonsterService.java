@@ -5,7 +5,6 @@
  */
 package org.game.ms.monster;
 
-import cn.hutool.core.bean.BeanUtil;
 import org.game.ms.monster.template.WolfTemplate;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.role.LivingStatus;
@@ -28,10 +27,18 @@ public class MonsterService {
     public Monster initMonster() {
         Monster monster = new Monster();
         monster.setId(id++);
+        monster.setSpeed(wolfTemplate.getSpeed() / 1000);
+        monster.setAttackRange(wolfTemplate.getAttackRange());
+        monster.setAttackCooldownMax(wolfTemplate.getAttackCooldown() * 1000);
+        monster.setHealthMax(wolfTemplate.getHealth());
+        monster.setHealthPoint(monster.getHealthMax());
+        monster.setResourceMax(wolfTemplate.getResource());
+        monster.setResourcePoint(monster.getResourceMax());
+        monster.setAttack(wolfTemplate.getAttack());
+        monster.setDefense(wolfTemplate.getDeffence());
         monster.setAttackStatus(AttackStatus.NOT_ATTACK);
         monster.setMoveStatus(MoveStatus.STANDING);
         monster.setLivingStatus(LivingStatus.LIVING);
-        BeanUtil.copyProperties(wolfTemplate, monster);
         return monster;
     }
 }

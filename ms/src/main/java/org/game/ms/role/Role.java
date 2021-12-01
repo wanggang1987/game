@@ -24,13 +24,20 @@ public class Role {
     private double speed;
     private double attackRange;
     private double healthPoint;
+    private double healthMax;
     private double resourcePoint;
+    private double resourceMax;
     private double attack;
     private double defense;
+    private double attackCooldown;
+    private double attackCooldownMax;
+    private double attackPower;
+    private double magicPower;
     private RootMap map;
     private Location location;
+
     private transient Role target;
-    private LivingStatus livingStatus;
-    private MoveStatus moveStatus;
-    private AttackStatus attackStatus;
+    private transient LivingStatus livingStatus;
+    private transient MoveStatus moveStatus;
+    private transient AttackStatus attackStatus;
 }

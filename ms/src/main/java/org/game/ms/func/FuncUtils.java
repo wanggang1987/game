@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.TimeZone;
-import org.game.ms.map.Location;
 
 /**
  *
@@ -20,15 +19,20 @@ import org.game.ms.map.Location;
  */
 public class FuncUtils {
 
-    private static Random randomSeed = new Random(10);
+    private static Random randomSeed = new Random(new Date().getTime());
 
     public static double randomInRange(double base, double range) {
         return randomSeed.nextBoolean() == true ? base + randomSeed.nextDouble() * range : base - randomSeed.nextDouble() * range;
     }
 
-    private static double precision = 0.001;
+    public static double randomInPersentRange(double base, int persentRange) {
+        double range = base * persentRange / 100;
+        return randomInRange(base, range);
+    }
 
-    public static int distanceCompare(double a, double b) {
+    private static final double precision = 0.001;
+
+    public static int numberCompare(double a, double b) {
         if (a - b > precision) {
             return 1;
         } else if (b - a > precision) {

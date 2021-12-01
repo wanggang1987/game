@@ -1,7 +1,13 @@
+timewheel:
+    ticksPerWheel: 10
+    tickDuration: 100
+
 player:
     speed: 2
     attackRange: 3
+    attackCooldown: 1
     warrior:
+        name: 战士
         baseHealth: 1000
         baseResource: 1
         baseAttack: 10
@@ -13,15 +19,17 @@ player:
 
 monster:
     wolf:
+        name: 狼
         level: 1
         speed: 1
+        attackRange: 2
+        attackCooldown: 2
         health: 100
         resource: 0
         attack: 10
         deffence: 5
-        attackRange: 3
         
 map:
     gridSize: 20
     world:
-        name: "霍格沃兹"
+        name: "艾泽拉斯"

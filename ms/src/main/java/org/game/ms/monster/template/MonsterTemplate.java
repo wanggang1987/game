@@ -22,6 +22,8 @@ public class MonsterTemplate {
 
     private int level;
     private double speed;
+    private double attackRange;
+    private double attackCooldown;
     private double health;
     private double resource;
     private double attack;
