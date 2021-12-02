@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class AutoPlay {
+public class AutoPlayer {
 
     @Autowired
     private FightService fightService;

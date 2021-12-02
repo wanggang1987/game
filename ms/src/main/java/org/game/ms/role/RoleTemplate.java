@@ -3,20 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.game.ms.skill;
+package org.game.ms.role;
 
 import lombok.Data;
-import org.springframework.stereotype.Component;
 
 /**
  *
  * @author wanggang
  */
 @Data
-@Component
-public class Skill {
+public class RoleTemplate {
 
-    private String name;
-    private double attackPowerRate;
-    private double magicPowerRate;
+    private double speed;
+    private double attackRange;
+    private double attackCooldown;
 }

@@ -7,7 +7,7 @@ package org.game.ms.mock;
 
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.game.ms.lifecycle.AutoPlay;
+import org.game.ms.lifecycle.AutoPlayer;
 import org.game.ms.lifecycle.LifeCycle;
 import org.game.ms.map.WorldMap;
 import org.game.ms.player.Player;
@@ -27,7 +27,7 @@ public class Mock {
     @Autowired
     private LifeCycle lifeCycle;
     @Autowired
-    private AutoPlay autoPlay;
+    private AutoPlayer autoPlay;
     @Autowired
     private WorldMap worldMap;
 

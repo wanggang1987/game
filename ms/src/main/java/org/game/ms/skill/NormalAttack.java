@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class NormalAttack extends Skill {
 
+    private String name = "普通攻击";
     private double attackPowerRate = 1.0;
     private double magicPowerRate = 0;
 }

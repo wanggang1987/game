@@ -10,6 +10,7 @@ import org.game.ms.func.FuncUtils;
 import org.game.ms.lifecycle.LifeCycle;
 import org.game.ms.player.Player;
 import org.game.ms.role.AttackStatus;
+import org.game.ms.role.FightingStatus;
 import org.game.ms.role.LivingStatus;
 import org.game.ms.role.Role;
 import org.game.ms.skill.NormalAttack;
@@ -24,16 +25,16 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class FightService {
-    
+
     @Autowired
     private LifeCycle lifeCycle;
     @Autowired
     private NormalAttack normalAttack;
-    
+
     public void fight(Player player) {
         normalAttack(player);
     }
-    
+
     public void normalAttack(Player player) {
         attackRanageCompare(player);
         if (AttackStatus.OUT_RANGE.equals(player.getAttackStatus())) {
@@ -41,13 +42,16 @@ public class FightService {
         }
         if (FuncUtils.numberCompare(player.getAttackCooldown(), 0) == 0) {
             double damage = skillDamageCaculate(player, normalAttack);
-            player.getTarget().setHealthPoint(player.getTarget().getHealthPoint() - damage);
-            log.debug("player {} attack target {} damage {}", player.getId(), player.getTarget().getId(), damage);
-            checkDie(player.getTarget());
+            playerDamageMonster(player, damage, normalAttack);
             player.setAttackCooldown(player.getAttackCooldownMax());
         }
+        player.setFightingStatus(FightingStatus.IN_FIGHTING);
+        player.getTarget().setFightingStatus(FightingStatus.IN_FIGHTING);
+        if (monsterDie(player.getTarget())) {
+            player.setFightingStatus(FightingStatus.NOT_FIGHTING);
+        }
     }
-    
+
     public static void attackRanageCompare(Role source) {
         double xDistance = source.getTarget().getLocation().getX() - source.getLocation().getX();
         double yDistance = source.getTarget().getLocation().getY() - source.getLocation().getY();
@@ -58,17 +62,25 @@ public class FightService {
             source.setAttackStatus(AttackStatus.AUTO_ATTACK);
         }
     }
-    
+
     private double skillDamageCaculate(Player player, Skill skill) {
         double damage = player.getAttackPower() * skill.getAttackPowerRate() + player.getAttack() - player.getTarget().getDefense();
         return FuncUtils.randomInPersentRange(damage, 30);
     }
-    
-    private void checkDie(Role role) {
+
+    private boolean monsterDie(Role role) {
         if (FuncUtils.numberCompare(role.getHealthPoint(), 0.5) == -1) {
+            log.debug("role {} die", role.getId());
             role.setLivingStatus(LivingStatus.DEAD);
             lifeCycle.detoryMonster(role);
-            log.debug("role {} die", role.getId());
+            return true;
         }
+        return false;
     }
+
+    private void playerDamageMonster(Player player, double damage, Skill skill) {
+        player.getTarget().setHealthPoint(player.getTarget().getHealthPoint() - damage);
+        log.debug("player {} {} monster {} damage {}", player.getId(), skill.getName(), player.getTarget().getId(), damage);
+    }
+
 }

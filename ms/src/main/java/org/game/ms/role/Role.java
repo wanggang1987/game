@@ -35,9 +35,11 @@ public class Role {
     private double magicPower;
     private RootMap map;
     private Location location;
+    private RoleTemplate template;
 
     private transient Role target;
-    private transient LivingStatus livingStatus;
-    private transient MoveStatus moveStatus;
-    private transient AttackStatus attackStatus;
+    private LivingStatus livingStatus;
+    private MoveStatus moveStatus;
+    private AttackStatus attackStatus;
+    private FightingStatus fightingStatus;
 }

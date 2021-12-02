@@ -7,6 +7,7 @@ package org.game.ms.lifecycle;
 
 import cn.hutool.json.JSONUtil;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.func.FuncUtils;
@@ -56,6 +57,10 @@ public class LifeCycle {
 
     public Monster onlineMonster(Long id) {
         return onlineMonsters.get(id);
+    }
+
+    public List<Monster> onlineMonsters() {
+        return (List<Monster>) onlineMonsters.values();
     }
 
     public Monster createMonster() {
