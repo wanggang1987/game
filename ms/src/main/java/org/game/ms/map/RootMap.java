@@ -93,7 +93,6 @@ public class RootMap {
                 monsterIds.addAll(gridMonsters);
             }
         }
-        log.debug("findNearByMonsterIdsForPlayer player {}  monsters:{}", player.getId(), monsterIds.size());
         return monsterIds;
     }
 
@@ -110,26 +109,26 @@ public class RootMap {
         return null;
     }
 
-    public void playerMoveToTargetInTick(Player player) {
-        double xDistance = player.getTarget().getLocation().getX() - player.getLocation().getX();
-        double yDistance = player.getTarget().getLocation().getY() - player.getLocation().getY();
+    public void roleMoveToTargetInTick(Role role) {
+        double xDistance = role.getTarget().getLocation().getX() - role.getLocation().getX();
+        double yDistance = role.getTarget().getLocation().getY() - role.getLocation().getY();
         double preDistance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
-        double moveDistance = player.getSpeed() * wheelConfig.getTickDuration();
+        double moveDistance = role.getSpeed() * wheelConfig.getTickDuration();
         if (moveDistance > preDistance) {
-            player.setMoveStatus(MoveStatus.STANDING);
-            movePlayerToLocation(player, player.getTarget().getLocation().getX(), player.getTarget().getLocation().getY());
+            role.setMoveStatus(MoveStatus.STANDING);
+            moveRoleToLocation(role, role.getTarget().getLocation().getX(), role.getTarget().getLocation().getY());
         } else {
-            double x = player.getLocation().getX() + (xDistance / preDistance) * moveDistance;
-            double y = player.getLocation().getY() + (yDistance / preDistance) * moveDistance;
-            player.setMoveStatus(MoveStatus.MOVEING);
-            movePlayerToLocation(player, x, y);
+            double x = role.getLocation().getX() + (xDistance / preDistance) * moveDistance;
+            double y = role.getLocation().getY() + (yDistance / preDistance) * moveDistance;
+            role.setMoveStatus(MoveStatus.MOVEING);
+            moveRoleToLocation(role, x, y);
         }
     }
 
-    private void movePlayerToLocation(Player player, double x, double y) {
+    private void moveRoleToLocation(Role role, double x, double y) {
         Location location = new Location(x, y, 0);
         location.setGrid(locationInGrid(location));
-        player.setLocation(location);
-        log.debug("player move to location {}", location);
+        role.setLocation(location);
+//        log.debug("player move to location {}", location);
     }
 }

@@ -42,6 +42,7 @@ public class AutoPlayer {
 
     private void playerAuto(Player player) {
         if (player.getTarget() == null) {
+            player.setAttackStatus(AttackStatus.NOT_ATTACK);
             Long targetId = player.getMap().findNearByMonsterIdForPlayer(player);
             player.setTarget(lifeCycle.onlineMonster(targetId));
         }
@@ -74,7 +75,7 @@ public class AutoPlayer {
             player.setMoveStatus(MoveStatus.STANDING);
         }
         if (MoveStatus.MOVEING.equals(player.getMoveStatus())) {
-            player.getMap().playerMoveToTargetInTick(player);
+            player.getMap().roleMoveToTargetInTick(player);
         }
     }
 }

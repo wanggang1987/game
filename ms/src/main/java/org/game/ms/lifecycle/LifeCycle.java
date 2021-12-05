@@ -6,9 +6,11 @@
 package org.game.ms.lifecycle;
 
 import cn.hutool.json.JSONUtil;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.map.RootMap;
@@ -17,7 +19,7 @@ import org.game.ms.monster.Monster;
 import org.game.ms.monster.MonsterService;
 import org.game.ms.player.Player;
 import org.game.ms.player.PlayerService;
-import org.game.ms.role.Role;
+import org.game.ms.role.LivingStatus;
 import org.game.ms.timeline.WheelConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,8 +61,8 @@ public class LifeCycle {
         return onlineMonsters.get(id);
     }
 
-    public List<Monster> onlineMonsters() {
-        return (List<Monster>) onlineMonsters.values();
+    public Collection<Monster> onlineMonsters() {
+        return onlineMonsters.values();
     }
 
     public Monster createMonster() {
@@ -70,20 +72,26 @@ public class LifeCycle {
         return monster;
     }
 
-    public void detoryMonster(Role monster) {
-        monster.getMap().removeMonsterFromMap(monster);
-        onlineMonsters.remove(monster.getId());
-        log.debug("detoryMonster {} ", monster.getId());
-    }
-
     public void cooldownTimer() {
-        onlinePlayers.entrySet().stream()
-                .filter(entry -> FuncUtils.numberCompare(entry.getValue().getAttackCooldown(), 0) == 1)
-                .forEach(entry -> {
-                    entry.getValue().setAttackCooldown(entry.getValue().getAttackCooldown() - wheelConfig.getTickDuration());
-                    if (FuncUtils.numberCompare(entry.getValue().getAttackCooldown(), 0) == -1) {
-                        entry.getValue().setAttackCooldown(0);
+        onlinePlayers.values().stream()
+                .filter(player -> FuncUtils.numberCompare(player.getAttackCooldown(), 0) == 1)
+                .forEach(player -> {
+                    player.setAttackCooldown(player.getAttackCooldown() - wheelConfig.getTickDuration());
+                    if (FuncUtils.numberCompare(player.getAttackCooldown(), 0) == -1) {
+                        player.setAttackCooldown(0);
                     }
                 });
+    }
+
+    public void monsterDie() {
+        List<Monster> deadList = onlineMonsters.values().stream()
+                .filter(monster -> FuncUtils.numberCompare(monster.getHealthPoint(), 0.5) == -1)
+                .collect(Collectors.toList());
+        deadList.forEach(monster -> {
+            monster.setLivingStatus(LivingStatus.DEAD);
+            log.debug("monster {} die", monster.getId());
+            monster.getMap().removeMonsterFromMap(monster);
+            onlineMonsters.remove(monster.getId());
+        });
     }
 }

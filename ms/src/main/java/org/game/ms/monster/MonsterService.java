@@ -7,8 +7,10 @@ package org.game.ms.monster;
 
 import org.game.ms.monster.template.WolfTemplate;
 import org.game.ms.role.AttackStatus;
+import org.game.ms.role.FightingStatus;
 import org.game.ms.role.LivingStatus;
 import org.game.ms.role.MoveStatus;
+import org.game.ms.role.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,7 @@ public class MonsterService {
 
     public Monster initMonster() {
         Monster monster = new Monster();
+        monster.setRoleType(RoleType.MONSTER);
         monster.setId(id++);
         monster.setSpeed(wolfTemplate.getSpeed() / 1000);
         monster.setAttackRange(wolfTemplate.getAttackRange());
@@ -39,6 +42,7 @@ public class MonsterService {
         monster.setAttackStatus(AttackStatus.NOT_ATTACK);
         monster.setMoveStatus(MoveStatus.STANDING);
         monster.setLivingStatus(LivingStatus.LIVING);
+        monster.setFightingStatus(FightingStatus.NOT_FIGHTING);
         return monster;
     }
 }

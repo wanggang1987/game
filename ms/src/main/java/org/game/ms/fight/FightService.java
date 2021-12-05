@@ -7,11 +7,8 @@ package org.game.ms.fight;
 
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.func.FuncUtils;
-import org.game.ms.lifecycle.LifeCycle;
-import org.game.ms.player.Player;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.role.FightingStatus;
-import org.game.ms.role.LivingStatus;
 import org.game.ms.role.Role;
 import org.game.ms.skill.NormalAttack;
 import org.game.ms.skill.Skill;
@@ -27,28 +24,31 @@ import org.springframework.stereotype.Service;
 public class FightService {
 
     @Autowired
-    private LifeCycle lifeCycle;
-    @Autowired
     private NormalAttack normalAttack;
 
-    public void fight(Player player) {
-        normalAttack(player);
+    public void fight(Role role) {
+        normalAttack(role);
     }
 
-    public void normalAttack(Player player) {
-        attackRanageCompare(player);
-        if (AttackStatus.OUT_RANGE.equals(player.getAttackStatus())) {
+    public void normalAttack(Role role) {
+        attackRanageCompare(role);
+        if (AttackStatus.OUT_RANGE.equals(role.getAttackStatus())) {
             return;
         }
-        if (FuncUtils.numberCompare(player.getAttackCooldown(), 0) == 0) {
-            double damage = skillDamageCaculate(player, normalAttack);
-            playerDamageMonster(player, damage, normalAttack);
-            player.setAttackCooldown(player.getAttackCooldownMax());
+        if (FuncUtils.numberCompare(role.getAttackCooldown(), 0) == 0) {
+            double damage = skillDamageCaculate(role, normalAttack);
+            damageTarget(role, damage, normalAttack);
+            role.setAttackCooldown(role.getAttackCooldownMax());
         }
-        player.setFightingStatus(FightingStatus.IN_FIGHTING);
-        player.getTarget().setFightingStatus(FightingStatus.IN_FIGHTING);
-        if (monsterDie(player.getTarget())) {
-            player.setFightingStatus(FightingStatus.NOT_FIGHTING);
+    }
+
+    private void statusInFight(Role role) {
+        if (FightingStatus.NOT_FIGHTING.equals(role.getFightingStatus())) {
+            role.setFightingStatus(FightingStatus.IN_FIGHTING);
+        }
+        if (FightingStatus.NOT_FIGHTING.equals(role.getTarget().getFightingStatus())) {
+            role.getTarget().setTarget(role);
+            role.getTarget().setFightingStatus(FightingStatus.IN_FIGHTING);
         }
     }
 
@@ -63,24 +63,16 @@ public class FightService {
         }
     }
 
-    private double skillDamageCaculate(Player player, Skill skill) {
-        double damage = player.getAttackPower() * skill.getAttackPowerRate() + player.getAttack() - player.getTarget().getDefense();
+    private double skillDamageCaculate(Role role, Skill skill) {
+        double damage = role.getAttackPower() * skill.getAttackPowerRate() + role.getAttack() - role.getTarget().getDefense();
         return FuncUtils.randomInPersentRange(damage, 30);
     }
 
-    private boolean monsterDie(Role role) {
-        if (FuncUtils.numberCompare(role.getHealthPoint(), 0.5) == -1) {
-            log.debug("role {} die", role.getId());
-            role.setLivingStatus(LivingStatus.DEAD);
-            lifeCycle.detoryMonster(role);
-            return true;
-        }
-        return false;
-    }
-
-    private void playerDamageMonster(Player player, double damage, Skill skill) {
-        player.getTarget().setHealthPoint(player.getTarget().getHealthPoint() - damage);
-        log.debug("player {} {} monster {} damage {}", player.getId(), skill.getName(), player.getTarget().getId(), damage);
+    private void damageTarget(Role role, double damage, Skill skill) {
+        role.getTarget().setHealthPoint(role.getTarget().getHealthPoint() - damage);
+        log.debug("{} {} {} {} {} damage {}", role.getRoleType(), role.getId(), skill.getName(),
+                role.getTarget().getRoleType(), role.getTarget().getId(), damage);
+        statusInFight(role);
     }
 
 }

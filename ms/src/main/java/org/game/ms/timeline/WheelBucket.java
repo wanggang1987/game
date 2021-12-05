@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.func.SpringContextUtils;
+import org.game.ms.lifecycle.AutoMonster;
 import org.game.ms.lifecycle.AutoPlayer;
 import org.game.ms.lifecycle.LifeCycle;
 
@@ -19,11 +20,13 @@ import org.game.ms.lifecycle.LifeCycle;
 @Slf4j
 public class WheelBucket {
 
-    private AutoPlayer autoPlay;
+    private AutoPlayer autoPlayer;
+    private AutoMonster autoMonster;
     private LifeCycle lifeCycle;
 
     public WheelBucket() {
-        this.autoPlay = SpringContextUtils.getBean(AutoPlayer.class);
+        this.autoPlayer = SpringContextUtils.getBean(AutoPlayer.class);
+        this.autoMonster = SpringContextUtils.getBean(AutoMonster.class);
         this.lifeCycle = SpringContextUtils.getBean(LifeCycle.class);
     }
 
@@ -33,16 +36,10 @@ public class WheelBucket {
         realTimeTasks.add(task);
     }
 
-    private void autoPlaytask() {
-        autoPlay.autoPlayForTick();
-    }
-
-    private void cooldownTimer() {
-        lifeCycle.cooldownTimer();
-    }
-
     public void work() {
-        cooldownTimer();
-        autoPlaytask();
+        lifeCycle.cooldownTimer();
+        autoPlayer.autoPlayForTick();
+        autoMonster.autoMonsterForTick();
+        lifeCycle.monsterDie();
     }
 }

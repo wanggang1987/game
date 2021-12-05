@@ -35,7 +35,7 @@ public class Role {
     private double magicPower;
     private RootMap map;
     private Location location;
-    private RoleTemplate template;
+    private RoleType roleType;
 
     private transient Role target;
     private LivingStatus livingStatus;
