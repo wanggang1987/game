@@ -52,7 +52,7 @@ public class TimeWheel {
         });
     }
 
-    private void cycleManager() {
+    private void cycleManager() throws InterruptedException {
         long start = System.currentTimeMillis();
         long wheelStart = start / 1000 * 1000;
         long deadLine = (start / 1000 + 1) * 1000;
@@ -64,11 +64,7 @@ public class TimeWheel {
             long target = wheelStart + ((tick + 1) * wheelConfig.getTickDuration());
             long sleepTimeMs = target - now;
             if (sleepTimeMs > 0) {
-                try {
-                    Thread.sleep(sleepTimeMs);
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                }
+                Thread.sleep(sleepTimeMs);
             }
         }
     }

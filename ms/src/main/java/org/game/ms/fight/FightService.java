@@ -8,7 +8,6 @@ package org.game.ms.fight;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.role.AttackStatus;
-import org.game.ms.role.FightingStatus;
 import org.game.ms.role.Role;
 import org.game.ms.skill.NormalAttack;
 import org.game.ms.skill.Skill;
@@ -25,6 +24,8 @@ public class FightService {
 
     @Autowired
     private NormalAttack normalAttack;
+    @Autowired
+    private BattleService battleService;
 
     public void fight(Role role) {
         normalAttack(role);
@@ -42,16 +43,6 @@ public class FightService {
         }
     }
 
-    private void statusInFight(Role role) {
-        if (FightingStatus.NOT_FIGHTING.equals(role.getFightingStatus())) {
-            role.setFightingStatus(FightingStatus.IN_FIGHTING);
-        }
-        if (FightingStatus.NOT_FIGHTING.equals(role.getTarget().getFightingStatus())) {
-            role.getTarget().setTarget(role);
-            role.getTarget().setFightingStatus(FightingStatus.IN_FIGHTING);
-        }
-    }
-
     public static void attackRanageCompare(Role source) {
         double xDistance = source.getTarget().getLocation().getX() - source.getLocation().getX();
         double yDistance = source.getTarget().getLocation().getY() - source.getLocation().getY();
@@ -65,6 +56,9 @@ public class FightService {
 
     private double skillDamageCaculate(Role role, Skill skill) {
         double damage = role.getAttackPower() * skill.getAttackPowerRate() + role.getAttack() - role.getTarget().getDefense();
+        if (damage < 1) {
+            damage = 1;
+        }
         return FuncUtils.randomInPersentRange(damage, 30);
     }
 
@@ -72,7 +66,7 @@ public class FightService {
         role.getTarget().setHealthPoint(role.getTarget().getHealthPoint() - damage);
         log.debug("{} {} {} {} {} damage {}", role.getRoleType(), role.getId(), skill.getName(),
                 role.getTarget().getRoleType(), role.getTarget().getId(), damage);
-        statusInFight(role);
+        battleService.addFightStatus(role, role.getTarget());
     }
 
 }

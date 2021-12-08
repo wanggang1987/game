@@ -7,14 +7,15 @@ package org.game.ms.map;
 
 import cn.hutool.core.collection.CollectionUtil;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.monster.Monster;
 import org.game.ms.player.Player;
 import org.game.ms.role.MoveStatus;
 import org.game.ms.role.Role;
+import org.game.ms.role.RoleType;
 import org.game.ms.timeline.WheelConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,12 +31,17 @@ public class RootMap {
 
     final protected int gridSize = 20;
     protected final List<Long> inMapPlayerIdList = new ArrayList<>();
-    protected final Map<String, List<Long>> gridMonsterIdsMap = new HashMap<>();
+    protected final Map<String, List<Long>> gridPlayersIdsMap = new ConcurrentHashMap<>();
+    protected final Map<String, List<Long>> gridMonsterIdsMap = new ConcurrentHashMap<>();
 
-    protected void addMonsterToMap(Monster monster, Location location) {
+    protected void addMonsterToMap(Role monster, Location location) {
         location.setGrid(locationInGrid(location));
         monster.setMap(this);
         monster.setLocation(location);
+        addMonsterToGrid(monster);
+    }
+
+    private void addMonsterToGrid(Role monster) {
         List<Long> gridMonsterIds = gridMonsterIdsMap.get(monster.getLocation().getGrid());
         if (gridMonsterIds == null) {
             gridMonsterIds = new ArrayList<>();
@@ -48,9 +54,13 @@ public class RootMap {
         inMapPlayerIdList.add(player.getId());
     }
 
-    public void removeMonsterFromMap(Role monster) {
+    private void removeMonsterFromGrid(Role monster) {
         List<Long> gridMonsterIds = gridMonsterIdsMap.get(monster.getLocation().getGrid());
         gridMonsterIds.remove(monster.getId());
+    }
+
+    public void removeMonsterFromMap(Role monster) {
+        removeMonsterFromGrid(monster);
         log.debug("removeMonsterFromMap monster {} ", monster.getId());
     }
 
@@ -116,19 +126,24 @@ public class RootMap {
         double moveDistance = role.getSpeed() * wheelConfig.getTickDuration();
         if (moveDistance > preDistance) {
             role.setMoveStatus(MoveStatus.STANDING);
-            moveRoleToLocation(role, role.getTarget().getLocation().getX(), role.getTarget().getLocation().getY());
+            moveRoleToLocation(role, role.getLocation(), role.getTarget().getLocation().getX(), role.getTarget().getLocation().getY());
         } else {
             double x = role.getLocation().getX() + (xDistance / preDistance) * moveDistance;
             double y = role.getLocation().getY() + (yDistance / preDistance) * moveDistance;
             role.setMoveStatus(MoveStatus.MOVEING);
-            moveRoleToLocation(role, x, y);
+            moveRoleToLocation(role, role.getLocation(), x, y);
         }
     }
 
-    private void moveRoleToLocation(Role role, double x, double y) {
+    private void moveRoleToLocation(Role role, Location pre, double x, double y) {
         Location location = new Location(x, y, 0);
         location.setGrid(locationInGrid(location));
+        if (!pre.getGrid().equals(location.getGrid())) {
+            if (RoleType.MONSTER.equals(role.getRoleType())) {
+                removeMonsterFromGrid(role);
+                addMonsterToGrid(role);
+            }
+        }
         role.setLocation(location);
-//        log.debug("player move to location {}", location);
     }
 }

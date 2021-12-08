@@ -16,7 +16,8 @@ import org.game.ms.role.Role;
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Player extends Role{
+public class Player extends Role {
 
+    private long experience;
     private List<Profession> profession = new ArrayList<>();
 }

@@ -9,7 +9,13 @@ package org.game.ms.role;
  *
  * @author wanggang
  */
-public enum FightingStatus {
-    IN_FIGHTING,
-    NOT_FIGHTING
+public class Experience {
+
+    static public Integer MonsterExp(Integer level) {
+        return 2 * level;
+    }
+
+    static public Integer UpgradeNead(Integer level) {
+        return 10 * level * level;
+    }
 }

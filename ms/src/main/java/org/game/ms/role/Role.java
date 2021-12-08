@@ -7,6 +7,7 @@ package org.game.ms.role;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import org.game.ms.fight.Battle;
 import org.game.ms.map.Location;
 import org.game.ms.map.RootMap;
 
@@ -35,11 +36,11 @@ public class Role {
     private double magicPower;
     private RootMap map;
     private Location location;
-    private RoleType roleType;
+    private transient RoleType roleType;
 
     private transient Role target;
     private LivingStatus livingStatus;
     private MoveStatus moveStatus;
     private AttackStatus attackStatus;
-    private FightingStatus fightingStatus;
+    private transient Battle battle;
 }

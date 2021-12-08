@@ -28,6 +28,9 @@ public class AutoMonster {
     private LifeCycle lifeCycle;
 
     private void MonsterAuto(Monster monster) {
+        if (monster.getTarget() == null && monster.getBattle() != null) {
+            monster.setTarget(lifeCycle.onlinePlayer(monster.getBattle().getPlayers().stream().findAny().orElse(null)));
+        }
         if (monster.getTarget() == null) {
             return;
         }

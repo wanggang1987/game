@@ -11,8 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.id.IdService;
 import org.game.ms.role.AttackStatus;
-import org.game.ms.role.FightingStatus;
+import org.game.ms.role.Experience;
 import org.game.ms.role.LivingStatus;
 import org.game.ms.role.MoveStatus;
 import org.game.ms.role.RoleType;
@@ -26,24 +27,27 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class PlayerService {
-    
+
+    @Autowired
+    private IdService idService;
     @Autowired
     private PlayerMapper playerMapper;
     @Autowired
     private PlayerTemplate playerTemplate;
     @Autowired
     private WarriorTample warriorTample;
-    
+
     Map<Profession, PlayerTemplate> mapProfessionRole = new HashMap<>();
-    
+
     @PostConstruct
     private void init() {
         mapProfessionRole.put(Profession.warrior, warriorTample);
     }
-    
+
     public Player createPlayer(String name) {
         //init role
         Player player = new Player();
+        player.setId(idService.newId());
         player.setName(name);
         player.getProfession().add(Profession.warrior);
         player.setLevel(1);
@@ -52,18 +56,43 @@ public class PlayerService {
         //insert to db
         PlayerPO ppo = new PlayerPO();
         ppo.setStr(JSONUtil.toJsonStr(player));
-        playerMapper.insertUseGeneratedKeys(ppo);
-        player.setId(ppo.getId());
-        
+        playerMapper.insert(ppo);
+
         log.debug("init player {}", JSONUtil.toJsonStr(player));
         return player;
     }
-    
+
+    public void playerGetExp(Player player, int exp) {
+        long now = player.getExperience() + exp;
+        long need = Experience.UpgradeNead(player.getLevel());
+        log.info("player {} exp {}/{}", player.getId(), now, need);
+        if (now >= need) {
+            now = now - need;
+            player.setLevel(player.getLevel() + 1);
+            attributeInit(player);
+            log.debug("player {} level up to {}", player.getId(), player.getLevel());
+        }
+        player.setExperience(now);
+    }
+
     private void initPlayer(Player player) {
         player.setRoleType(RoleType.PLAYER);
         player.setSpeed(playerTemplate.getSpeed() / 1000);
         player.setAttackRange(playerTemplate.getAttackRange());
         player.setAttackCooldownMax(playerTemplate.getAttackCooldown() * 1000);
+        player.setAttackStatus(AttackStatus.NOT_ATTACK);
+        player.setMoveStatus(MoveStatus.STANDING);
+        player.setLivingStatus(LivingStatus.LIVING);
+        attributeInit(player);
+    }
+
+    private void attributeInit(Player player) {
+        player.setHealthMax(0);
+        player.setHealthPoint(0);
+        player.setResourceMax(0);
+        player.setResourcePoint(0);
+        player.setAttack(0);
+        player.setDefense(0);
         player.getProfession().stream().forEach(profession -> {
             PlayerTemplate template = mapProfessionRole.get(profession);
             player.setHealthMax(player.getHealthMax() + template.getBaseHealth() + template.getGrowthHealth() * player.getLevel());
@@ -73,9 +102,5 @@ public class PlayerService {
             player.setAttack(player.getAttack() + template.getBaseAttack() + template.getGrowthAttack() * player.getLevel());
             player.setDefense(player.getDefense() + template.getBaseDeffence() + template.getGrowthDefense() * player.getLevel());
         });
-        player.setAttackStatus(AttackStatus.NOT_ATTACK);
-        player.setMoveStatus(MoveStatus.STANDING);
-        player.setLivingStatus(LivingStatus.LIVING);
-        player.setFightingStatus(FightingStatus.NOT_FIGHTING);
     }
 }

@@ -7,11 +7,12 @@ package org.game.ms.lifecycle;
 
 import cn.hutool.json.JSONUtil;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.fight.BattleService;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.map.RootMap;
 import org.game.ms.map.WorldMap;
@@ -19,6 +20,7 @@ import org.game.ms.monster.Monster;
 import org.game.ms.monster.MonsterService;
 import org.game.ms.player.Player;
 import org.game.ms.player.PlayerService;
+import org.game.ms.role.Experience;
 import org.game.ms.role.LivingStatus;
 import org.game.ms.timeline.WheelConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,26 +40,29 @@ public class LifeCycle {
     private MonsterService monsterService;
     @Autowired
     private WheelConfig wheelConfig;
+    @Autowired
+    private BattleService battleService;
 
     private WorldMap worldMap;
-    private final Map<Long, RootMap> maps = new HashMap<>();
-    private final Map<Long, Player> onlinePlayers = new HashMap<>();
-    private final Map<Long, Monster> onlineMonsters = new HashMap<>();
+    private final Map<Long, RootMap> maps = new ConcurrentHashMap<>();
+    private final Map<Long, Player> onlinePlayers = new ConcurrentHashMap<>();
+    private final Map<Long, Monster> onlineMonsters = new ConcurrentHashMap<>();
 
-    public Player createPlayer(String name) {
-        //init player 
-        Player player = playerService.createPlayer(name);
-        //player online
+    public void playerOnline(Player player) {
         onlinePlayers.put(player.getId(), player);
-        log.debug("player online {} ", JSONUtil.toJsonStr(player));
-        return player;
     }
 
     public Player onlinePlayer(Long id) {
+        if (id == null) {
+            return null;
+        }
         return onlinePlayers.get(id);
     }
 
     public Monster onlineMonster(Long id) {
+        if (id == null) {
+            return null;
+        }
         return onlineMonsters.get(id);
     }
 
@@ -81,6 +86,14 @@ public class LifeCycle {
                         player.setAttackCooldown(0);
                     }
                 });
+        onlineMonsters.values().stream()
+                .filter(monster -> FuncUtils.numberCompare(monster.getAttackCooldown(), 0) == 1)
+                .forEach(monster -> {
+                    monster.setAttackCooldown(monster.getAttackCooldown() - wheelConfig.getTickDuration());
+                    if (FuncUtils.numberCompare(monster.getAttackCooldown(), 0) == -1) {
+                        monster.setAttackCooldown(0);
+                    }
+                });
     }
 
     public void monsterDie() {
@@ -89,9 +102,19 @@ public class LifeCycle {
                 .collect(Collectors.toList());
         deadList.forEach(monster -> {
             monster.setLivingStatus(LivingStatus.DEAD);
-            log.debug("monster {} die", monster.getId());
             monster.getMap().removeMonsterFromMap(monster);
             onlineMonsters.remove(monster.getId());
+            battleReward(monster);
+            log.debug("monster {} die", monster.getId());
         });
+    }
+
+    public void battleReward(Monster monster) {
+        int exp = Experience.MonsterExp(monster.getLevel());
+        monster.getBattle().getPlayers().forEach(id -> {
+            Player player = onlinePlayer(id);
+            playerService.playerGetExp(player, exp);
+        });
+        battleService.removeRoleFromBattle(monster);
     }
 }

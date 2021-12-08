@@ -5,7 +5,6 @@
  */
 package org.game.ms.map;
 
-import cn.hutool.json.JSONUtil;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.func.FuncUtils;
@@ -50,14 +49,14 @@ public class WorldMap extends RootMap {
         log.debug("flushAndRrmoveMonsterForPlayer add {} monsters", totalNum);
     }
 
-    protected void createMonsterAroundPlayer(Player player, int num) {
+    private void createMonsterAroundPlayer(Player player, int num) {
         for (int i = 0; i < num; i++) {
             Monster monster = lifeCycle.createMonster();
             Location location = new Location(
                     FuncUtils.randomInRange(player.getLocation().getX(), gridSize),
                     FuncUtils.randomInRange(player.getLocation().getY(), gridSize), 0);
             addMonsterToMap(monster, location);
-            log.debug("createMonsterAroundPlayer id:{}  monster:{}", player.getId(), JSONUtil.toJsonStr(monster));
+            log.debug("createMonsterAroundPlayer player:{}  monster:{}", player.getId(), monster.getId());
         }
     }
 }

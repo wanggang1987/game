@@ -14,4 +14,22 @@
             <column name="str" type="blob"/>
         </createTable>
     </changeSet>
+    
+    <changeSet id="2" author="wg">
+        <sql>delete from t_player;</sql>
+    </changeSet>
+    
+    <changeSet id="3" author="wg">
+        <createTable tableName="t_gid">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="4" author="wg">
+        <addColumn tableName="t_gid">
+            <column name="create_time" type="timestamp"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

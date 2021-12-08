@@ -3,46 +3,46 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.game.ms.mock;
+package org.game.ms.client;
 
-import javax.annotation.PostConstruct;
+import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.lifecycle.AutoPlayer;
 import org.game.ms.lifecycle.LifeCycle;
 import org.game.ms.map.WorldMap;
 import org.game.ms.player.Player;
+import org.game.ms.player.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
  * @author wanggang
  */
 @Slf4j
-@Component
-public class Mock {
-
-    private Player player;
-
+@RestController
+@RequestMapping("client")
+public class GameController {
+    
     @Autowired
     private LifeCycle lifeCycle;
     @Autowired
     private AutoPlayer autoPlay;
     @Autowired
     private WorldMap worldMap;
-
-    @PostConstruct
-    private void init() throws InterruptedException {
-        player = lifeCycle.createPlayer("战士");
-
-        //go to the world map
+    @Autowired
+    private PlayerService playerService;
+    
+    @PostMapping("createPlayer")
+    public void createPlayer() {
+        Player player = playerService.createPlayer("测试");
+        lifeCycle.playerOnline(player);
         player.setMap(worldMap);
         worldMap.playerComeInMap(player);
         autoPlay.startPlayerAutoPlay(player);
+        log.debug("{}", JSONUtil.toJsonStr(player));
     }
-
-//    @Scheduled(fixedRate = 1000)
-//    private void showPlayer() {
-//        log.debug("{}", JSONUtil.toJsonStr(player));
-//    }
+    
 }
