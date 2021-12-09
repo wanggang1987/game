@@ -6,11 +6,11 @@ package org.game.ms.player;
 
 import org.game.ms.player.template.PlayerTemplate;
 import org.game.ms.player.template.WarriorTample;
-import cn.hutool.json.JSONUtil;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.func.JsonUtils;
 import org.game.ms.id.IdService;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.role.Experience;
@@ -55,10 +55,10 @@ public class PlayerService {
 
         //insert to db
         PlayerPO ppo = new PlayerPO();
-        ppo.setStr(JSONUtil.toJsonStr(player));
+        ppo.setStr(JsonUtils.bean2json(player));
         playerMapper.insert(ppo);
 
-        log.debug("init player {}", JSONUtil.toJsonStr(player));
+        log.debug("init player {} {}", player.getId(), player.getProfession());
         return player;
     }
 

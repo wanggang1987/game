@@ -5,16 +5,14 @@
  */
 package org.game.ms.role;
 
-import lombok.Data;
-
 /**
  *
  * @author wanggang
  */
-@Data
-public class RoleTemplate {
+public class Gold {
 
-    private double speed;
-    private double attackRange;
-    private double attackCooldown;
+    static public int MonsterExp(int level) {
+        return 2 * level;
+    }
+
 }

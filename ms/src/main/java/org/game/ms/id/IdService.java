@@ -33,7 +33,7 @@ public class IdService {
     }
 
     @Scheduled(fixedRate = 1000 * 1)
-    private void idControl() {
+    private void idGrow() {
         if (id >= idMax - range) {
             Gid gid = new Gid();
             idMax += range * 2;

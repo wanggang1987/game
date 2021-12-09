@@ -5,12 +5,12 @@
  */
 package org.game.ms.map;
 
-import cn.hutool.core.collection.CollectionUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.func.FuncUtils;
 import org.game.ms.monster.Monster;
 import org.game.ms.player.Player;
 import org.game.ms.role.MoveStatus;
@@ -99,7 +99,7 @@ public class RootMap {
         List<String> grids = nearByGrids(player.getLocation());
         for (String grid : grids) {
             List<Long> gridMonsters = gridMonsterIdsMap.get(grid);
-            if (CollectionUtil.isNotEmpty(gridMonsters)) {
+            if (FuncUtils.notEmpty(gridMonsters)) {
                 monsterIds.addAll(gridMonsters);
             }
         }
@@ -110,7 +110,7 @@ public class RootMap {
         List<String> grids = nearByGrids(player.getLocation());
         for (String grid : grids) {
             List<Long> gridMonsterIds = gridMonsterIdsMap.get(grid);
-            if (CollectionUtil.isNotEmpty(gridMonsterIds)) {
+            if (FuncUtils.notEmpty(gridMonsterIds)) {
                 Long id = gridMonsterIds.stream().findAny().orElse(null);
                 log.debug("findNearByMonsterForPlayer player {}  monster:{}", player.getId(), id);
                 return id;

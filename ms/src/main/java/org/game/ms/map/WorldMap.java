@@ -8,6 +8,7 @@ package org.game.ms.map;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.func.FuncUtils;
+import org.game.ms.func.JsonUtils;
 import org.game.ms.lifecycle.LifeCycle;
 import org.game.ms.monster.Monster;
 import org.game.ms.player.Player;
@@ -51,12 +52,12 @@ public class WorldMap extends RootMap {
 
     private void createMonsterAroundPlayer(Player player, int num) {
         for (int i = 0; i < num; i++) {
-            Monster monster = lifeCycle.createMonster();
+            Monster monster = lifeCycle.createMonsterByLevel(player.getLevel());
             Location location = new Location(
                     FuncUtils.randomInRange(player.getLocation().getX(), gridSize),
                     FuncUtils.randomInRange(player.getLocation().getY(), gridSize), 0);
             addMonsterToMap(monster, location);
-            log.debug("createMonsterAroundPlayer player:{}  monster:{}", player.getId(), monster.getId());
+            log.debug("createMonsterAroundPlayer player:{}  monster:{} ", player.getId(), JsonUtils.bean2json(monster));
         }
     }
 }

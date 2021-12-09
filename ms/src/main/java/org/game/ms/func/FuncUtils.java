@@ -5,13 +5,18 @@
  */
 package org.game.ms.func;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.TimeZone;
+import org.springframework.beans.BeanUtils;
 
 /**
  *
@@ -41,6 +46,43 @@ public class FuncUtils {
         return 0;
     }
 
+    public static Timestamp currentTime() {
+        return new Timestamp(System.currentTimeMillis());
+    }
+
+    public static boolean equals(Object a, Object b) {
+        return Objects.equals(a, b);
+    }
+
+    public static boolean notEquals(Object a, Object b) {
+        return !equals(a, b);
+    }
+
+    public static boolean isEmpty(Object obj) {
+        if (obj == null) {
+            return true;
+        }
+        if ((obj instanceof Collection)) {
+            return ((Collection) obj).isEmpty();
+        }
+        if ((obj instanceof Map)) {
+            return ((Map) obj).isEmpty();
+        }
+        if ((obj instanceof String)) {
+            return ((String) obj).trim().equals("");
+        }
+        return false;
+    }
+
+    public static boolean notEmpty(Object obj) {
+        return !isEmpty(obj);
+    }
+
+    public static void copyProperties(Object from, Object to) {
+        BeanUtils.copyProperties(from, to);
+    }
+    
+    
     public static String todayString() {
         Calendar day = Calendar.getInstance();
         TimeZone zone = TimeZone.getTimeZone("GMT+8:00");

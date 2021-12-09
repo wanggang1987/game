@@ -5,7 +5,6 @@
  */
 package org.game.ms.lifecycle;
 
-import cn.hutool.json.JSONUtil;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -66,14 +65,18 @@ public class LifeCycle {
         return onlineMonsters.get(id);
     }
 
+    public Collection<Player> onlinePlayers() {
+        return onlinePlayers.values();
+    }
+
     public Collection<Monster> onlineMonsters() {
         return onlineMonsters.values();
     }
 
-    public Monster createMonster() {
-        Monster monster = monsterService.initMonster();
+    public Monster createMonsterByLevel(int level) {
+        Monster monster = monsterService.initMonsterByLevel(level);
         onlineMonsters.put(monster.getId(), monster);
-        log.debug("createMonster {}", JSONUtil.toJsonStr(monster));
+        log.debug("createMonster {}", monster.getId());
         return monster;
     }
 
