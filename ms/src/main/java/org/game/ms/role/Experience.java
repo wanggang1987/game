@@ -11,11 +11,11 @@ package org.game.ms.role;
  */
 public class Experience {
 
-    static public Integer MonsterExp(Integer level) {
+    static public int MonsterExp(int level) {
         return 2 * level;
     }
 
-    static public Integer UpgradeNead(Integer level) {
+    static public int UpgradeNead(int level) {
         return 10 * level * level;
     }
 }

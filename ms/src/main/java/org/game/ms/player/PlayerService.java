@@ -63,8 +63,8 @@ public class PlayerService {
     }
 
     public void playerGetExp(Player player, int exp) {
-        long now = player.getExperience() + exp;
-        long need = Experience.UpgradeNead(player.getLevel());
+        int now = player.getExperience() + exp;
+        int need = Experience.UpgradeNead(player.getLevel());
         log.info("player {} exp {}/{}", player.getId(), now, need);
         if (now >= need) {
             now = now - need;

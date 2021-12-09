@@ -5,7 +5,9 @@
  */
 package org.game.ms.id;
 
+import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,11 +20,29 @@ public class IdService {
     @Autowired
     private GidMapper gidMapper;
 
-    
-    //TODO cache id in mem
-    public Integer newId() {
-        Gid id = new Gid();
-        gidMapper.insertUseGeneratedKeys(id);
-        return id.getId();
+    private long id = 0;
+    private long idMax = 0;
+    private int range = 1000;
+
+    @PostConstruct
+    private void idInit() {
+        Gid gid = new Gid();
+        gidMapper.insertUseGeneratedKeys(gid);
+        id = gid.getId();
+        idMax = id;
+    }
+
+    @Scheduled(fixedRate = 1000 * 1)
+    private void idControl() {
+        if (id >= idMax - range) {
+            Gid gid = new Gid();
+            idMax += range * 2;
+            gid.setId(idMax);
+            gidMapper.insert(gid);
+        }
+    }
+
+    public long newId() {
+        return id++;
     }
 }
