@@ -111,7 +111,8 @@ public class RootMap {
         for (String grid : grids) {
             List<Long> gridMonsterIds = gridMonsterIdsMap.get(grid);
             if (FuncUtils.notEmpty(gridMonsterIds)) {
-                Long id = gridMonsterIds.stream().findAny().orElse(null);
+                int index = FuncUtils.randomIntRange(gridMonsterIds.size());
+                Long id = gridMonsterIds.get(index);
                 log.debug("findNearByMonsterForPlayer player {}  monster:{}", player.getId(), id);
                 return id;
             }
@@ -126,24 +127,26 @@ public class RootMap {
         double moveDistance = role.getSpeed() * wheelConfig.getTickDuration();
         if (moveDistance > preDistance) {
             role.setMoveStatus(MoveStatus.STANDING);
-            moveRoleToLocation(role, role.getLocation(), role.getTarget().getLocation().getX(), role.getTarget().getLocation().getY());
+            moveRoleToLocation(role, role.getTarget().getLocation().getX(), role.getTarget().getLocation().getY());
         } else {
             double x = role.getLocation().getX() + (xDistance / preDistance) * moveDistance;
             double y = role.getLocation().getY() + (yDistance / preDistance) * moveDistance;
             role.setMoveStatus(MoveStatus.MOVEING);
-            moveRoleToLocation(role, role.getLocation(), x, y);
+            moveRoleToLocation(role, x, y);
         }
     }
 
-    private void moveRoleToLocation(Role role, Location pre, double x, double y) {
+    private void moveRoleToLocation(Role role, double x, double y) {
         Location location = new Location(x, y, 0);
         location.setGrid(locationInGrid(location));
-        if (!pre.getGrid().equals(location.getGrid())) {
-            if (RoleType.MONSTER.equals(role.getRoleType())) {
+        if (FuncUtils.equals(role.getLocation().getGrid(), location.getGrid())) {
+            role.setLocation(location);
+        } else {
+            if (FuncUtils.equals(role.getRoleType(), RoleType.MONSTER)) {
                 removeMonsterFromGrid(role);
+                role.setLocation(location);
                 addMonsterToGrid(role);
             }
         }
-        role.setLocation(location);
     }
 }

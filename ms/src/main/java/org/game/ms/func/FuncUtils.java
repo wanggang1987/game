@@ -24,7 +24,11 @@ import org.springframework.beans.BeanUtils;
  */
 public class FuncUtils {
 
-    private static Random randomSeed = new Random(new Date().getTime());
+    private static final Random randomSeed = new Random(new Date().getTime());
+
+    public static int randomIntRange(int range) {
+        return randomSeed.nextInt(range);
+    }
 
     public static double randomInRange(double base, double range) {
         return randomSeed.nextBoolean() == true ? base + randomSeed.nextDouble() * range : base - randomSeed.nextDouble() * range;
@@ -81,8 +85,7 @@ public class FuncUtils {
     public static void copyProperties(Object from, Object to) {
         BeanUtils.copyProperties(from, to);
     }
-    
-    
+
     public static String todayString() {
         Calendar day = Calendar.getInstance();
         TimeZone zone = TimeZone.getTimeZone("GMT+8:00");

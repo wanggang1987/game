@@ -33,7 +33,7 @@ public class FightService {
 
     public void normalAttack(Role role) {
         attackRanageCompare(role);
-        if (AttackStatus.OUT_RANGE.equals(role.getAttackStatus())) {
+        if (FuncUtils.equals(role.getAttackStatus(), AttackStatus.OUT_RANGE)) {
             return;
         }
         if (FuncUtils.numberCompare(role.getAttackCooldown(), 0) == 0) {

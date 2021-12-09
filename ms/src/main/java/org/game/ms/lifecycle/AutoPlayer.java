@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.fight.FightService;
+import org.game.ms.func.FuncUtils;
 import org.game.ms.player.Player;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.role.LivingStatus;
@@ -49,7 +50,7 @@ public class AutoPlayer {
         if (player.getTarget() == null) {
             return;
         }
-        if (LivingStatus.DEAD.equals(player.getTarget().getLivingStatus())) {
+        if (FuncUtils.equals(player.getTarget().getLivingStatus(), LivingStatus.DEAD)) {
             player.setTarget(null);
             return;
         }
@@ -66,14 +67,14 @@ public class AutoPlayer {
     }
 
     private void autoMove(Player player) {
-        if (AttackStatus.OUT_RANGE.equals(player.getAttackStatus())
-                && MoveStatus.STANDING.equals(player.getMoveStatus())) {
+        if (FuncUtils.equals(player.getAttackStatus(), AttackStatus.OUT_RANGE)
+                && FuncUtils.equals(player.getMoveStatus(), MoveStatus.STANDING)) {
             log.debug("player {} start move to location {}", player.getId(), player.getTarget().getLocation());
             player.setMoveStatus(MoveStatus.MOVEING);
-        } else if (!AttackStatus.OUT_RANGE.equals(player.getAttackStatus())) {
+        } else if (FuncUtils.notEquals(player.getAttackStatus(), AttackStatus.OUT_RANGE)) {
             player.setMoveStatus(MoveStatus.STANDING);
         }
-        if (MoveStatus.MOVEING.equals(player.getMoveStatus())) {
+        if (FuncUtils.equals(player.getMoveStatus(), MoveStatus.MOVEING)) {
             player.getMap().roleMoveToTargetInTick(player);
         }
     }

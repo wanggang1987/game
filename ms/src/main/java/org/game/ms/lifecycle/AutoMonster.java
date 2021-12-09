@@ -7,6 +7,7 @@ package org.game.ms.lifecycle;
 
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.fight.FightService;
+import org.game.ms.func.FuncUtils;
 import org.game.ms.monster.Monster;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.role.LivingStatus;
@@ -29,12 +30,13 @@ public class AutoMonster {
 
     private void MonsterAuto(Monster monster) {
         if (monster.getTarget() == null && monster.getBattle() != null) {
-            monster.setTarget(lifeCycle.onlinePlayer(monster.getBattle().getPlayers().stream().findAny().orElse(null)));
+            int index = FuncUtils.randomIntRange(monster.getBattle().getPlayers().size());
+            monster.setTarget(lifeCycle.onlinePlayer(monster.getBattle().getPlayers().get(index)));
         }
         if (monster.getTarget() == null) {
             return;
         }
-        if (LivingStatus.DEAD.equals(monster.getTarget().getLivingStatus())) {
+        if (FuncUtils.equals(monster.getTarget().getLivingStatus(), LivingStatus.DEAD)) {
             monster.setTarget(null);
             return;
         }
@@ -51,15 +53,15 @@ public class AutoMonster {
     }
 
     private void autoMove(Monster monster) {
-        if (AttackStatus.OUT_RANGE.equals(monster.getAttackStatus())
-                && MoveStatus.STANDING.equals(monster.getMoveStatus())) {
+        if (FuncUtils.equals(monster.getAttackStatus(), AttackStatus.OUT_RANGE)
+                && FuncUtils.equals(monster.getMoveStatus(), MoveStatus.STANDING)) {
             log.debug("Monster {} start move to location {}", monster.getId(), monster.getTarget().getLocation());
             monster.setMoveStatus(MoveStatus.MOVEING);
         }
-        if (!AttackStatus.OUT_RANGE.equals(monster.getAttackStatus())) {
+        if (FuncUtils.notEquals(monster.getAttackStatus(), AttackStatus.OUT_RANGE)) {
             monster.setMoveStatus(MoveStatus.STANDING);
         }
-        if (MoveStatus.MOVEING.equals(monster.getMoveStatus())) {
+        if (FuncUtils.equals(monster.getMoveStatus(), MoveStatus.MOVEING)) {
             monster.getMap().roleMoveToTargetInTick(monster);
         }
     }

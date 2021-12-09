@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.func.FuncUtils;
 import org.game.ms.id.IdService;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.role.LivingStatus;
@@ -71,6 +72,7 @@ public class MonsterService {
         if (levelTemples == null) {
             return findTemplateByLevel(level - 1);
         }
-        return levelTemples.stream().findAny().orElse(null);
+        int index = FuncUtils.randomIntRange(levelTemples.size());
+        return levelTemples.get(index);
     }
 }

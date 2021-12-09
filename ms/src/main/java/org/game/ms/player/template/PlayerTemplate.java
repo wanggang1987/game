@@ -6,12 +6,19 @@
 package org.game.ms.player.template;
 
 import lombok.Data;
+import org.game.ms.config.YamlPropertySourceFactory;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
 /**
  *
  * @author wanggang
  */
 @Data
+@Configuration
+@PropertySource(factory = YamlPropertySourceFactory.class, value = "classpath:initdata.yaml")
+@ConfigurationProperties(prefix = "player")
 public class PlayerTemplate {
 
     private double speed;

@@ -6,6 +6,7 @@
 package org.game.ms.fight;
 
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.func.FuncUtils;
 import org.game.ms.id.IdService;
 import org.game.ms.lifecycle.LifeCycle;
 import org.game.ms.role.Role;
@@ -34,9 +35,9 @@ public class BattleService {
 
     private void addRoleToBattle(Role role, Battle battle) {
         role.setBattle(battle);
-        if (RoleType.PLAYER.equals(role.getRoleType())) {
+        if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
             battle.getPlayers().add(role.getId());
-        } else if (RoleType.MONSTER.equals(role.getRoleType())) {
+        } else if (FuncUtils.equals(role.getRoleType(), RoleType.MONSTER)) {
             battle.getMonsters().add(role.getId());
         }
     }
@@ -46,13 +47,13 @@ public class BattleService {
         if (battle == null) {
             return;
         }
-        if (RoleType.PLAYER.equals(role.getRoleType())) {
+        if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
             battle.getPlayers().remove(role.getId());
             role.setBattle(null);
             if (battle.getPlayers().isEmpty()) {
                 battle.getMonsters().forEach(id -> lifeCycle.onlineMonster(id).setBattle(null));
             }
-        } else if (RoleType.MONSTER.equals(role.getRoleType())) {
+        } else if (FuncUtils.equals(role.getRoleType(), RoleType.MONSTER)) {
             battle.getMonsters().remove(role.getId());
             role.setBattle(null);
             if (battle.getMonsters().isEmpty()) {
@@ -61,7 +62,7 @@ public class BattleService {
         }
         log.debug("battle {} players {} monsters {}", battle.getId(), battle.getPlayers().size(), battle.getMonsters().size());
     }
-    
+
     public void addFightStatus(Role source, Role target) {
         Battle sourceBattle = source.getBattle();
         Battle targetBattle = target.getBattle();
