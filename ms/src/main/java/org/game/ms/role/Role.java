@@ -5,11 +5,14 @@
  */
 package org.game.ms.role;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.List;
 import lombok.Data;
 import org.game.ms.fight.Battle;
 import org.game.ms.map.Location;
 import org.game.ms.map.RootMap;
+import org.game.ms.skill.Skill;
 
 /**
  *
@@ -19,6 +22,7 @@ import org.game.ms.map.RootMap;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Role {
 
+    private RoleType roleType;
     private long id;
     private String name;
     private int level;
@@ -30,17 +34,23 @@ public class Role {
     private double resourceMax;
     private double attack;
     private double defense;
-    private double attackCooldown;
-    private double attackCooldownMax;
     private double attackPower;
     private double magicPower;
+
     private RootMap map;
     private Location location;
-    private RoleType roleType;
+
     private RoleType targetType;
     private Long targetId;
     private LivingStatus livingStatus;
     private MoveStatus moveStatus;
     private AttackStatus attackStatus;
     private Battle battle;
+
+    private double attackCooldown;
+    private double attackCooldownMax;
+    private double skillColldown;
+    private double skillCooldownMax;
+    @JsonIgnore
+    private List<Skill> skills;
 }
