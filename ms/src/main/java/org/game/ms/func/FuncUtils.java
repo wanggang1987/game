@@ -26,7 +26,7 @@ public class FuncUtils {
 
     private static final Random randomSeed = new Random(new Date().getTime());
 
-    public static int randomIntRange(int range) {
+    public static int randomZeroToRange(int range) {
         return randomSeed.nextInt(range);
     }
 
@@ -37,6 +37,12 @@ public class FuncUtils {
     public static double randomInPersentRange(double base, int persentRange) {
         double range = base * persentRange / 100;
         return randomInRange(base, range);
+    }
+
+    public static int randomInPersentRange(int base, int persentRange) {
+        double range = base * persentRange / 100;
+        Double ret = randomInRange(base, range);
+        return ret.intValue();
     }
 
     private static final double precision = 0.001;

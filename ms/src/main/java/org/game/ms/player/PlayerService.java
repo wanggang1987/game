@@ -12,10 +12,13 @@ import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.func.JsonUtils;
 import org.game.ms.id.IdService;
+import org.game.ms.lifecycle.LifeCycle;
+import org.game.ms.map.RootMap;
 import org.game.ms.role.AttackStatus;
-import org.game.ms.role.Experience;
+import org.game.ms.reward.Experience;
 import org.game.ms.role.LivingStatus;
 import org.game.ms.role.MoveStatus;
+import org.game.ms.role.RoleService;
 import org.game.ms.role.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,8 +29,10 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class PlayerService {
+public class PlayerService extends RoleService {
 
+    @Autowired
+    private LifeCycle lifeCycle;
     @Autowired
     private IdService idService;
     @Autowired
@@ -75,6 +80,12 @@ public class PlayerService {
         player.setExperience(now);
     }
 
+    public void playerGetCoin(Player player, int coin) {
+        int now = player.getCoin() + coin;
+        player.setCoin(now);
+        log.info("player {} coin {}", player.getId(), now);
+    }
+
     private void initPlayer(Player player) {
         player.setRoleType(RoleType.PLAYER);
         player.setSpeed(playerTemplate.getSpeed() / 1000);
@@ -83,6 +94,7 @@ public class PlayerService {
         player.setAttackStatus(AttackStatus.NOT_ATTACK);
         player.setMoveStatus(MoveStatus.STANDING);
         player.setLivingStatus(LivingStatus.LIVING);
+        player.setTargetId(null);
         attributeInit(player);
     }
 
@@ -102,5 +114,22 @@ public class PlayerService {
             player.setAttack(player.getAttack() + template.getBaseAttack() + template.getGrowthAttack() * player.getLevel());
             player.setDefense(player.getDefense() + template.getBaseDeffence() + template.getGrowthDefense() * player.getLevel());
         });
+    }
+
+    public Long findNearByMonster(Player player) {
+        return player.getMap().findNearByMonsterIdForPlayer(player);
+    }
+
+    public void playerGotoMap(Player player, RootMap map) {
+        player.setMap(map);
+        map.playerComeInMap(player);
+    }
+
+    public void playerReborn(Player player) {
+        initPlayer(player);
+        player.getMap().playerLeaveMap(player);
+        player.getMap().playerComeInMap(player);
+        player.setLivingStatus(LivingStatus.LIVING);
+        log.debug("playerReborn {} {}", player.getId(), player.getLocation());
     }
 }

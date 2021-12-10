@@ -41,5 +41,6 @@ public class WheelBucket {
         autoPlayer.autoPlayForTick();
         autoMonster.autoMonsterForTick();
         lifeCycle.monsterDie();
+        lifeCycle.playerDie();
     }
 }

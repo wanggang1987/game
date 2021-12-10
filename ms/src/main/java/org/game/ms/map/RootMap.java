@@ -31,7 +31,6 @@ public class RootMap {
 
     final protected int gridSize = 20;
     protected final List<Long> inMapPlayerIdList = new ArrayList<>();
-    protected final Map<String, List<Long>> gridPlayersIdsMap = new ConcurrentHashMap<>();
     protected final Map<String, List<Long>> gridMonsterIdsMap = new ConcurrentHashMap<>();
 
     protected void addMonsterToMap(Role monster, Location location) {
@@ -50,8 +49,13 @@ public class RootMap {
         gridMonsterIds.add(monster.getId());
     }
 
-    protected void playerComeInMap(Player player) {
+    public void playerComeInMap(Player player) {
         inMapPlayerIdList.add(player.getId());
+    }
+
+    public void playerLeaveMap(Player player) {
+        inMapPlayerIdList.remove(player.getId());
+        player.setLocation(null);
     }
 
     private void removeMonsterFromGrid(Role monster) {
@@ -111,7 +115,7 @@ public class RootMap {
         for (String grid : grids) {
             List<Long> gridMonsterIds = gridMonsterIdsMap.get(grid);
             if (FuncUtils.notEmpty(gridMonsterIds)) {
-                int index = FuncUtils.randomIntRange(gridMonsterIds.size());
+                int index = FuncUtils.randomZeroToRange(gridMonsterIds.size());
                 Long id = gridMonsterIds.get(index);
                 log.debug("findNearByMonsterForPlayer player {}  monster:{}", player.getId(), id);
                 return id;
@@ -120,14 +124,14 @@ public class RootMap {
         return null;
     }
 
-    public void roleMoveToTargetInTick(Role role) {
-        double xDistance = role.getTarget().getLocation().getX() - role.getLocation().getX();
-        double yDistance = role.getTarget().getLocation().getY() - role.getLocation().getY();
+    public void roleMoveToTargetInTick(Role role, Role target) {
+        double xDistance = target.getLocation().getX() - role.getLocation().getX();
+        double yDistance = target.getLocation().getY() - role.getLocation().getY();
         double preDistance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
         double moveDistance = role.getSpeed() * wheelConfig.getTickDuration();
         if (moveDistance > preDistance) {
             role.setMoveStatus(MoveStatus.STANDING);
-            moveRoleToLocation(role, role.getTarget().getLocation().getX(), role.getTarget().getLocation().getY());
+            moveRoleToLocation(role, target.getLocation().getX(), target.getLocation().getY());
         } else {
             double x = role.getLocation().getX() + (xDistance / preDistance) * moveDistance;
             double y = role.getLocation().getY() + (yDistance / preDistance) * moveDistance;

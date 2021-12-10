@@ -10,8 +10,9 @@ import org.game.ms.fight.FightService;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.monster.Monster;
 import org.game.ms.role.AttackStatus;
-import org.game.ms.role.LivingStatus;
 import org.game.ms.role.MoveStatus;
+import org.game.ms.role.RoleService;
+import org.game.ms.role.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,17 +28,21 @@ public class AutoMonster {
     private FightService fightService;
     @Autowired
     private LifeCycle lifeCycle;
+    @Autowired
+    private RoleService roleService;
 
     private void MonsterAuto(Monster monster) {
-        if (monster.getTarget() == null && monster.getBattle() != null) {
-            int index = FuncUtils.randomIntRange(monster.getBattle().getPlayers().size());
-            monster.setTarget(lifeCycle.onlinePlayer(monster.getBattle().getPlayers().get(index)));
-        }
-        if (monster.getTarget() == null) {
+        if (monster.getBattle() == null) {
+            monster.setTargetId(null);
             return;
         }
-        if (FuncUtils.equals(monster.getTarget().getLivingStatus(), LivingStatus.DEAD)) {
-            monster.setTarget(null);
+        if (monster.getBattle() != null && monster.getTargetId() == null) {
+            int index = FuncUtils.randomZeroToRange(monster.getBattle().getPlayers().size());
+            monster.setTargetType(RoleType.PLAYER);
+            monster.setTargetId(monster.getBattle().getPlayers().get(index));
+            return;
+        }
+        if (monster.getTargetId() == null) {
             return;
         }
         autoAttack(monster);
@@ -55,14 +60,14 @@ public class AutoMonster {
     private void autoMove(Monster monster) {
         if (FuncUtils.equals(monster.getAttackStatus(), AttackStatus.OUT_RANGE)
                 && FuncUtils.equals(monster.getMoveStatus(), MoveStatus.STANDING)) {
-            log.debug("Monster {} start move to location {}", monster.getId(), monster.getTarget().getLocation());
+            log.debug("Monster {} start move to {} {}", monster.getId(), monster.getTargetType(), monster.getTargetId());
             monster.setMoveStatus(MoveStatus.MOVEING);
         }
         if (FuncUtils.notEquals(monster.getAttackStatus(), AttackStatus.OUT_RANGE)) {
             monster.setMoveStatus(MoveStatus.STANDING);
         }
         if (FuncUtils.equals(monster.getMoveStatus(), MoveStatus.MOVEING)) {
-            monster.getMap().roleMoveToTargetInTick(monster);
+            roleService.moveToTargetInTick(monster);
         }
     }
 }

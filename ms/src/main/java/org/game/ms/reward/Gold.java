@@ -3,19 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.game.ms.role;
+package org.game.ms.reward;
+
+import org.game.ms.func.FuncUtils;
 
 /**
  *
  * @author wanggang
  */
-public class Experience {
+public class Gold {
 
-    static public int MonsterExp(int level) {
-        return 2 * level;
+    static public int MonsterCoin(int level) {
+        int base = 20 * level;
+        return FuncUtils.randomInPersentRange(base, 30);
     }
 
-    static public int UpgradeNead(int level) {
-        return 10 * level * level;
-    }
 }

@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("client")
 public class GameController {
-
+    
     @Autowired
     private LifeCycle lifeCycle;
     @Autowired
@@ -36,17 +36,16 @@ public class GameController {
     private WorldMap worldMap;
     @Autowired
     private PlayerService playerService;
-
+    
     @PostMapping("createPlayer")
     public void createPlayer() {
         Player player = playerService.createPlayer("测试");
         lifeCycle.playerOnline(player);
-        player.setMap(worldMap);
-        worldMap.playerComeInMap(player);
+        playerService.playerGotoMap(player, worldMap);
         autoPlay.startPlayerAutoPlay(player);
         log.debug("{}", JsonUtils.bean2json(player));
     }
-
+    
     @GetMapping("player")
     private Player getPlayer() {
         return lifeCycle.onlinePlayers().stream().findAny().orElse(null);

@@ -5,7 +5,6 @@
  */
 package org.game.ms.role;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import org.game.ms.fight.Battle;
@@ -38,8 +37,8 @@ public class Role {
     private RootMap map;
     private Location location;
     private RoleType roleType;
-    @JsonIgnore
-    private Role target;
+    private RoleType targetType;
+    private Long targetId;
     private LivingStatus livingStatus;
     private MoveStatus moveStatus;
     private AttackStatus attackStatus;

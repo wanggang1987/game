@@ -52,12 +52,14 @@ public class BattleService {
             role.setBattle(null);
             if (battle.getPlayers().isEmpty()) {
                 battle.getMonsters().forEach(id -> lifeCycle.onlineMonster(id).setBattle(null));
+                battle.getMonsters().clear();
             }
         } else if (FuncUtils.equals(role.getRoleType(), RoleType.MONSTER)) {
             battle.getMonsters().remove(role.getId());
             role.setBattle(null);
             if (battle.getMonsters().isEmpty()) {
                 battle.getPlayers().forEach(id -> lifeCycle.onlinePlayer(id).setBattle(null));
+                battle.getPlayers().clear();
             }
         }
         log.debug("battle {} players {} monsters {}", battle.getId(), battle.getPlayers().size(), battle.getMonsters().size());

@@ -19,8 +19,11 @@ import org.game.ms.monster.Monster;
 import org.game.ms.monster.MonsterService;
 import org.game.ms.player.Player;
 import org.game.ms.player.PlayerService;
-import org.game.ms.role.Experience;
+import org.game.ms.reward.Experience;
+import org.game.ms.reward.Gold;
 import org.game.ms.role.LivingStatus;
+import org.game.ms.role.Role;
+import org.game.ms.role.RoleType;
 import org.game.ms.timeline.WheelConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,6 +68,16 @@ public class LifeCycle {
         return onlineMonsters.get(id);
     }
 
+    public Role getRole(RoleType type, Long id) {
+        if (FuncUtils.equals(type, RoleType.MONSTER)) {
+            return onlineMonster(id);
+        }
+        if (FuncUtils.equals(type, RoleType.PLAYER)) {
+            return onlinePlayer(id);
+        }
+        return null;
+    }
+
     public Collection<Player> onlinePlayers() {
         return onlinePlayers.values();
     }
@@ -101,23 +114,37 @@ public class LifeCycle {
 
     public void monsterDie() {
         List<Monster> deadList = onlineMonsters.values().stream()
-                .filter(monster -> FuncUtils.numberCompare(monster.getHealthPoint(), 0.5) == -1)
+                .filter(monster -> FuncUtils.numberCompare(monster.getHealthPoint(), 1) == -1)
                 .collect(Collectors.toList());
         deadList.forEach(monster -> {
             monster.setLivingStatus(LivingStatus.DEAD);
-            monster.getMap().removeMonsterFromMap(monster);
+            monsterService.removeFromMap(monster);
             onlineMonsters.remove(monster.getId());
-            battleReward(monster);
+            monsterReward(monster);
+            battleService.removeRoleFromBattle(monster);
             log.debug("monster {} die", monster.getId());
         });
     }
 
-    public void battleReward(Monster monster) {
+    private void monsterReward(Monster monster) {
         int exp = Experience.MonsterExp(monster.getLevel());
+        int coin = Gold.MonsterCoin(monster.getLevel());
         monster.getBattle().getPlayers().forEach(id -> {
             Player player = onlinePlayer(id);
             playerService.playerGetExp(player, exp);
+            playerService.playerGetCoin(player, coin);
         });
-        battleService.removeRoleFromBattle(monster);
     }
+
+    public void playerDie() {
+        List<Player> deadList = onlinePlayers.values().stream()
+                .filter(player -> FuncUtils.numberCompare(player.getHealthPoint(), 1) == -1)
+                .collect(Collectors.toList());
+        deadList.forEach(player -> {
+            player.setLivingStatus(LivingStatus.DEAD);
+            battleService.removeRoleFromBattle(player);
+            log.debug("player {} die", player.getId());
+        });
+    }
+
 }

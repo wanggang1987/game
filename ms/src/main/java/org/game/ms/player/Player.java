@@ -19,5 +19,6 @@ import org.game.ms.role.Role;
 public class Player extends Role {
 
     private int experience;
+    private int coin;
     private List<Profession> profession = new ArrayList<>();
 }

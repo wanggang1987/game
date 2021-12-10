@@ -11,9 +11,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.game.ms.fight.FightService;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.player.Player;
+import org.game.ms.player.PlayerService;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.role.LivingStatus;
 import org.game.ms.role.MoveStatus;
+import org.game.ms.role.Role;
+import org.game.ms.role.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,9 +29,11 @@ import org.springframework.stereotype.Service;
 public class AutoPlayer {
 
     @Autowired
+    private LifeCycle lifeCycle;
+    @Autowired
     private FightService fightService;
     @Autowired
-    private LifeCycle lifeCycle;
+    private PlayerService playerService;
 
     private final List<Player> autoPlayers = new ArrayList<>();
 
@@ -42,18 +47,28 @@ public class AutoPlayer {
     }
 
     private void playerAuto(Player player) {
-        if (player.getTarget() == null) {
+        if (FuncUtils.equals(player.getLivingStatus(), LivingStatus.DEAD)) {
+            log.debug("player {} dead ", player.getId());
+            playerService.playerReborn(player);
+            return;
+        }
+        if (player.getTargetId() == null) {
             player.setAttackStatus(AttackStatus.NOT_ATTACK);
-            Long targetId = player.getMap().findNearByMonsterIdForPlayer(player);
-            player.setTarget(lifeCycle.onlineMonster(targetId));
-        }
-        if (player.getTarget() == null) {
+            player.setTargetId(playerService.findNearByMonster(player));
+            player.setTargetType(RoleType.MONSTER);
             return;
         }
-        if (FuncUtils.equals(player.getTarget().getLivingStatus(), LivingStatus.DEAD)) {
-            player.setTarget(null);
+        Role target = lifeCycle.getRole(player.getTargetType(), player.getTargetId());
+        if (target == null) {
+            player.setTargetType(null);
+            player.setTargetId(null);
             return;
         }
+        if (FuncUtils.equals(target.getLivingStatus(), LivingStatus.DEAD)) {
+            player.setTargetId(null);
+            return;
+        }
+
         autoAttack(player);
         autoMove(player);
     }
@@ -69,13 +84,13 @@ public class AutoPlayer {
     private void autoMove(Player player) {
         if (FuncUtils.equals(player.getAttackStatus(), AttackStatus.OUT_RANGE)
                 && FuncUtils.equals(player.getMoveStatus(), MoveStatus.STANDING)) {
-            log.debug("player {} start move to location {}", player.getId(), player.getTarget().getLocation());
+            log.debug("player {} start move to {} {}", player.getId(), player.getTargetType(), player.getTargetId());
             player.setMoveStatus(MoveStatus.MOVEING);
         } else if (FuncUtils.notEquals(player.getAttackStatus(), AttackStatus.OUT_RANGE)) {
             player.setMoveStatus(MoveStatus.STANDING);
         }
         if (FuncUtils.equals(player.getMoveStatus(), MoveStatus.MOVEING)) {
-            player.getMap().roleMoveToTargetInTick(player);
+            playerService.moveToTargetInTick(player);
         }
     }
 }

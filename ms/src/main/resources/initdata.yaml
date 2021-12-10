@@ -12,10 +12,10 @@ player:
         baseResource: 100
         baseAttack: 10
         baseDeffence: 5
-        growthHealth: 100
-        growthResource: 1
-        growthAttack: 20
-        growthDefense: 5
+        growthHealth: 0
+        growthResource: 0
+        growthAttack: 0
+        growthDefense: 0
 
 monster:
     total:
@@ -24,9 +24,9 @@ monster:
            speed: 1,
            attackRange: 2,
            attackCooldown: 2,
-           health: 100,
+           health: 30,
            resource: 0,
-           attack: 10,
+           attack: 20,
            deffence: 5,
         }
         - {name: 狼,
@@ -34,9 +34,9 @@ monster:
            speed: 1,
            attackRange: 2,
            attackCooldown: 2,
-           health: 100,
+           health: 30,
            resource: 0,
-           attack: 10,
+           attack: 15,
            deffence: 5,
         }
         

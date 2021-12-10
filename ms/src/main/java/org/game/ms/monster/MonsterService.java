@@ -15,6 +15,7 @@ import org.game.ms.id.IdService;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.role.LivingStatus;
 import org.game.ms.role.MoveStatus;
+import org.game.ms.role.RoleService;
 import org.game.ms.role.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,13 +26,13 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class MonsterService {
-    
+public class MonsterService extends RoleService {
+
     @Autowired
     private IdService idService;
     @Autowired
     private MonsterTemplateCollection monsterTemplateList;
-    
+
     @PostConstruct
     private void initMonsterTemplate() {
         monsterTemplateList.setLevelMap(new HashMap<>());
@@ -44,7 +45,7 @@ public class MonsterService {
             levelTemples.add(template);
         });
     }
-    
+
     public Monster initMonsterByLevel(int level) {
         MonsterTemplate template = findTemplateByLevel(level);
         Monster monster = new Monster();
@@ -66,13 +67,17 @@ public class MonsterService {
         monster.setLivingStatus(LivingStatus.LIVING);
         return monster;
     }
-    
+
     private MonsterTemplate findTemplateByLevel(int level) {
         List<MonsterTemplate> levelTemples = monsterTemplateList.getLevelMap().get(level);
         if (levelTemples == null) {
             return findTemplateByLevel(level - 1);
         }
-        int index = FuncUtils.randomIntRange(levelTemples.size());
+        int index = FuncUtils.randomZeroToRange(levelTemples.size());
         return levelTemples.get(index);
+    }
+
+    public void removeFromMap(Monster monster) {
+        monster.getMap().removeMonsterFromMap(monster);
     }
 }
