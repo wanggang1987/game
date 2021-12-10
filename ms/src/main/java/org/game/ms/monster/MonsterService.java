@@ -35,12 +35,12 @@ public class MonsterService extends RoleService {
 
     @PostConstruct
     private void initMonsterTemplate() {
-        monsterTemplateList.setLevelMap(new HashMap<>());
-        monsterTemplateList.getTotal().forEach(template -> {
-            List<MonsterTemplate> levelTemples = monsterTemplateList.getLevelMap().get(template.getLevel());
+        monsterTemplateList.setWorldLevel(new HashMap<>());
+        monsterTemplateList.getWorldAll().forEach(template -> {
+            List<MonsterTemplate> levelTemples = monsterTemplateList.getWorldLevel().get(template.getLevel());
             if (levelTemples == null) {
                 levelTemples = new ArrayList<>();
-                monsterTemplateList.getLevelMap().put(template.getLevel(), levelTemples);
+                monsterTemplateList.getWorldLevel().put(template.getLevel(), levelTemples);
             }
             levelTemples.add(template);
         });
@@ -69,7 +69,7 @@ public class MonsterService extends RoleService {
     }
 
     private MonsterTemplate findTemplateByLevel(int level) {
-        List<MonsterTemplate> levelTemples = monsterTemplateList.getLevelMap().get(level);
+        List<MonsterTemplate> levelTemples = monsterTemplateList.getWorldLevel().get(level);
         if (levelTemples == null) {
             return findTemplateByLevel(level - 1);
         }

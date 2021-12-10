@@ -19,10 +19,10 @@ import org.springframework.context.annotation.PropertySource;
  */
 @Data
 @Configuration
-@PropertySource(factory = YamlPropertySourceFactory.class, value = "classpath:initdata.yaml")
-@ConfigurationProperties(prefix = "monster")
+@PropertySource(factory = YamlPropertySourceFactory.class, value = "classpath:monster.yaml")
+@ConfigurationProperties(prefix = "template")
 public class MonsterTemplateCollection {
 
-    private List<MonsterTemplate> total;
-    private Map<Integer, List<MonsterTemplate>> levelMap;
+    private List<MonsterTemplate> worldAll;
+    private Map<Integer, List<MonsterTemplate>> worldLevel;
 }

@@ -1,0 +1,22 @@
+template:
+    worldAll:
+        - {name: 熊,
+           level: 1,
+           speed: 1,
+           attackRange: 2,
+           attackCooldown: 2,
+           health: 30,
+           resource: 0,
+           attack: 20,
+           deffence: 5,
+        }
+        - {name: 狼,
+           level: 1,
+           speed: 1,
+           attackRange: 2,
+           attackCooldown: 2,
+           health: 30,
+           resource: 0,
+           attack: 15,
+           deffence: 5,
+        }

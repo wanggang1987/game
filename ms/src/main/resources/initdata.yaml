@@ -16,29 +16,6 @@ player:
         growthResource: 0
         growthAttack: 0
         growthDefense: 0
-
-monster:
-    total:
-        - {name: 熊,
-           level: 1,
-           speed: 1,
-           attackRange: 2,
-           attackCooldown: 2,
-           health: 30,
-           resource: 0,
-           attack: 20,
-           deffence: 5,
-        }
-        - {name: 狼,
-           level: 1,
-           speed: 1,
-           attackRange: 2,
-           attackCooldown: 2,
-           health: 30,
-           resource: 0,
-           attack: 15,
-           deffence: 5,
-        }
         
 map:
     gridSize: 20
