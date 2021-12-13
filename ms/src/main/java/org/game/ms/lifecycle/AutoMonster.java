@@ -51,7 +51,7 @@ public class AutoMonster {
     }
 
     private void autoAttack(Monster monster) {
-        fightService.fight(monster);
+        fightService.autoFight(monster);
     }
 
     public void autoMonsterForTick() {

@@ -21,10 +21,10 @@ import org.game.ms.skill.ResourceService;
 @Slf4j
 public class WheelBucket {
 
-    private AutoPlayer autoPlayer;
-    private AutoMonster autoMonster;
-    private LifeCycle lifeCycle;
-    private ResourceService skillService;
+    private final AutoPlayer autoPlayer;
+    private final AutoMonster autoMonster;
+    private final LifeCycle lifeCycle;
+    private final ResourceService skillService;
 
     public WheelBucket() {
         this.autoPlayer = SpringContextUtils.getBean(AutoPlayer.class);

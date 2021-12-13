@@ -17,6 +17,10 @@ import org.springframework.stereotype.Component;
 public class Skill {
 
     private String name;
+    private double range;
+    private int lastTime;
+    private int loopTime;
+    private DamageType damageType;
     private double attackPowerRate;
     private double magicPowerRate;
 }

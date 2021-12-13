@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
+import org.game.ms.player.template.PlayerTemplate;
 import org.game.ms.role.Role;
 
 /**
@@ -20,5 +21,5 @@ public class Player extends Role {
 
     private int experience;
     private int coin;
-    private List<Profession> profession = new ArrayList<>();
+    private List<PlayerTemplate> profession = new ArrayList<>();
 }

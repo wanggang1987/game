@@ -40,19 +40,12 @@ public class PlayerService extends RoleService {
     @Autowired
     private WarriorTample warriorTample;
 
-    Map<Profession, PlayerTemplate> mapProfessionRole = new HashMap<>();
-
-    @PostConstruct
-    private void init() {
-        mapProfessionRole.put(Profession.warrior, warriorTample);
-    }
-
     public Player createPlayer(String name) {
         //init role
         Player player = new Player();
         player.setId(idService.newId());
         player.setName(name);
-        player.getProfession().add(Profession.warrior);
+        player.getProfession().add(warriorTample);
         player.setLevel(1);
         initPlayer(player);
 
@@ -61,7 +54,7 @@ public class PlayerService extends RoleService {
         ppo.setStr(JsonUtils.bean2json(player));
         playerMapper.insert(ppo);
 
-        log.debug("init player {} {}", player.getId(), player.getProfession());
+        log.debug("init player {} ", player.getId());
         return player;
     }
 
@@ -91,6 +84,7 @@ public class PlayerService extends RoleService {
         player.setLivingStatus(LivingStatus.LIVING);
         player.setTargetId(null);
         attributeInit(player);
+        skillInit(player);
     }
 
     private void attributeInit(Player player) {
@@ -105,6 +99,11 @@ public class PlayerService extends RoleService {
         Resource resource = player.getResource();
         resource.setAngerMax(100);
         resource.setAngerPoint(resource.getAngerMax());
+    }
+
+    private void skillInit(Player player) {
+        player.getProfession().forEach(profession -> player.getSkills().addAll(profession.getSkills()));
+
     }
 
     public Long findNearByMonster(Player player) {

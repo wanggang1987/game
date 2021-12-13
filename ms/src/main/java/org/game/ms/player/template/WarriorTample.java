@@ -5,9 +5,11 @@
  */
 package org.game.ms.player.template;
 
-import java.util.List;
+import javax.annotation.PostConstruct;
 import org.game.ms.config.YamlPropertySourceFactory;
 import lombok.Data;
+import org.game.ms.skill.warrior.Rend;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -22,5 +24,11 @@ import org.springframework.context.annotation.PropertySource;
 @ConfigurationProperties(prefix = "player.warrior")
 public class WarriorTample extends PlayerTemplate {
 
-    private List<String> skills;
+    @Autowired
+    private Rend rend;
+
+    @PostConstruct
+    private void init() {
+        skills.add(rend);
+    }
 }

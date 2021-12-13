@@ -78,7 +78,7 @@ public class AutoPlayer {
     }
 
     private void autoAttack(Player player) {
-        fightService.fight(player);
+        fightService.autoFight(player);
     }
 
     private void autoMove(Player player) {

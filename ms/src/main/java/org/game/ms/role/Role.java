@@ -7,6 +7,7 @@ package org.game.ms.role;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 import org.game.ms.fight.Battle;
@@ -52,6 +53,6 @@ public class Role {
     private double skillColldown;
     private double skillCooldownMax;
     @JsonIgnore
-    private List<Skill> skills;
+    private List<Skill> skills = new ArrayList<>();
     private Resource resource = new Resource();
 }

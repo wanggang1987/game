@@ -5,8 +5,11 @@
  */
 package org.game.ms.player.template;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Data;
 import org.game.ms.config.YamlPropertySourceFactory;
+import org.game.ms.skill.Skill;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -21,6 +24,7 @@ import org.springframework.context.annotation.PropertySource;
 @ConfigurationProperties(prefix = "player")
 public class PlayerTemplate {
 
+    private String name;
     private double speed;
     private double attackRange;
     private double attackCooldown;
@@ -29,4 +33,5 @@ public class PlayerTemplate {
     private double attack;
     private double deffence;
 
+    protected List<Skill> skills = new ArrayList<>();
 }

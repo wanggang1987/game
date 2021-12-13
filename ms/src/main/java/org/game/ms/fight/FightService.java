@@ -10,6 +10,7 @@ import org.game.ms.func.FuncUtils;
 import org.game.ms.lifecycle.LifeCycle;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.role.Role;
+import org.game.ms.skill.DamageType;
 import org.game.ms.skill.NormalAttack;
 import org.game.ms.skill.Skill;
 import org.game.ms.skill.ResourceService;
@@ -33,16 +34,37 @@ public class FightService {
     @Autowired
     private ResourceService resourceService;
 
-    public void fight(Role role) {
+    public void autoFight(Role role) {
         Role target = lifeCycle.getRole(role.getTargetType(), role.getTargetId());
-        normalAttack(role, target);
+        attackRanageCompare(role, target);
+        physicalAttack(role, target);
     }
 
-    private void normalAttack(Role role, Role target) {
-        attackRanageCompare(role, target);
+    private void physicalAttack(Role role, Role target) {
         if (FuncUtils.equals(role.getAttackStatus(), AttackStatus.OUT_RANGE)) {
             return;
         }
+        role.getSkills().stream()
+                .filter(skill -> FuncUtils.equals(skill.getDamageType(), DamageType.PHYSICAL))
+                .forEach(skill -> {
+                    if (skill.getLastTime() == 0) {
+                        directlyDamage();
+                    } else if (skill.getLastTime() > 0) {
+                        continuousDamage();
+                    }
+                });
+        normalAttack(role, target);
+    }
+
+    private void directlyDamage() {
+
+    }
+
+    private void continuousDamage() {
+
+    }
+
+    private void normalAttack(Role role, Role target) {
         if (resourceService.attackCoolDownReady(role)) {
             double damage = skillDamageCaculate(role, normalAttack, target);
             damageTarget(role, damage, normalAttack, target);
@@ -51,11 +73,14 @@ public class FightService {
         }
     }
 
-    private static void attackRanageCompare(Role source, Role target) {
+    private static double targetDistance(Role source, Role target) {
         double xDistance = target.getLocation().getX() - source.getLocation().getX();
         double yDistance = target.getLocation().getY() - source.getLocation().getY();
-        double targetDistance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
-        if (targetDistance > source.getAttackRange()) {
+        return Math.sqrt(xDistance * xDistance + yDistance * yDistance);
+    }
+
+    private static void attackRanageCompare(Role source, Role target) {
+        if (targetDistance(source, target) > source.getAttackRange()) {
             source.setAttackStatus(AttackStatus.OUT_RANGE);
         } else {
             source.setAttackStatus(AttackStatus.AUTO_ATTACK);

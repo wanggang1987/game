@@ -3,9 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.game.ms.skill;
+package org.game.ms.skill.warrior;
 
 import lombok.Data;
+import org.game.ms.skill.DamageType;
+import org.game.ms.skill.Skill;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,9 +16,11 @@ import org.springframework.stereotype.Component;
  */
 @Data
 @Component
-public class NormalAttack extends Skill {
+public class Rend extends Skill {
 
-    private String name = "普通攻击";
+    private String name = "撕裂";
+    private int lastTime = 9;
+    private int loopTime = 3;
     private DamageType damageType = DamageType.PHYSICAL;
     private double attackPowerRate = 1;
 }
