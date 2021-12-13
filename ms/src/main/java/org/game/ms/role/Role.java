@@ -12,6 +12,7 @@ import lombok.Data;
 import org.game.ms.fight.Battle;
 import org.game.ms.map.Location;
 import org.game.ms.map.RootMap;
+import org.game.ms.skill.Resource;
 import org.game.ms.skill.Skill;
 
 /**
@@ -30,8 +31,6 @@ public class Role {
     private double attackRange;
     private double healthPoint;
     private double healthMax;
-    private double resourcePoint;
-    private double resourceMax;
     private double attack;
     private double defense;
     private double attackPower;
@@ -42,6 +41,7 @@ public class Role {
 
     private RoleType targetType;
     private Long targetId;
+    private double targetDistance;
     private LivingStatus livingStatus;
     private MoveStatus moveStatus;
     private AttackStatus attackStatus;
@@ -53,4 +53,5 @@ public class Role {
     private double skillCooldownMax;
     @JsonIgnore
     private List<Skill> skills;
+    private Resource resource = new Resource();
 }

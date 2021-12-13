@@ -24,13 +24,9 @@ public class PlayerTemplate {
     private double speed;
     private double attackRange;
     private double attackCooldown;
-    private double baseHealth;
-    private double baseResource;
-    private double baseAttack;
-    private double baseDeffence;
-    private double growthHealth;
-    private double growthResource;
-    private double growthAttack;
-    private double growthDefense;
+    private double health;
+    private double resource;
+    private double attack;
+    private double deffence;
 
 }

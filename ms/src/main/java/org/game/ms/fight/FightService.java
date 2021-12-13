@@ -12,6 +12,7 @@ import org.game.ms.role.AttackStatus;
 import org.game.ms.role.Role;
 import org.game.ms.skill.NormalAttack;
 import org.game.ms.skill.Skill;
+import org.game.ms.skill.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,8 @@ public class FightService {
     private NormalAttack normalAttack;
     @Autowired
     private BattleService battleService;
+    @Autowired
+    private ResourceService resourceService;
 
     public void fight(Role role) {
         Role target = lifeCycle.getRole(role.getTargetType(), role.getTargetId());
@@ -40,18 +43,19 @@ public class FightService {
         if (FuncUtils.equals(role.getAttackStatus(), AttackStatus.OUT_RANGE)) {
             return;
         }
-        if (FuncUtils.numberCompare(role.getAttackCooldown(), 0) == 0) {
+        if (resourceService.attackCoolDownReady(role)) {
             double damage = skillDamageCaculate(role, normalAttack, target);
             damageTarget(role, damage, normalAttack, target);
-            role.setAttackCooldown(role.getAttackCooldownMax());
+            resourceService.attackCoolDownBegin(role);
+            resourceService.gainAngerByHit(role);
         }
     }
 
     private static void attackRanageCompare(Role source, Role target) {
         double xDistance = target.getLocation().getX() - source.getLocation().getX();
         double yDistance = target.getLocation().getY() - source.getLocation().getY();
-        double preDistance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
-        if (FuncUtils.numberCompare(preDistance, source.getAttackRange()) == 1) {
+        double targetDistance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
+        if (targetDistance > source.getAttackRange()) {
             source.setAttackStatus(AttackStatus.OUT_RANGE);
         } else {
             source.setAttackStatus(AttackStatus.AUTO_ATTACK);

@@ -12,6 +12,7 @@ import org.game.ms.func.SpringContextUtils;
 import org.game.ms.lifecycle.AutoMonster;
 import org.game.ms.lifecycle.AutoPlayer;
 import org.game.ms.lifecycle.LifeCycle;
+import org.game.ms.skill.ResourceService;
 
 /**
  *
@@ -23,11 +24,13 @@ public class WheelBucket {
     private AutoPlayer autoPlayer;
     private AutoMonster autoMonster;
     private LifeCycle lifeCycle;
+    private ResourceService skillService;
 
     public WheelBucket() {
         this.autoPlayer = SpringContextUtils.getBean(AutoPlayer.class);
         this.autoMonster = SpringContextUtils.getBean(AutoMonster.class);
         this.lifeCycle = SpringContextUtils.getBean(LifeCycle.class);
+        this.skillService = SpringContextUtils.getBean(ResourceService.class);
     }
 
     private final List<TickTask> realTimeTasks = new ArrayList<>();
@@ -37,7 +40,7 @@ public class WheelBucket {
     }
 
     public void work() {
-        lifeCycle.cooldownTimer();
+        skillService.resourceUpdateForTick();
         autoPlayer.autoPlayForTick();
         autoMonster.autoMonsterForTick();
         lifeCycle.monsterDie();

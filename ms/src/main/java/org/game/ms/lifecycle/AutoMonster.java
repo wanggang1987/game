@@ -11,6 +11,7 @@ import org.game.ms.func.FuncUtils;
 import org.game.ms.monster.Monster;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.role.MoveStatus;
+import org.game.ms.role.Role;
 import org.game.ms.role.RoleService;
 import org.game.ms.role.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;

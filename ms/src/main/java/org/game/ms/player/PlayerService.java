@@ -4,6 +4,7 @@
  */
 package org.game.ms.player;
 
+import org.game.ms.skill.Resource;
 import org.game.ms.player.template.PlayerTemplate;
 import org.game.ms.player.template.WarriorTample;
 import java.util.HashMap;
@@ -12,7 +13,6 @@ import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.func.JsonUtils;
 import org.game.ms.id.IdService;
-import org.game.ms.lifecycle.LifeCycle;
 import org.game.ms.map.RootMap;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.reward.Experience;
@@ -31,8 +31,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class PlayerService extends RoleService {
 
-    @Autowired
-    private LifeCycle lifeCycle;
     @Autowired
     private IdService idService;
     @Autowired
@@ -88,9 +86,6 @@ public class PlayerService extends RoleService {
 
     private void initPlayer(Player player) {
         player.setRoleType(RoleType.PLAYER);
-        player.setSpeed(playerTemplate.getSpeed() / 1000);
-        player.setAttackRange(playerTemplate.getAttackRange());
-        player.setAttackCooldownMax(playerTemplate.getAttackCooldown() * 1000);
         player.setAttackStatus(AttackStatus.NOT_ATTACK);
         player.setMoveStatus(MoveStatus.STANDING);
         player.setLivingStatus(LivingStatus.LIVING);
@@ -99,21 +94,17 @@ public class PlayerService extends RoleService {
     }
 
     private void attributeInit(Player player) {
-        player.setHealthMax(0);
-        player.setHealthPoint(0);
-        player.setResourceMax(0);
-        player.setResourcePoint(0);
-        player.setAttack(0);
-        player.setDefense(0);
-        player.getProfession().stream().forEach(profession -> {
-            PlayerTemplate template = mapProfessionRole.get(profession);
-            player.setHealthMax(player.getHealthMax() + template.getBaseHealth() + template.getGrowthHealth() * player.getLevel());
-            player.setHealthPoint(player.getHealthMax());
-            player.setResourceMax(player.getResourceMax() + template.getBaseResource() + template.getGrowthResource() * player.getLevel());
-            player.setResourcePoint(player.getResourceMax());
-            player.setAttack(player.getAttack() + template.getBaseAttack() + template.getGrowthAttack() * player.getLevel());
-            player.setDefense(player.getDefense() + template.getBaseDeffence() + template.getGrowthDefense() * player.getLevel());
-        });
+        player.setSpeed(playerTemplate.getSpeed() / 1000);
+        player.setAttackRange(playerTemplate.getAttackRange());
+        player.setAttackCooldownMax(playerTemplate.getAttackCooldown() * 1000);
+        player.setHealthMax(playerTemplate.getHealth());
+        player.setHealthPoint(player.getHealthMax());
+        player.setAttack(playerTemplate.getAttack());
+        player.setDefense(playerTemplate.getDeffence());
+
+        Resource resource = player.getResource();
+        resource.setAngerMax(100);
+        resource.setAngerPoint(resource.getAngerMax());
     }
 
     public Long findNearByMonster(Player player) {

@@ -24,7 +24,6 @@ import org.game.ms.reward.Gold;
 import org.game.ms.role.LivingStatus;
 import org.game.ms.role.Role;
 import org.game.ms.role.RoleType;
-import org.game.ms.timeline.WheelConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,8 +39,6 @@ public class LifeCycle {
     private PlayerService playerService;
     @Autowired
     private MonsterService monsterService;
-    @Autowired
-    private WheelConfig wheelConfig;
     @Autowired
     private BattleService battleService;
 
@@ -93,28 +90,9 @@ public class LifeCycle {
         return monster;
     }
 
-    public void cooldownTimer() {
-        onlinePlayers.values().stream()
-                .filter(player -> FuncUtils.numberCompare(player.getAttackCooldown(), 0) == 1)
-                .forEach(player -> {
-                    player.setAttackCooldown(player.getAttackCooldown() - wheelConfig.getTickDuration());
-                    if (FuncUtils.numberCompare(player.getAttackCooldown(), 0) == -1) {
-                        player.setAttackCooldown(0);
-                    }
-                });
-        onlineMonsters.values().stream()
-                .filter(monster -> FuncUtils.numberCompare(monster.getAttackCooldown(), 0) == 1)
-                .forEach(monster -> {
-                    monster.setAttackCooldown(monster.getAttackCooldown() - wheelConfig.getTickDuration());
-                    if (FuncUtils.numberCompare(monster.getAttackCooldown(), 0) == -1) {
-                        monster.setAttackCooldown(0);
-                    }
-                });
-    }
-
     public void monsterDie() {
         List<Monster> deadList = onlineMonsters.values().stream()
-                .filter(monster -> FuncUtils.numberCompare(monster.getHealthPoint(), 1) == -1)
+                .filter(monster -> monster.getHealthPoint() < 1)
                 .collect(Collectors.toList());
         deadList.forEach(monster -> {
             monster.setLivingStatus(LivingStatus.DEAD);
@@ -138,7 +116,7 @@ public class LifeCycle {
 
     public void playerDie() {
         List<Player> deadList = onlinePlayers.values().stream()
-                .filter(player -> FuncUtils.numberCompare(player.getHealthPoint(), 1) == -1)
+                .filter(player -> player.getHealthPoint() < 1)
                 .collect(Collectors.toList());
         deadList.forEach(player -> {
             player.setLivingStatus(LivingStatus.DEAD);

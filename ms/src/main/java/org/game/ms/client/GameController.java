@@ -11,10 +11,12 @@ import org.game.ms.func.JsonUtils;
 import org.game.ms.lifecycle.AutoPlayer;
 import org.game.ms.lifecycle.LifeCycle;
 import org.game.ms.map.WorldMap;
+import org.game.ms.monster.Monster;
 import org.game.ms.player.Player;
 import org.game.ms.player.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("client")
 public class GameController {
-    
+
     @Autowired
     private LifeCycle lifeCycle;
     @Autowired
@@ -36,7 +38,7 @@ public class GameController {
     private WorldMap worldMap;
     @Autowired
     private PlayerService playerService;
-    
+
     @PostMapping("createPlayer")
     public void createPlayer() {
         Player player = playerService.createPlayer("测试");
@@ -45,9 +47,14 @@ public class GameController {
         autoPlay.startPlayerAutoPlay(player);
         log.debug("{}", JsonUtils.bean2json(player));
     }
-    
-    @GetMapping("player")
-    private Player getPlayer() {
-        return lifeCycle.onlinePlayers().stream().findAny().orElse(null);
+
+    @GetMapping("player/{id}")
+    private Player getPlayer(@PathVariable("id") long id) {
+        return lifeCycle.onlinePlayer(id);
+    }
+
+    @GetMapping("monster/{id}")
+    private Monster getMonster(@PathVariable("id") long id) {
+        return lifeCycle.onlineMonster(id);
     }
 }

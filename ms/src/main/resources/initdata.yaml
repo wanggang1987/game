@@ -6,16 +6,12 @@ player:
     speed: 2
     attackRange: 3
     attackCooldown: 1
+    health: 30
+    resource: 0
+    attack: 20
+    deffence: 5
     warrior:
         name: 战士
-        baseHealth: 100
-        baseResource: 100
-        baseAttack: 10
-        baseDeffence: 5
-        growthHealth: 0
-        growthResource: 0
-        growthAttack: 0
-        growthDefense: 0
         
 map:
     gridSize: 20

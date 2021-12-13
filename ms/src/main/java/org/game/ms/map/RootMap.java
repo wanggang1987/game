@@ -127,14 +127,14 @@ public class RootMap {
     public void roleMoveToTargetInTick(Role role, Role target) {
         double xDistance = target.getLocation().getX() - role.getLocation().getX();
         double yDistance = target.getLocation().getY() - role.getLocation().getY();
-        double preDistance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
+        double targetDistance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
         double moveDistance = role.getSpeed() * wheelConfig.getTickDuration();
-        if (moveDistance > preDistance) {
+        if (moveDistance > targetDistance) {
             role.setMoveStatus(MoveStatus.STANDING);
             moveRoleToLocation(role, target.getLocation().getX(), target.getLocation().getY());
         } else {
-            double x = role.getLocation().getX() + (xDistance / preDistance) * moveDistance;
-            double y = role.getLocation().getY() + (yDistance / preDistance) * moveDistance;
+            double x = role.getLocation().getX() + (xDistance / targetDistance) * moveDistance;
+            double y = role.getLocation().getY() + (yDistance / targetDistance) * moveDistance;
             role.setMoveStatus(MoveStatus.MOVEING);
             moveRoleToLocation(role, x, y);
         }
@@ -150,6 +150,8 @@ public class RootMap {
                 removeMonsterFromGrid(role);
                 role.setLocation(location);
                 addMonsterToGrid(role);
+            } else if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
+                role.setLocation(location);
             }
         }
     }

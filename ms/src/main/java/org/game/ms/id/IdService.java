@@ -22,7 +22,7 @@ public class IdService {
 
     private long id = 0;
     private long idMax = 0;
-    private int range = 1000;
+    private final int range = 1000;
 
     @PostConstruct
     private void idInit() {
