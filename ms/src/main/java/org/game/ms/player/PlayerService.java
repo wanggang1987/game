@@ -39,13 +39,19 @@ public class PlayerService extends RoleService {
     private PlayerTemplate playerTemplate;
     @Autowired
     private WarriorTample warriorTample;
+    private Map<Profession, PlayerTemplate> professionMap = new HashMap<>();
+
+    @PostConstruct
+    private void init() {
+        professionMap.put(Profession.WARRIOR, warriorTample);
+    }
 
     public Player createPlayer(String name) {
         //init role
         Player player = new Player();
         player.setId(idService.newId());
         player.setName(name);
-        player.getProfession().add(warriorTample);
+        player.getProfession().add(Profession.WARRIOR);
         player.setLevel(1);
         initPlayer(player);
 
@@ -102,8 +108,10 @@ public class PlayerService extends RoleService {
     }
 
     private void skillInit(Player player) {
-        player.getProfession().forEach(profession -> player.getSkills().addAll(profession.getSkills()));
-
+        player.getProfession().forEach(profession -> {
+            PlayerTemplate template = professionMap.get(profession);
+            player.getSkills().addAll(template.getSkills());
+        });
     }
 
     public Long findNearByMonster(Player player) {
