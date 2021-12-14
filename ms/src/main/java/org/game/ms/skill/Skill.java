@@ -6,6 +6,7 @@
 package org.game.ms.skill;
 
 import lombok.Data;
+import org.game.ms.skill.resource.ResourceType;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,10 +18,12 @@ import org.springframework.stereotype.Component;
 public class Skill {
 
     private String name;
-    private double range;
-    private int lastTime;
-    private int loopTime;
-    private DamageType damageType;
-    private double attackPowerRate;
-    private double magicPowerRate;
+    private ResourceType resourceType;
+    private int cost;
+    private double coolDown;
+    private double coolDownMax;
+    private int range;
+    private RangeType rangeType;
+    private DirectDamage directDamage;
+    private LoopDamage loopDamage;
 }

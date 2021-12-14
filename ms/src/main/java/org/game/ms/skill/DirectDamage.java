@@ -6,6 +6,7 @@
 package org.game.ms.skill;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -13,9 +14,11 @@ import lombok.Data;
  * @author wanggang
  */
 @Data
+@AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Resource {
+public class DirectDamage extends DamageBase {
 
-    private double angerPoint;
-    private double angerMax;
+    private DamageType damageType;
+    private double attackPowerRate;
+    private double magicPowerRate;
 }

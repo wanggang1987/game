@@ -5,17 +5,18 @@
  */
 package org.game.ms.skill;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-import org.springframework.stereotype.Component;
 
 /**
  *
  * @author wanggang
  */
 @Data
-@Component
-public class NormalAttack extends Skill {
-
-    private String name = "普通攻击";
-    private DirectDamage directDamage = new DirectDamage(DamageType.PHYSICAL, 1, 0);
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class DamageBase {
+    
+    private DamageType damageType;
+    private double attackPowerRate;
+    private double magicPowerRate;
 }

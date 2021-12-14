@@ -12,7 +12,7 @@ import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.id.IdService;
-import org.game.ms.skill.Resource;
+import org.game.ms.skill.resource.Resource;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.role.LivingStatus;
 import org.game.ms.role.MoveStatus;
@@ -56,7 +56,6 @@ public class MonsterService extends RoleService {
         monster.setLevel(template.getLevel());
         monster.setSpeed(template.getSpeed() / 1000);
         monster.setAttackRange(template.getAttackRange());
-        monster.setAttackCooldownMax(template.getAttackCooldown() * 1000);
         monster.setHealthMax(template.getHealth());
         monster.setHealthPoint(monster.getHealthMax());
         monster.setAttack(template.getAttack());
@@ -65,6 +64,8 @@ public class MonsterService extends RoleService {
         monster.setMoveStatus(MoveStatus.STANDING);
         monster.setLivingStatus(LivingStatus.LIVING);
         Resource resource = monster.getResource();
+        resource.setAttackCooldownMax(template.getAttackCooldown() * 1000);
+        resource.setSkillCooldownMax(1.5 * 1000);
         resource.setAngerMax(100);
         resource.setAngerPoint(resource.getAngerMax());
         return monster;

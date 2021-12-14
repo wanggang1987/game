@@ -39,12 +39,13 @@ public class GameController {
     private PlayerService playerService;
 
     @PostMapping("createPlayer")
-    public void createPlayer() {
+    private Long createPlayer() {
         Player player = playerService.createPlayer("测试");
         lifeCycle.playerOnline(player);
         playerService.playerGotoMap(player, worldMap);
         autoPlay.startPlayerAutoPlay(player);
         log.debug("{}", JsonUtils.bean2json(player));
+        return player.getId();
     }
 
     @GetMapping("player/{id}")

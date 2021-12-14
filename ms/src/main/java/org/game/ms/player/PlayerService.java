@@ -4,7 +4,7 @@
  */
 package org.game.ms.player;
 
-import org.game.ms.skill.Resource;
+import org.game.ms.skill.resource.Resource;
 import org.game.ms.player.template.PlayerTemplate;
 import org.game.ms.player.template.WarriorTample;
 import java.util.HashMap;
@@ -20,6 +20,8 @@ import org.game.ms.role.LivingStatus;
 import org.game.ms.role.MoveStatus;
 import org.game.ms.role.RoleService;
 import org.game.ms.role.RoleType;
+import org.game.ms.skill.Skill;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +41,7 @@ public class PlayerService extends RoleService {
     private PlayerTemplate playerTemplate;
     @Autowired
     private WarriorTample warriorTample;
-    private Map<Profession, PlayerTemplate> professionMap = new HashMap<>();
+    private final Map<Profession, PlayerTemplate> professionMap = new HashMap<>();
 
     @PostConstruct
     private void init() {
@@ -96,13 +98,14 @@ public class PlayerService extends RoleService {
     private void attributeInit(Player player) {
         player.setSpeed(playerTemplate.getSpeed() / 1000);
         player.setAttackRange(playerTemplate.getAttackRange());
-        player.setAttackCooldownMax(playerTemplate.getAttackCooldown() * 1000);
         player.setHealthMax(playerTemplate.getHealth());
         player.setHealthPoint(player.getHealthMax());
         player.setAttack(playerTemplate.getAttack());
         player.setDefense(playerTemplate.getDeffence());
 
         Resource resource = player.getResource();
+        resource.setAttackCooldownMax(playerTemplate.getAttackCooldown() * 1000);
+        resource.setSkillCooldownMax(1.5 * 1000);
         resource.setAngerMax(100);
         resource.setAngerPoint(resource.getAngerMax());
     }
@@ -110,7 +113,11 @@ public class PlayerService extends RoleService {
     private void skillInit(Player player) {
         player.getProfession().forEach(profession -> {
             PlayerTemplate template = professionMap.get(profession);
-            player.getSkills().addAll(template.getSkills());
+            template.getSkills().forEach(skill -> {
+                Skill one = new Skill();
+                BeanUtils.copyProperties(skill, one);
+                player.getSkills().add(one);
+            });
         });
     }
 

@@ -34,4 +34,5 @@ public class PlayerTemplate {
     private double deffence;
 
     protected List<Skill> skills = new ArrayList<>();
+
 }

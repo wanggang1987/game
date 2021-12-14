@@ -10,10 +10,11 @@ import org.game.ms.func.FuncUtils;
 import org.game.ms.lifecycle.LifeCycle;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.role.Role;
-import org.game.ms.skill.DamageType;
+import org.game.ms.skill.DamageBase;
 import org.game.ms.skill.NormalAttack;
+import org.game.ms.skill.RangeType;
 import org.game.ms.skill.Skill;
-import org.game.ms.skill.ResourceService;
+import org.game.ms.skill.resource.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,32 +45,38 @@ public class FightService {
         if (FuncUtils.equals(role.getAttackStatus(), AttackStatus.OUT_RANGE)) {
             return;
         }
-        role.getSkills().stream()
-                .filter(skill -> FuncUtils.equals(skill.getDamageType(), DamageType.PHYSICAL))
-                .forEach(skill -> {
-                    if (skill.getLastTime() == 0) {
-                        directlyDamage();
-                    } else if (skill.getLastTime() > 0) {
-                        continuousDamage();
-                    }
-                });
         normalAttack(role, target);
-    }
 
-    private void directlyDamage() {
-
-    }
-
-    private void continuousDamage() {
+        for (Skill skill : role.getSkills()) {
+            if (!resourceService.generalSkillCoolDownReady(role.getResource())) {
+                break;
+            }
+            if (FuncUtils.notEquals(skill.getRangeType(), RangeType.MELEE)
+                    || !resourceService.skillCoolDownReady(skill)) {
+                continue;
+            }
+            if (!resourceService.skillCostResource(role.getResource(), skill)) {
+                continue;
+            }
+            if (FuncUtils.notEmpty(skill.getDirectDamage())) {
+                double damage = skillDamageCaculate(role, skill.getDirectDamage(), target);
+                damageTarget(role, damage, skill, target);
+            }
+            if (FuncUtils.notEmpty(skill.getLoopDamage())) {
+                double damage = skillDamageCaculate(role, skill.getLoopDamage(), target);
+                damageTarget(role, damage, skill, target);
+            }
+            resourceService.skillCoolDownBegin(role.getResource(), skill);
+        }
 
     }
 
     private void normalAttack(Role role, Role target) {
-        if (resourceService.attackCoolDownReady(role)) {
-            double damage = skillDamageCaculate(role, normalAttack, target);
+        if (resourceService.attackCoolDownReady(role.getResource())) {
+            double damage = skillDamageCaculate(role, normalAttack.getDirectDamage(), target);
             damageTarget(role, damage, normalAttack, target);
-            resourceService.attackCoolDownBegin(role);
-            resourceService.gainAngerByHit(role);
+            resourceService.attackCoolDownBegin(role.getResource());
+            resourceService.gainAngerByHit(role.getResource());
         }
     }
 
@@ -87,8 +94,8 @@ public class FightService {
         }
     }
 
-    private double skillDamageCaculate(Role role, Skill skill, Role target) {
-        double damage = role.getAttackPower() * skill.getAttackPowerRate() + role.getAttack() - target.getDefense();
+    private double skillDamageCaculate(Role role, DamageBase damageBase, Role target) {
+        double damage = role.getAttackPower() * damageBase.getAttackPowerRate() + role.getAttack() - target.getDefense();
         if (damage < 1) {
             damage = 1;
         }

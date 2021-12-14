@@ -7,7 +7,11 @@ package org.game.ms.skill.warrior;
 
 import lombok.Data;
 import org.game.ms.skill.DamageType;
+import org.game.ms.skill.LoopDamage;
+import org.game.ms.skill.RangeType;
 import org.game.ms.skill.Skill;
+import org.game.ms.skill.SkillType;
+import org.game.ms.skill.resource.ResourceType;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,8 +23,11 @@ import org.springframework.stereotype.Component;
 public class Rend extends Skill {
 
     private String name = "撕裂";
-    private int lastTime = 9;
-    private int loopTime = 3;
-    private DamageType damageType = DamageType.PHYSICAL;
-    private double attackPowerRate = 1;
+    private ResourceType resourceType = ResourceType.ANGER;
+    private int cost = 40;
+    private double coolDown;
+    private double coolDownMax = 9000;
+    private SkillType skillType = SkillType.DAMAGE_SKILL;
+    private RangeType rangeType = RangeType.MELEE;
+    private LoopDamage loopDamage = new LoopDamage(9, 3, DamageType.PHYSICAL, 1, 0);
 }
