@@ -11,10 +11,13 @@ import org.game.ms.lifecycle.LifeCycle;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.role.Role;
 import org.game.ms.skill.DamageBase;
+import org.game.ms.skill.LoopDamage;
 import org.game.ms.skill.NormalAttack;
 import org.game.ms.skill.RangeType;
 import org.game.ms.skill.Skill;
 import org.game.ms.skill.resource.ResourceService;
+import org.game.ms.timeline.TaskQueue;
+import org.game.ms.timeline.TickTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +29,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class FightService {
 
+    @Autowired
+    private TaskQueue taskQueue;
     @Autowired
     private LifeCycle lifeCycle;
     @Autowired
@@ -63,8 +68,13 @@ public class FightService {
                 damageTarget(role, damage, skill, target);
             }
             if (FuncUtils.notEmpty(skill.getLoopDamage())) {
-                double damage = skillDamageCaculate(role, skill.getLoopDamage(), target);
-                damageTarget(role, damage, skill, target);
+                LoopDamage loopDamage = skill.getLoopDamage();
+                double damage = skillDamageCaculate(role, loopDamage, target);
+                int n = loopDamage.getLastTime() / loopDamage.getLoopTime();
+                for (int i = 1; i <= n; i++) {
+                    TickTask tickTask = new TickTask(role, target, skill, damage / n, i * loopDamage.getLoopTime());
+                    taskQueue.addTask(tickTask);
+                }
             }
             resourceService.skillCoolDownBegin(role.getResource(), skill);
         }

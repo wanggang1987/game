@@ -29,5 +29,5 @@ public class Rend extends Skill {
     private double coolDownMax = 9000;
     private SkillType skillType = SkillType.DAMAGE_SKILL;
     private RangeType rangeType = RangeType.MELEE;
-    private LoopDamage loopDamage = new LoopDamage(9, 3, DamageType.PHYSICAL, 1, 0);
+    private LoopDamage loopDamage = new LoopDamage(9000, 3000, DamageType.PHYSICAL, 1, 0);
 }

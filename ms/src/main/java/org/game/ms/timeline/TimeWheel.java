@@ -21,14 +21,21 @@ public class TimeWheel {
 
     @Autowired
     private WheelConfig wheelConfig;
+    @Autowired
+    private TaskQueue queue;
 
     private WheelBucket[] wheels;
     private ForkJoinPool threadPool;
     private int tick = 0;
 
-    public void addTaskNextTick(TickTask task) {
-        int nextTick = tick == wheelConfig.getTicksPerWheel() ? 0 : tick + 1;
-        wheels[nextTick].addTaskToRealTime(task);
+    private void addTaskToMs(TickTask task) {
+        int ticks = task.getTicks() + tick;
+        int n = ticks % wheelConfig.getTicksPerWheel();
+        wheels[n].addTaskToRealTime(task);
+    }
+
+    private void queueManager() {
+        queue.tasks().forEach(task -> addTaskToMs(task));
     }
 
     @PostConstruct
@@ -43,6 +50,7 @@ public class TimeWheel {
             //start the thread
             while (true) {
                 try {
+
                     cycleManager();
                 } catch (Exception e) {
                     log.error(e.getMessage());
