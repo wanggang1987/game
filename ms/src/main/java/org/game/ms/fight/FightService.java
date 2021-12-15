@@ -112,7 +112,7 @@ public class FightService {
         return FuncUtils.randomInPersentRange(damage, 30);
     }
 
-    private void damageTarget(Role role, double damage, Skill skill, Role target) {
+    public void damageTarget(Role role, double damage, Skill skill, Role target) {
         target.setHealthPoint(target.getHealthPoint() - damage);
         log.debug("{} {} {} {} {} damage {} health {}/{}", role.getRoleType(), role.getId(), skill.getName(),
                 target.getRoleType(), target.getId(), damage,

@@ -5,7 +5,7 @@ timewheel:
 player:
     speed: 2
     attackRange: 3
-    attackCooldown: 1
+    attackCooldown: 1.5
     health: 300
     resource: 0
     attack: 20

@@ -5,10 +5,9 @@
  */
 package org.game.ms.timeline;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +19,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TaskQueue {
 
-    private final List<TickTask> queue = new LinkedList<>();
+    private final List<TickTask> queue = new ArrayList<>();
 
     public void addTask(TickTask task) {
         queue.add(task);

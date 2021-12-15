@@ -5,7 +5,6 @@
  */
 package org.game.ms.timeline;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.game.ms.role.Role;
 import org.game.ms.skill.Skill;
@@ -15,12 +14,21 @@ import org.game.ms.skill.Skill;
  * @author wanggang
  */
 @Data
-@AllArgsConstructor
 public class TickTask {
 
     private Role source;
     private Role target;
     private Skill skill;
     private double damage;
-    private int ticks;
+    private long tick;
+    private long ms;
+
+    public TickTask(Role source, Role target, Skill skill, double damage, long ms) {
+        this.source = source;
+        this.target = target;
+        this.skill = skill;
+        this.damage = damage;
+        this.ms = ms;
+    }
+
 }

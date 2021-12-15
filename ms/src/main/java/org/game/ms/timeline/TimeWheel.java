@@ -26,16 +26,17 @@ public class TimeWheel {
 
     private WheelBucket[] wheels;
     private ForkJoinPool threadPool;
-    private int tick = 0;
 
     private void addTaskToMs(TickTask task) {
-        int ticks = task.getTicks() + tick;
-        int n = ticks % wheelConfig.getTicksPerWheel();
-        wheels[n].addTaskToRealTime(task);
+        long ticks = wheelConfig.getTick() + task.getMs() / wheelConfig.getTickDuration();
+        task.setTick(ticks);
+        Long n = ticks % wheelConfig.getTicksPerWheel();
+        wheels[n.intValue()].addTaskToRealTime(task);
     }
 
     private void queueManager() {
         queue.tasks().forEach(task -> addTaskToMs(task));
+        queue.tasks().clear();
     }
 
     @PostConstruct
@@ -50,7 +51,6 @@ public class TimeWheel {
             //start the thread
             while (true) {
                 try {
-
                     cycleManager();
                 } catch (Exception e) {
                     log.error(e.getMessage());
@@ -65,8 +65,9 @@ public class TimeWheel {
         long wheelStart = start / 1000 * 1000;
         long deadLine = (start / 1000 + 1) * 1000;
 //        log.debug("cycleManager from {} to {},wheelStart {} ", start, deadLine, wheelStart);
-
-        for (tick = 0; tick < wheelConfig.getTicksPerWheel(); tick++) {
+        for (int tick = 0; tick < wheelConfig.getTicksPerWheel(); tick++) {
+            queueManager();
+            wheelConfig.ticktock();
             wheels[tick].work();
             long now = System.currentTimeMillis();
             long target = wheelStart + ((tick + 1) * wheelConfig.getTickDuration());

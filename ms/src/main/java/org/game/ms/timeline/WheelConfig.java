@@ -21,6 +21,11 @@ import org.springframework.context.annotation.PropertySource;
 @ConfigurationProperties(prefix = "timewheel")
 public class WheelConfig {
 
+    private long tick = 0;
     private int ticksPerWheel;
     private int tickDuration;
+
+    public void ticktock() {
+        tick++;
+    }
 }
