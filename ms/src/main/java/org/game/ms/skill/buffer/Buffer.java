@@ -6,18 +6,25 @@
 package org.game.ms.skill.buffer;
 
 import java.sql.Timestamp;
-import org.game.ms.role.Role;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import org.game.ms.role.RoleType;
 import org.game.ms.skill.Skill;
 
 /**
  *
  * @author wanggang
  */
-public class DeBuffer {
+@Data
+@AllArgsConstructor
+public class Buffer {
 
+    private long sourceId;
+    private RoleType sourceType;
+    private long targetId;
+    private RoleType targetType;
     private Skill skill;
-    private Role source;
-    private Role target;
     private Timestamp startTime;
     private Timestamp endTime;
+    private boolean buffer;
 }

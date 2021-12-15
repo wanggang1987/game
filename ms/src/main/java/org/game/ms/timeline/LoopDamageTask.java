@@ -5,17 +5,19 @@
  */
 package org.game.ms.timeline;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.game.ms.skill.buffer.Buffer;
 
 /**
  *
  * @author wanggang
  */
 @Data
-public class TickTask {
+@AllArgsConstructor
+public class LoopDamageTask {
 
-    private BufferManagerTask bufferManagerTask;
-    private LoopDamageTask loopDamageTask;
-    private long tick;
-
+    private Buffer buffer;
+    private double damage;
+    private long ms;
 }

@@ -22,21 +22,19 @@ public class TimeWheel {
     @Autowired
     private WheelConfig wheelConfig;
     @Autowired
-    private TaskQueue queue;
+    private TaskService taskService;
 
     private WheelBucket[] wheels;
     private ForkJoinPool threadPool;
 
     private void addTaskToMs(TickTask task) {
-        long ticks = wheelConfig.getTick() + task.getMs() / wheelConfig.getTickDuration();
-        task.setTick(ticks);
-        Long n = ticks % wheelConfig.getTicksPerWheel();
+        Long n = task.getTick() % wheelConfig.getTicksPerWheel();
         wheels[n.intValue()].addTaskToRealTime(task);
     }
 
     private void queueManager() {
-        queue.tasks().forEach(task -> addTaskToMs(task));
-        queue.tasks().clear();
+        taskService.tasks().forEach(task -> addTaskToMs(task));
+        taskService.tasks().clear();
     }
 
     @PostConstruct

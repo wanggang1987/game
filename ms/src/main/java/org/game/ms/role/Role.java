@@ -14,6 +14,7 @@ import org.game.ms.map.Location;
 import org.game.ms.map.RootMap;
 import org.game.ms.skill.resource.Resource;
 import org.game.ms.skill.Skill;
+import org.game.ms.skill.buffer.Buffer;
 
 /**
  *
@@ -48,4 +49,5 @@ public class Role {
     private Battle battle;
     private List<Skill> skills = new ArrayList<>();
     private Resource resource = new Resource();
+    private List<Buffer> buffers = new ArrayList<>();
 }

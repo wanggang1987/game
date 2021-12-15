@@ -10,10 +10,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.fight.FightService;
+import org.game.ms.func.FuncUtils;
 import org.game.ms.func.SpringContextUtils;
 import org.game.ms.lifecycle.AutoMonster;
 import org.game.ms.lifecycle.AutoPlayer;
 import org.game.ms.lifecycle.LifeCycle;
+import org.game.ms.skill.buffer.Buffer;
+import org.game.ms.skill.buffer.BufferService;
 import org.game.ms.skill.resource.ResourceService;
 
 /**
@@ -29,6 +32,7 @@ public class WheelBucket {
     private final LifeCycle lifeCycle;
     private final ResourceService skillService;
     private final FightService fightService;
+    private final BufferService bufferService;
 
     public WheelBucket() {
         this.wheelConfig = SpringContextUtils.getBean(WheelConfig.class);
@@ -37,6 +41,7 @@ public class WheelBucket {
         this.lifeCycle = SpringContextUtils.getBean(LifeCycle.class);
         this.skillService = SpringContextUtils.getBean(ResourceService.class);
         this.fightService = SpringContextUtils.getBean(FightService.class);
+        this.bufferService = SpringContextUtils.getBean(BufferService.class);
     }
 
     private final List<TickTask> realTimeTasks = new ArrayList<>();
@@ -50,10 +55,21 @@ public class WheelBucket {
         List<TickTask> revmoeList = realTimeTasks.stream()
                 .filter(task -> task.getTick() <= wheelConfig.getTick())
                 .collect(Collectors.toList());
-        revmoeList.forEach(task -> {
-            fightService.damageTarget(task.getSource(), task.getDamage(), task.getSkill(), task.getTarget());
-        });
+        revmoeList.forEach(task -> excuteTask(task));
         realTimeTasks.removeAll(revmoeList);
+    }
+
+    private void excuteTask(TickTask tickTask) {
+        if (FuncUtils.notEmpty(tickTask.getLoopDamageTask())) {
+            fightService.loopDamage(tickTask.getLoopDamageTask());
+        }
+        if (FuncUtils.notEmpty(tickTask.getBufferManagerTask())) {
+            if (tickTask.getBufferManagerTask().isAdd()) {
+
+            } else {
+                bufferService.removeBuffer(tickTask.getBufferManagerTask().getBuffer());
+            }
+        }
     }
 
     public void work() {
