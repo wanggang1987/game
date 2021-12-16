@@ -25,7 +25,6 @@ public class Rend extends Skill {
     private String name = "撕裂";
     private ResourceType resourceType = ResourceType.ANGER;
     private int cost = 40;
-    private double coolDown;
     private double coolDownMax = 9000;
     private SkillType skillType = SkillType.DAMAGE_SKILL;
     private RangeType rangeType = RangeType.MELEE;

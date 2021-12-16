@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.func.FuncUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,12 @@ public class TaskService {
     @Autowired
     private WheelConfig wheelConfig;
     private final List<TickTask> queue = new ArrayList<>();
+
+    public void addTask(TickTask tickTask) {
+        long ticks = wheelConfig.getTick() + tickTask.getMs() / wheelConfig.getTickDuration();
+        tickTask.setTick(ticks);
+        queue.add(tickTask);
+    }
 
     public void addTask(LoopDamageTask loopDamageTask) {
         TickTask tickTask = new TickTask();

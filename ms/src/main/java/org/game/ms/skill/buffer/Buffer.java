@@ -5,7 +5,6 @@
  */
 package org.game.ms.skill.buffer;
 
-import java.sql.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.game.ms.role.RoleType;
@@ -19,12 +18,11 @@ import org.game.ms.skill.Skill;
 @AllArgsConstructor
 public class Buffer {
 
+    private long id;
     private long sourceId;
     private RoleType sourceType;
     private long targetId;
     private RoleType targetType;
     private Skill skill;
-    private Timestamp startTime;
-    private Timestamp endTime;
     private boolean buffer;
 }

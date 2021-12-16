@@ -5,8 +5,11 @@
  */
 package org.game.ms.skill.buffer;
 
+import org.game.ms.func.FuncUtils;
+import org.game.ms.id.IdService;
 import org.game.ms.lifecycle.LifeCycle;
 import org.game.ms.role.Role;
+import org.game.ms.skill.Skill;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +22,8 @@ public class BufferService {
 
     @Autowired
     private LifeCycle lifeCycle;
+    @Autowired
+    private IdService idService;
 
     public void addBuffer(Buffer buffer) {
         Role target = lifeCycle.getRole(buffer.getTargetType(), buffer.getTargetId());
@@ -30,7 +35,14 @@ public class BufferService {
 
     public void removeBuffer(Buffer buffer) {
         Role target = lifeCycle.getRole(buffer.getTargetType(), buffer.getTargetId());
-        target.getBuffers().remove(buffer);
+        if (FuncUtils.notEmpty(target)) {
+            target.getBuffers().remove(buffer);
+        }
+    }
+
+    public Buffer createBuffer(Role source, Role target, Skill skill, boolean isBuffer) {
+        return new Buffer(idService.newId(), source.getId(), source.getRoleType(),
+                target.getId(), target.getRoleType(), skill, isBuffer);
     }
 
 }

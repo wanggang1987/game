@@ -111,6 +111,7 @@ public class PlayerService extends RoleService {
     }
 
     private void skillInit(Player player) {
+        player.getSkills().clear();
         player.getProfession().forEach(profession -> {
             PlayerTemplate template = professionMap.get(profession);
             template.getSkills().forEach(skill -> {

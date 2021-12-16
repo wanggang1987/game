@@ -5,7 +5,6 @@
  */
 package org.game.ms.fight;
 
-import java.sql.Timestamp;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.lifecycle.LifeCycle;
@@ -22,6 +21,7 @@ import org.game.ms.skill.resource.ResourceService;
 import org.game.ms.timeline.BufferManagerTask;
 import org.game.ms.timeline.LoopDamageTask;
 import org.game.ms.timeline.TaskService;
+import org.game.ms.timeline.TickTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -75,19 +75,19 @@ public class FightService {
             }
             if (FuncUtils.notEmpty(skill.getLoopDamage())) {
                 LoopDamage loopDamage = skill.getLoopDamage();
-                Timestamp now = FuncUtils.currentTime();
-                Timestamp end = new Timestamp(now.getTime() + loopDamage.getLastTime());
-                Buffer deBuffer = new Buffer(role.getId(), role.getRoleType(), target.getId(), target.getRoleType(),
-                        skill, now, end, false);
+                Buffer deBuffer = bufferService.createBuffer(role, target, skill, true);
                 bufferService.addBuffer(deBuffer);
 
                 double damage = skillDamageCaculate(role, loopDamage, target);
                 int n = loopDamage.getLastTime() / loopDamage.getLoopTime();
-                for (int i = 1; i <= n; i++) {
+                for (int i = 1; i < n; i++) {
                     taskService.addTask(new LoopDamageTask(deBuffer, damage / n, i * loopDamage.getLoopTime()));
                 }
-
-                taskService.addTask(new BufferManagerTask(deBuffer, false, loopDamage.getLastTime()));
+                TickTask tickTask = new TickTask();
+                tickTask.setLoopDamageTask(new LoopDamageTask(deBuffer, damage / n, n * loopDamage.getLoopTime()));
+                tickTask.setBufferManagerTask(new BufferManagerTask(deBuffer, false, loopDamage.getLastTime()));
+                tickTask.setMs(loopDamage.getLastTime());
+                taskService.addTask(tickTask);
             }
             resourceService.skillCoolDownBegin(role.getResource(), skill);
         }
@@ -137,8 +137,9 @@ public class FightService {
         Buffer buffer = task.getBuffer();
         Role source = lifeCycle.getRole(buffer.getSourceType(), buffer.getSourceId());
         Role target = lifeCycle.getRole(buffer.getTargetType(), buffer.getTargetId());
-
-        damageTarget(source, task.getDamage(), buffer.getSkill(), target);
+        if (FuncUtils.notEmpty(target) && target.getBuffers().contains(buffer)) {
+            damageTarget(source, task.getDamage(), buffer.getSkill(), target);
+        }
     }
 
 }

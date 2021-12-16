@@ -15,7 +15,6 @@ import org.game.ms.func.SpringContextUtils;
 import org.game.ms.lifecycle.AutoMonster;
 import org.game.ms.lifecycle.AutoPlayer;
 import org.game.ms.lifecycle.LifeCycle;
-import org.game.ms.skill.buffer.Buffer;
 import org.game.ms.skill.buffer.BufferService;
 import org.game.ms.skill.resource.ResourceService;
 
