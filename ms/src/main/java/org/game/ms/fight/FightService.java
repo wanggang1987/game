@@ -21,7 +21,6 @@ import org.game.ms.skill.resource.ResourceService;
 import org.game.ms.timeline.BufferManagerTask;
 import org.game.ms.timeline.LoopDamageTask;
 import org.game.ms.timeline.TaskService;
-import org.game.ms.timeline.TickTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,7 +55,6 @@ public class FightService {
         if (FuncUtils.equals(role.getAttackStatus(), AttackStatus.OUT_RANGE)) {
             return;
         }
-        normalAttack(role, target);
 
         for (Skill skill : role.getSkills()) {
             if (!resourceService.generalSkillCoolDownReady(role.getResource())) {
@@ -74,24 +72,25 @@ public class FightService {
                 damageTarget(role, damage, skill, target);
             }
             if (FuncUtils.notEmpty(skill.getLoopDamage())) {
-                LoopDamage loopDamage = skill.getLoopDamage();
                 Buffer deBuffer = bufferService.createBuffer(role, target, skill, true);
+                if (target.getBuffers().contains(deBuffer)) {
+                    continue;
+                }
                 bufferService.addBuffer(deBuffer);
 
+                LoopDamage loopDamage = skill.getLoopDamage();
                 double damage = skillDamageCaculate(role, loopDamage, target);
                 int n = loopDamage.getLastTime() / loopDamage.getLoopTime();
-                for (int i = 1; i < n; i++) {
+                for (int i = 1; i <= n; i++) {
                     taskService.addTask(new LoopDamageTask(deBuffer, damage / n, i * loopDamage.getLoopTime()));
                 }
-                TickTask tickTask = new TickTask();
-                tickTask.setLoopDamageTask(new LoopDamageTask(deBuffer, damage / n, n * loopDamage.getLoopTime()));
-                tickTask.setBufferManagerTask(new BufferManagerTask(deBuffer, false, loopDamage.getLastTime()));
-                tickTask.setMs(loopDamage.getLastTime());
-                taskService.addTask(tickTask);
+                taskService.addTask(new BufferManagerTask(deBuffer, false, loopDamage.getLastTime()));
             }
             resourceService.skillCoolDownBegin(role.getResource(), skill);
+            log.debug("{} {} cast {} to {} {}", role.getRoleType(), role.getId(), skill.getName(), target.getRoleType(), target.getId());
         }
 
+        normalAttack(role, target);
     }
 
     private void normalAttack(Role role, Role target) {

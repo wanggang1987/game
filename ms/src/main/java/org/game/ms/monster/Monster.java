@@ -16,4 +16,5 @@ import org.game.ms.role.Role;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Monster extends Role {
 
+    private MonsterTemplate template;
 }

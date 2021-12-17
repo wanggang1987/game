@@ -9,9 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.game.ms.fight.FightService;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.monster.Monster;
+import org.game.ms.monster.MonsterService;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.role.MoveStatus;
-import org.game.ms.role.Role;
 import org.game.ms.role.RoleService;
 import org.game.ms.role.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +31,12 @@ public class AutoMonster {
     private LifeCycle lifeCycle;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private MonsterService monsterService;
 
     private void MonsterAuto(Monster monster) {
         if (monster.getBattle() == null) {
+            monsterService.initMonster(monster);
             monster.setTargetId(null);
             return;
         }

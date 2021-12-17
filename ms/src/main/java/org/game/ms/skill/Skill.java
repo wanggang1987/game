@@ -5,6 +5,7 @@
  */
 package org.game.ms.skill;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import org.game.ms.skill.resource.ResourceType;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
  */
 @Data
 @Component
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Skill {
 
     private String name;

@@ -18,6 +18,6 @@ import org.game.ms.skill.buffer.Buffer;
 public class BufferManagerTask {
 
     private Buffer buffer;
-    private boolean add;
+    private boolean isAdd;
     private long ms;
 }

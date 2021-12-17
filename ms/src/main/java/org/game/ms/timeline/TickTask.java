@@ -17,6 +17,5 @@ public class TickTask {
     private BufferManagerTask bufferManagerTask;
     private LoopDamageTask loopDamageTask;
     private long tick;
-    private long ms;
 
 }

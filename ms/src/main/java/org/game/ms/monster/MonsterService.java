@@ -50,6 +50,7 @@ public class MonsterService extends RoleService {
     public Monster initMonsterByLevel(int level) {
         MonsterTemplate template = findTemplateByLevel(level);
         Monster monster = new Monster();
+        monster.setTemplate(template);
         monster.setRoleType(RoleType.MONSTER);
         monster.setId(idService.newId());
         monster.setName(template.getName());
@@ -69,6 +70,10 @@ public class MonsterService extends RoleService {
         resource.setAngerMax(100);
         resource.setAngerPoint(resource.getAngerMax());
         return monster;
+    }
+
+    public void initMonster(Monster monster) {
+        monster.getBuffers().clear();
     }
 
     private MonsterTemplate findTemplateByLevel(int level) {

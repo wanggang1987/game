@@ -47,7 +47,6 @@ public class WheelBucket {
 
     public void addTaskToRealTime(TickTask task) {
         realTimeTasks.add(task);
-        log.debug("addTaskToRealTime {} ", task);
     }
 
     private void excuteWheel() {
@@ -76,7 +75,6 @@ public class WheelBucket {
         skillService.resourceUpdateForTick();
         autoPlayer.autoPlayForTick();
         autoMonster.autoMonsterForTick();
-        lifeCycle.monsterDie();
-        lifeCycle.playerDie();
+        lifeCycle.lifeEnd();
     }
 }

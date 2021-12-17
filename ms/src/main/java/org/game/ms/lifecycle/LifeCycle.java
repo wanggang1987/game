@@ -90,7 +90,7 @@ public class LifeCycle {
         return monster;
     }
 
-    public void monsterDie() {
+    private void monsterDie() {
         List<Monster> deadList = onlineMonsters.values().stream()
                 .filter(monster -> monster.getHealthPoint() < 1)
                 .collect(Collectors.toList());
@@ -114,7 +114,13 @@ public class LifeCycle {
         });
     }
 
-    public void playerDie() {
+    public void lifeEnd() {
+        monsterDie();
+        playerDie();
+        battleService.removeEndBattle();
+    }
+
+    private void playerDie() {
         List<Player> deadList = onlinePlayers.values().stream()
                 .filter(player -> player.getHealthPoint() < 1)
                 .collect(Collectors.toList());

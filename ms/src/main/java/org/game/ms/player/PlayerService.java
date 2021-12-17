@@ -93,6 +93,11 @@ public class PlayerService extends RoleService {
         player.setTargetId(null);
         attributeInit(player);
         skillInit(player);
+        bufferInit(player);
+    }
+
+    private void bufferInit(Player player) {
+        player.getBuffers().clear();
     }
 
     private void attributeInit(Player player) {
