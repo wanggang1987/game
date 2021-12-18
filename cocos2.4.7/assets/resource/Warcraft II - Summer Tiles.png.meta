@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "095bb653-7880-457e-a461-7a5015916cb4",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 626,
+  "height": 659,
+  "platformSettings": {},
+  "subMetas": {
+    "Warcraft II - Summer Tiles": {
+      "ver": "1.0.6",
+      "uuid": "e180c19b-a7b0-4691-b08c-6f0ce2db0438",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "095bb653-7880-457e-a461-7a5015916cb4",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 626,
+      "height": 659,
+      "rawWidth": 626,
+      "rawHeight": 659,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}
