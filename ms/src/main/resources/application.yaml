@@ -23,6 +23,7 @@ spring:
         date-format: yyyy-MM-dd HH:mm:ss
         serialization:
             indent_output: true
+
 mybatis:
     configuration:
         map-underscore-to-camel-case: true

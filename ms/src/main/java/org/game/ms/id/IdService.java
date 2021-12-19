@@ -24,23 +24,23 @@ public class IdService {
     private long idMax = 0;
     private final int range = 1000;
 
-    @PostConstruct
-    private void idInit() {
-        Gid gid = new Gid();
-        gidMapper.insertUseGeneratedKeys(gid);
-        id = gid.getId();
-        idMax = id;
-    }
-
-    @Scheduled(fixedRate = 1000 * 1)
-    private void idGrow() {
-        if (id >= idMax - range) {
-            Gid gid = new Gid();
-            idMax += range * 2;
-            gid.setId(idMax);
-            gidMapper.insert(gid);
-        }
-    }
+//    @PostConstruct
+//    private void idInit() {
+//        Gid gid = new Gid();
+//        gidMapper.insertUseGeneratedKeys(gid);
+//        id = gid.getId();
+//        idMax = id;
+//    }
+//
+//    @Scheduled(fixedRate = 1000 * 1)
+//    private void idGrow() {
+//        if (id >= idMax - range) {
+//            Gid gid = new Gid();
+//            idMax += range * 2;
+//            gid.setId(idMax);
+//            gidMapper.insert(gid);
+//        }
+//    }
 
     public long newId() {
         return id++;
