@@ -5,6 +5,13 @@
  */
 package org.game.ms.client;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Stack;
+import java.util.concurrent.ForkJoinPool;
+import javax.annotation.PostConstruct;
 import org.game.ms.client.msg.MessageType;
 import org.game.ms.client.msg.CreatePlayerMsg;
 import org.game.ms.client.msg.WsMessage;
@@ -17,6 +24,7 @@ import org.game.ms.lifecycle.LifeCycle;
 import org.game.ms.map.WorldMap;
 import org.game.ms.player.Player;
 import org.game.ms.player.PlayerService;
+import org.game.ms.role.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,23 +47,22 @@ public class ClientService {
     @Autowired
     private WebsocketController websocketController;
 
+    private ForkJoinPool threadPool;
+    private Stack<WsMessage> messageStack = new Stack<>();
+    private Set<Long> playerUpdate = new HashSet<>();
+
+    public void addPlayerMoveMsg(Long id, RoleType type) {
+        if (FuncUtils.equals(type, RoleType.PLAYER)) {
+            playerUpdate.add(id);
+        }
+    }
+
     public void processMessage(WsMessage wsMessage) {
         if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.PLAYER_CREATE)) {
             Long playerId = createPlayer(wsMessage.getCreatePlayerMsg());
             websocketController.addPlayer(playerId, wsMessage.getSeesionId());
-            sendCreatePlayerAttribute(playerId);
+            playerUpdate.add(playerId);
         }
-    }
-
-    private void sendCreatePlayerAttribute(Long id) {
-        WsMessage message = new WsMessage();
-        message.setMessageType(MessageType.PLAYER_ATTRIBUTE);
-        message.setPlayerId(id);
-        Player player = lifeCycle.onlinePlayer(id);
-        RoleMsg roleMsg = new RoleMsg();
-        FuncUtils.copyProperties(player, roleMsg);
-        message.setPlayerMsg(roleMsg);
-        websocketController.sendMessage(message);
     }
 
     private Long createPlayer(CreatePlayerMsg msg) {
@@ -63,7 +70,56 @@ public class ClientService {
         lifeCycle.playerOnline(player);
         playerService.playerGotoMap(player, worldMap);
         autoPlay.startPlayerAutoPlay(player);
-        log.debug("{}", JsonUtils.bean2json(player));
+        log.debug("createPlayer{}", JsonUtils.bean2json(player));
         return player.getId();
+    }
+
+    @PostConstruct
+    private void pushMessage() throws InterruptedException {
+        threadPool = new ForkJoinPool(2);
+        threadPool.submit(() -> {
+            //start the thread
+            while (true) {
+                try {
+                    if (playerUpdate.isEmpty()) {
+                        Thread.sleep(1);
+                        continue;
+                    }
+                    List<Long> playerIds = new ArrayList<>();
+                    playerIds.addAll(playerUpdate);
+                    playerUpdate.clear();
+                    playerIds.forEach(id -> {
+                        WsMessage message = new WsMessage();
+                        message.setMessageType(MessageType.PLAYER_ATTRIBUTE);
+                        message.setPlayerId(id);
+                        Player player = lifeCycle.onlinePlayer(id);
+                        RoleMsg roleMsg = new RoleMsg();
+                        FuncUtils.copyProperties(player, roleMsg);
+                        message.setPlayerMsg(roleMsg);
+                        messageStack.push(message);
+                    });
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        threadPool.submit(() -> {
+            //start the thread
+            while (true) {
+                try {
+                    if (messageStack.isEmpty()) {
+                        Thread.sleep(1);
+                        continue;
+                    }
+                    WsMessage message = messageStack.pop();
+                    websocketController.sendMessage(message);
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

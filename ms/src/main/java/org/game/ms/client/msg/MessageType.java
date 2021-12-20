@@ -13,4 +13,5 @@ public enum MessageType {
     PLAYER_CREATE,
     PLAYER_LOGIN,
     PLAYER_ATTRIBUTE,
+    PLAYER_LOCATION,
 }

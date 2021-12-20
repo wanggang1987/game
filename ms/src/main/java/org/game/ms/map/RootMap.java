@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.client.ClientService;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.monster.Monster;
 import org.game.ms.player.Player;
@@ -28,6 +29,8 @@ public class RootMap {
 
     @Autowired
     private WheelConfig wheelConfig;
+    @Autowired
+    private ClientService clientService;
 
     final protected int gridSize = 20;
     protected final List<Long> inMapPlayerIdList = new ArrayList<>();
@@ -154,5 +157,6 @@ public class RootMap {
                 role.setLocation(location);
             }
         }
+        clientService.addPlayerMoveMsg(role.getId(), role.getRoleType());
     }
 }

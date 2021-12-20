@@ -21,5 +21,4 @@ public class WsMessage {
     private MessageType messageType;
     private CreatePlayerMsg createPlayerMsg;
     private RoleMsg playerMsg;
-
 }

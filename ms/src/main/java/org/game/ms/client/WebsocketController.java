@@ -79,8 +79,8 @@ public class WebsocketController {
         }
         try {
             String msg = JsonUtils.bean2json(message);
-            log.debug("sendMessage {}", msg);
             session.getBasicRemote().sendText(msg);
+            log.debug("sendMessage {}", msg);
         } catch (IOException e) {
             log.error(e.getMessage());
             e.printStackTrace();

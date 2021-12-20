@@ -7,6 +7,7 @@ package org.game.ms.client.msg;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import org.game.ms.map.Location;
 
 /**
  *
@@ -23,4 +24,6 @@ public class RoleMsg {
     private double attackRange;
     private double healthPoint;
     private double healthMax;
+    private Location location;
+
 }
