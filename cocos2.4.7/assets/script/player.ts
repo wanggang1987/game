@@ -17,23 +17,11 @@ export default class Player extends cc.Component {
 
     private playerPersionX = 0;
     private playerPersionY = 0;
-    private isLogin = false;
-    private playerId = 0;
 
     protected onLoad() {
-        if (!this.isLogin) {
-            let message = { name: 'test' };
-            this.clientService.createPlayer(message);
-            console.log("craate user");
-            this.isLogin = true;
-        }
     }
 
     protected update(dt: number): void {
-
-    }
-
-    start() {
 
     }
 

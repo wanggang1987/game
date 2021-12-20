@@ -24,54 +24,64 @@ export default class WsConnection extends cc.Component {
     private isCustomClose = false;
     // 错误消息队列
     private errorStack = [];
+    // 消息队列
+    private messageStack = [];
 
-    onLoad() {
-        this.url = "ws://localhost:8080/ws"
+    public getMessageStack() {
+        return this.messageStack;
+    }
+
+    public clearMessageStack() {
+        this.messageStack = []
+    }
+
+    protected onLoad() {
+        this.url = "ws://localhost:8080/ws";
         this.createWs();
     }
 
     private createWs() {
         if ('WebSocket' in window) {
             // 实例化
-            this.ws = new WebSocket(this.url)
+            this.ws = new WebSocket(this.url);
             // 监听事件
-            this.onopen()
-            this.onerror()
-            this.onclose()
-            this.onmessage()
+            this.onopen();
+            this.onerror();
+            this.onclose();
+            this.onmessage();
         } else {
-            console.log('你的浏览器不支持 WebSocket')
+            console.log('你的浏览器不支持 WebSocket');
         }
     }
 
     // 监听成功
     private onopen() {
         this.ws.onopen = () => {
-            console.log(this.ws, 'onopen')
+            console.log(this.ws, 'onopen');
             // 发送成功连接之前所发送失败的消息
             this.errorStack.forEach(message => {
-                this.send(message)
+                this.send(message);
             })
-            this.errorStack = []
-            this.isReconnectionLoading = false
+            this.errorStack = [];
+            this.isReconnectionLoading = false;
         }
     }
 
     // 监听错误
     private onerror() {
         this.ws.onerror = (err) => {
-            console.log(err, 'onerror')
-            this.reconnection()
-            this.isReconnectionLoading = false
+            console.log(err, 'onerror');
+            this.reconnection();
+            this.isReconnectionLoading = false;
         }
     }
 
     // 监听关闭
     private onclose() {
         this.ws.onclose = () => {
-            console.log('onclose')
-            this.reconnection()
-            this.isReconnectionLoading = false
+            console.log('onclose');
+            this.reconnection();
+            this.isReconnectionLoading = false;
         }
     }
 
@@ -79,12 +89,11 @@ export default class WsConnection extends cc.Component {
     private async onmessage() {
         this.ws.onmessage = (event) => {
             try {
-                const data = JSON.parse(event.data)
-
-                console.log(data, 'error')
-                //               this.eventCenter.emit(data.type, data.data)
+                const message = JSON.parse(event.data);
+                this.messageStack.push(message);
+                console.log(message, 'onmessage')
             } catch (error) {
-                console.log(error, 'error')
+                console.log(error, 'onmessage');
             }
         }
     }
@@ -92,12 +101,12 @@ export default class WsConnection extends cc.Component {
     // 重连
     private reconnection() {
         // 防止重复
-        if (this.isReconnectionLoading) return
+        if (this.isReconnectionLoading) return;
 
-        this.isReconnectionLoading = true
-        clearTimeout(this.timeId)
+        this.isReconnectionLoading = true;
+        clearTimeout(this.timeId);
         this.timeId = setTimeout(() => {
-            this.createWs()
+            this.createWs();
         }, 3000)
     }
 
@@ -105,16 +114,9 @@ export default class WsConnection extends cc.Component {
     public send(message) {
         // 连接失败时的处理
         if (this.ws.readyState !== 1) {
-            this.errorStack.push(message)
-            return
+            this.errorStack.push(message);
+            return;
         }
-
-        this.ws.send(message)
+        this.ws.send(message);
     }
-
-    start() {
-
-    }
-
-    // update (dt) {}
 }

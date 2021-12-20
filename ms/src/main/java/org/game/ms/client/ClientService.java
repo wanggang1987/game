@@ -5,7 +5,11 @@
  */
 package org.game.ms.client;
 
+import org.game.ms.client.msg.MessageType;
+import org.game.ms.client.msg.CreatePlayerMsg;
+import org.game.ms.client.msg.WsMessage;
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.client.msg.RoleMsg;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.func.JsonUtils;
 import org.game.ms.lifecycle.AutoPlayer;
@@ -32,11 +36,26 @@ public class ClientService {
     private WorldMap worldMap;
     @Autowired
     private PlayerService playerService;
+    @Autowired
+    private WebsocketController websocketController;
 
     public void processMessage(WsMessage wsMessage) {
         if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.PLAYER_CREATE)) {
-            createPlayer(wsMessage.getCreatePlayerMsg());
+            Long playerId = createPlayer(wsMessage.getCreatePlayerMsg());
+            websocketController.addPlayer(playerId, wsMessage.getSeesionId());
+            sendCreatePlayerAttribute(playerId);
         }
+    }
+
+    private void sendCreatePlayerAttribute(Long id) {
+        WsMessage message = new WsMessage();
+        message.setMessageType(MessageType.PLAYER_ATTRIBUTE);
+        message.setPlayerId(id);
+        Player player = lifeCycle.onlinePlayer(id);
+        RoleMsg roleMsg = new RoleMsg();
+        FuncUtils.copyProperties(player, roleMsg);
+        message.setPlayerMsg(roleMsg);
+        websocketController.sendMessage(message);
     }
 
     private Long createPlayer(CreatePlayerMsg msg) {

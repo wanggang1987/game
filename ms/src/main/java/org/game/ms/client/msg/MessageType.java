@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.game.ms.client;
+package org.game.ms.client.msg;
 
 /**
  *
@@ -12,4 +12,5 @@ package org.game.ms.client;
 public enum MessageType {
     PLAYER_CREATE,
     PLAYER_LOGIN,
+    PLAYER_ATTRIBUTE,
 }

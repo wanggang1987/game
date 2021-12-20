@@ -7,12 +7,24 @@
 
 const { ccclass, property } = cc._decorator;
 
+export interface Role {
+    id: number;
+    name: string;
+    level: number;
+    speed: number;
+    attackRange: number;
+    healthPoint: number;
+    healthMax: number;
+}
+
 @ccclass
 export default class RoleCollection extends cc.Component {
 
+    private player: Role = null;
 
-    start() {
-
+    public updatePlayer(player: Role){
+        this.player = player;
+        console.log(player, 'updatePlayer');
     }
-
+    
 }

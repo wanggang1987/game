@@ -8,15 +8,17 @@ import ClientService from "../func/ClientService";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class NewClass extends cc.Component {
+export default class MainPage extends cc.Component {
 
     @property({
         type: ClientService
     })
     private clientService: ClientService = null;
 
-    start () {
-
+    private createUser(){
+        let message = { name: 'test' };
+        this.clientService.createPlayer(message);
+        console.log("craate user");
     }
 
 }

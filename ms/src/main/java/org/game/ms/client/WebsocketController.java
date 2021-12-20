@@ -4,6 +4,7 @@
  */
 package org.game.ms.client;
 
+import org.game.ms.client.msg.WsMessage;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,10 +29,18 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class WebsocketController {
 
-    private final Map<String, Session> clients = new HashMap<>();
-    private final Map<Long, String> players = new HashMap<>();
+    private final static Map<String, Session> clients = new HashMap<>();
+    private final static Map<Long, String> players = new HashMap<>();
+    private static ClientService clientService;
+
     @Autowired
-    private ClientService clientService;
+    public void setClientService(ClientService clientService) {
+        WebsocketController.clientService = clientService;
+    }
+
+    public void addPlayer(Long playerId, String seessionId) {
+        players.put(playerId, seessionId);
+    }
 
     @OnOpen
     public void onOpen(Session session) {
@@ -48,12 +57,10 @@ public class WebsocketController {
 
     @OnMessage
     public void onMessage(String message, Session session) {
-        WsMessage wsMessage = JsonUtils.json2bean(message, WsMessage.class);
-        if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.PLAYER_LOGIN)) {
-            players.put(wsMessage.getPlayerId(), session.getId());
-        }
-        clientService.processMessage(wsMessage);
         log.debug("get client msg. ID:{} msg:{}", session.getId(), message);
+        WsMessage wsMessage = JsonUtils.json2bean(message, WsMessage.class);
+        wsMessage.setSeesionId(session.getId());
+        clientService.processMessage(wsMessage);
     }
 
     @OnError
@@ -67,8 +74,13 @@ public class WebsocketController {
             return;
         }
         Session session = clients.get(sessionId);
+        if (FuncUtils.isEmpty(session)) {
+            return;
+        }
         try {
-            session.getBasicRemote().sendText(JsonUtils.bean2json(message));
+            String msg = JsonUtils.bean2json(message);
+            log.debug("sendMessage {}", msg);
+            session.getBasicRemote().sendText(msg);
         } catch (IOException e) {
             log.error(e.getMessage());
             e.printStackTrace();
