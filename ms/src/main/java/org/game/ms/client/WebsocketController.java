@@ -4,50 +4,75 @@
  */
 package org.game.ms.client;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
+import lombok.extern.slf4j.Slf4j;
+import org.game.ms.func.FuncUtils;
+import org.game.ms.func.JsonUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
  *
  * @author gangwang
  */
+@Slf4j
 @ServerEndpoint(value = "/ws")
 @Controller
 public class WebsocketController {
 
+    private final Map<String, Session> clients = new HashMap<>();
+    private final Map<Long, String> players = new HashMap<>();
+    @Autowired
+    private ClientService clientService;
+
     @OnOpen
     public void onOpen(Session session) {
+        clients.put(session.getId(), session);
         // 先鉴权，如果鉴权通过则存储WebsocketSession，否则关闭连接，这里省略了鉴权的代码 
-        System.out.println("session open. ID:" + session.getId());
+        log.debug("session open. ID:{}", session.getId());
     }
 
-    /**
-     * 连接关闭调用的方法
-     */
     @OnClose
     public void onClose(Session session) {
-        System.out.println("session close. ID:" + session.getId());
+        clients.remove(session.getId());
+        log.debug("session close. ID:{}", session.getId());
     }
 
-    /**
-     * 收到客户端消息后调用的方法
-     */
     @OnMessage
     public void onMessage(String message, Session session) {
-        System.out.println("get client msg. ID:" + session.getId() + ". msg:" + message);
+        WsMessage wsMessage = JsonUtils.json2bean(message, WsMessage.class);
+        if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.PLAYER_LOGIN)) {
+            players.put(wsMessage.getPlayerId(), session.getId());
+        }
+        clientService.processMessage(wsMessage);
+        log.debug("get client msg. ID:{} msg:{}", session.getId(), message);
     }
 
-    /**
-     * 发生错误时调用
-     */
     @OnError
     public void onError(Session session, Throwable error) {
         error.printStackTrace();
+    }
+
+    public void sendMessage(WsMessage message) {
+        String sessionId = players.get(message.getPlayerId());
+        if (FuncUtils.isEmpty(sessionId)) {
+            return;
+        }
+        Session session = clients.get(sessionId);
+        try {
+            session.getBasicRemote().sendText(JsonUtils.bean2json(message));
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+        }
     }
 
 }

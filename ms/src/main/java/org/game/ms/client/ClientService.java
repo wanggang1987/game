@@ -6,28 +6,23 @@
 package org.game.ms.client;
 
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.func.FuncUtils;
 import org.game.ms.func.JsonUtils;
 import org.game.ms.lifecycle.AutoPlayer;
 import org.game.ms.lifecycle.LifeCycle;
 import org.game.ms.map.WorldMap;
-import org.game.ms.monster.Monster;
 import org.game.ms.player.Player;
 import org.game.ms.player.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author wanggang
  */
 @Slf4j
-@RestController
-@RequestMapping("client")
-public class GameController {
+@Service
+public class ClientService {
 
     @Autowired
     private LifeCycle lifeCycle;
@@ -38,23 +33,18 @@ public class GameController {
     @Autowired
     private PlayerService playerService;
 
-    @PostMapping("createPlayer")
-    private Long createPlayer() {
-        Player player = playerService.createPlayer("测试");
+    public void processMessage(WsMessage wsMessage) {
+        if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.PLAYER_CREATE)) {
+            createPlayer(wsMessage.getCreatePlayerMsg());
+        }
+    }
+
+    private Long createPlayer(CreatePlayerMsg msg) {
+        Player player = playerService.createPlayer(msg.getName());
         lifeCycle.playerOnline(player);
         playerService.playerGotoMap(player, worldMap);
         autoPlay.startPlayerAutoPlay(player);
         log.debug("{}", JsonUtils.bean2json(player));
         return player.getId();
-    }
-
-    @GetMapping("player/{id}")
-    private Player getPlayer(@PathVariable("id") long id) {
-        return lifeCycle.onlinePlayer(id);
-    }
-
-    @GetMapping("monster/{id}")
-    private Monster getMonster(@PathVariable("id") long id) {
-        return lifeCycle.onlineMonster(id);
     }
 }

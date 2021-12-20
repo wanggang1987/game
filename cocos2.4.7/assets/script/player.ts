@@ -4,27 +4,33 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
-import wsConnection from "./func/wsConnection";
+import ClientService from "./func/ClientService";
 const { ccclass, property } = cc._decorator;
 
 @ccclass
-export default class player extends cc.Component {
-    
+export default class Player extends cc.Component {
+
     @property({
-        type: wsConnection
+        type: ClientService
     })
-    private websocket: wsConnection = null;
+    private clientService: ClientService = null;
 
     private playerPersionX = 0;
     private playerPersionY = 0;
     private isLogin = false;
-    
-    protected update(dt: number): void {
-        if (!this.isLogin){
-            this.websocket.send("create");
+    private playerId = 0;
+
+    protected onLoad() {
+        if (!this.isLogin) {
+            let message = { name: 'test' };
+            this.clientService.createPlayer(message);
             console.log("craate user");
             this.isLogin = true;
         }
+    }
+
+    protected update(dt: number): void {
+
     }
 
     start() {

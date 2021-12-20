@@ -7,7 +7,7 @@
 const { ccclass, property } = cc._decorator;
 
 @ccclass
-export default class wsConnection extends cc.Component {
+export default class WsConnection extends cc.Component {
 
     // 要连接的URL
     private url;
@@ -70,10 +70,6 @@ export default class wsConnection extends cc.Component {
     private onclose() {
         this.ws.onclose = () => {
             console.log('onclose')
-
-            // 用户手动关闭的不重连
-            if (this.isCustomClose) return
-
             this.reconnection()
             this.isReconnectionLoading = false
         }
