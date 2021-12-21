@@ -7,6 +7,12 @@
 
 const { ccclass, property } = cc._decorator;
 
+export interface Location {
+    x: number;
+    y: number;
+    grid: string;
+}
+
 export interface Role {
     id: number;
     name: string;
@@ -15,16 +21,22 @@ export interface Role {
     attackRange: number;
     healthPoint: number;
     healthMax: number;
+    location: Location;
 }
 
 @ccclass
 export default class RoleCollection extends cc.Component {
 
-    private player: Role = null;
+    private default = 0;
+    public player: Role = null;
 
-    public updatePlayer(player: Role){
+    public getPlayer() {
+        return this.player;
+    }
+
+    public updatePlayer(player: Role) {
         this.player = player;
         console.log(player, 'updatePlayer');
     }
-    
+
 }

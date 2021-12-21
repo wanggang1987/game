@@ -10,6 +10,7 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class MainPage extends cc.Component {
 
+    private default = 0;
     @property({
         type: ClientService
     })

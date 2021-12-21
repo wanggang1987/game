@@ -9,19 +9,20 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class WsConnection extends cc.Component {
 
+    private default = 0;
     // 要连接的URL
-    private url;
+    private url: string;
     // 一个协议字符串或一个协议字符串数组。
     // 这些字符串用来指定子协议，这样一个服务器就可以实现多个WebSocket子协议
-    private protocols;
+    private protocols: string;
     // WebSocket 实例
-    private ws;
+    private ws: WebSocket;
     // 是否在重连中
-    private isReconnectionLoading = false;
+    private isReconnectionLoading: boolean = false;
     // 延时重连的 id
-    private timeId = null;
+    private timeId: number = null;
     // 是否是用户手动关闭连接
-    private isCustomClose = false;
+    private isCustomClose: boolean = false;
     // 错误消息队列
     private errorStack = [];
     // 消息队列

@@ -24,9 +24,10 @@ export interface WsMessage {
     playerMsg: Role;
 }
 
-
 @ccclass
 export default class ClientService extends cc.Component {
+
+    private default = 0;
     @property({
         type: WsConnection
     })
@@ -41,7 +42,7 @@ export default class ClientService extends cc.Component {
         this.websocket.send(JSON.stringify(message));
     }
 
-    protected update(dt) {
+    protected update(dt: number) {
         this.parseMessage();
     }
 
