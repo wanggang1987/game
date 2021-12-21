@@ -502,7 +502,7 @@
       "__id__": 3
     },
     "_enabled": true,
-    "roleCollection": {
+    "RoleCollection": {
       "__id__": 11
     },
     "lable": {
@@ -795,7 +795,7 @@
     "websocket": {
       "__id__": 15
     },
-    "roleCollection": {
+    "RoleCollection": {
       "__id__": 11
     },
     "_id": "36Q9GDyN5Lc69e91CvYtnO"
