@@ -4,6 +4,8 @@
  */
 package org.game.ms.client;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import org.game.ms.client.msg.WsMessage;
 import java.io.IOException;
 import java.util.HashMap;
@@ -31,9 +33,17 @@ public class WebsocketController {
 
     private final static Map<String, Session> clients = new HashMap<>();
     private final static Stack<WsMessage> receiveStack = new Stack<>();
+    private final static BiMap<Long, String> playerSession = HashBiMap.create();
 
     public Stack<WsMessage> getReceiveStack() {
         return receiveStack;
+    }
+
+    public void addPlayerSession(Long playerId, String sessionId) {
+        if (playerSession.containsKey(playerId)) {
+            return;
+        }
+        playerSession.put(playerId, sessionId);
     }
 
     @OnOpen
@@ -46,6 +56,7 @@ public class WebsocketController {
     @OnClose
     public void onClose(Session session) {
         clients.remove(session.getId());
+        playerSession.inverse().remove(session.getId());
         log.debug("session close. ID:{}", session.getId());
     }
 
@@ -63,10 +74,11 @@ public class WebsocketController {
     }
 
     public void sendMessage(WsMessage message) {
-        if (FuncUtils.isEmpty(message.getSeesionId())) {
+        String sessionId = playerSession.get(message.getPlayerId());
+        if (FuncUtils.isEmpty(sessionId)) {
             return;
         }
-        Session session = clients.get(message.getSeesionId());
+        Session session = clients.get(sessionId);
         if (FuncUtils.isEmpty(session)) {
             return;
         }

@@ -6,10 +6,8 @@
 package org.game.ms.client;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.ForkJoinPool;
@@ -47,12 +45,11 @@ public class ClientService {
     @Autowired
     private PlayerService playerService;
     @Autowired
-    private WebsocketController websocketController;
+    private WebsocketController websocket;
 
     private final Stack<WsMessage> sendStack = new Stack<>();
     private final Set<Long> playerUpdate = new HashSet<>();
-    private final Map<Long, String> playerSession = new HashMap<>();
-
+    
     public void addPlayerMoveMsg(Long id, RoleType type) {
         if (FuncUtils.equals(type, RoleType.PLAYER)) {
             playerUpdate.add(id);
@@ -62,10 +59,10 @@ public class ClientService {
     private void processMessage(WsMessage wsMessage) {
         if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.PLAYER_CREATE)) {
             Long playerId = createPlayer(wsMessage.getCreatePlayerMsg());
-            playerSession.put(playerId, wsMessage.getSeesionId());
+            websocket.addPlayerSession(playerId, wsMessage.getSeesionId());
             playerUpdate.add(playerId);
         } else if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.PLAYER_LOGIN)) {
-            playerSession.put(wsMessage.getPlayerId(), wsMessage.getSeesionId());
+            websocket.addPlayerSession(wsMessage.getPlayerId(), wsMessage.getSeesionId());
         }
 
     }
@@ -117,9 +114,7 @@ public class ClientService {
                         continue;
                     }
                     WsMessage message = sendStack.pop();
-                    String sessionId = playerSession.get(message.getPlayerId());
-                    message.setSeesionId(sessionId);
-                    websocketController.sendMessage(message);
+                    websocket.sendMessage(message);
                 } catch (Exception e) {
                     log.error(e.getMessage());
                     e.printStackTrace();
@@ -130,11 +125,11 @@ public class ClientService {
         threadPool.submit(() -> {
             while (true) {
                 try {
-                    if (websocketController.getReceiveStack().isEmpty()) {
+                    if (websocket.getReceiveStack().isEmpty()) {
                         Thread.sleep(1);
                         continue;
                     }
-                    WsMessage message = websocketController.getReceiveStack().pop();
+                    WsMessage message = websocket.getReceiveStack().pop();
                     processMessage(message);
                 } catch (Exception e) {
                     log.error(e.getMessage());
