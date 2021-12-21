@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.client.ClientService;
 import org.game.ms.fight.FightService;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.func.SpringContextUtils;
@@ -32,6 +33,7 @@ public class WheelBucket {
     private final ResourceService skillService;
     private final FightService fightService;
     private final BufferService bufferService;
+    private final ClientService clientService;
 
     public WheelBucket() {
         this.wheelConfig = SpringContextUtils.getBean(WheelConfig.class);
@@ -41,6 +43,7 @@ public class WheelBucket {
         this.skillService = SpringContextUtils.getBean(ResourceService.class);
         this.fightService = SpringContextUtils.getBean(FightService.class);
         this.bufferService = SpringContextUtils.getBean(BufferService.class);
+        this.clientService = SpringContextUtils.getBean(ClientService.class);
     }
 
     private final List<TickTask> realTimeTasks = new ArrayList<>();
@@ -76,5 +79,6 @@ public class WheelBucket {
         autoPlayer.autoPlayForTick();
         autoMonster.autoMonsterForTick();
         lifeCycle.lifeEnd();
+        clientService.readyBuildMessage();
     }
 }

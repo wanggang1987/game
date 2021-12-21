@@ -6,6 +6,7 @@
 package org.game.ms.client;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,8 +49,9 @@ public class ClientService {
     private WebsocketController websocket;
 
     private final Stack<WsMessage> sendStack = new Stack<>();
-    private final Set<Long> playerUpdate = new HashSet<>();
-    
+    private boolean buildMessage = false;
+    private Set<Long> playerUpdate = new HashSet<>();
+
     public void addPlayerMoveMsg(Long id, RoleType type) {
         if (FuncUtils.equals(type, RoleType.PLAYER)) {
             playerUpdate.add(id);
@@ -76,29 +78,63 @@ public class ClientService {
         return player.getId();
     }
 
+    public void readyBuildMessage() {
+        buildMessage = true;
+    }
+
+    private void buildPlayerUpdate() {
+        Collection<Long> temp = playerUpdate;
+        playerUpdate = new HashSet<>();
+        temp.forEach(id -> {
+            WsMessage message = new WsMessage();
+            message.setMessageType(MessageType.PLAYER_ATTRIBUTE);
+            message.setPlayerId(id);
+            Player player = lifeCycle.onlinePlayer(id);
+            RoleMsg roleMsg = new RoleMsg();
+            FuncUtils.copyProperties(player, roleMsg);
+            message.setPlayerMsg(roleMsg);
+            sendStack.push(message);
+        });
+    }
+
+    private void buildMessages() throws InterruptedException {
+        if (!buildMessage) {
+            return;
+        }
+        buildMessage = false;
+
+        if (playerUpdate.isEmpty()) {
+            Thread.sleep(1);
+            return;
+        }
+        buildPlayerUpdate();
+    }
+
+    private void sendMessages() throws InterruptedException {
+        if (sendStack.isEmpty()) {
+            Thread.sleep(1);
+            return;
+        }
+        WsMessage message = sendStack.pop();
+        websocket.sendMessage(message);
+    }
+
+    private void processMessages() throws InterruptedException {
+        if (websocket.getReceiveStack().isEmpty()) {
+            Thread.sleep(1);
+            return;
+        }
+        WsMessage message = websocket.getReceiveStack().pop();
+        processMessage(message);
+    }
+
     @PostConstruct
     private void pushMessage() throws InterruptedException {
         ForkJoinPool threadPool = new ForkJoinPool(3);
         threadPool.submit(() -> {
             while (true) {
                 try {
-                    if (playerUpdate.isEmpty()) {
-                        Thread.sleep(1);
-                        continue;
-                    }
-                    List<Long> playerIds = new ArrayList<>();
-                    playerIds.addAll(playerUpdate);
-                    playerUpdate.clear();
-                    playerIds.forEach(id -> {
-                        WsMessage message = new WsMessage();
-                        message.setMessageType(MessageType.PLAYER_ATTRIBUTE);
-                        message.setPlayerId(id);
-                        Player player = lifeCycle.onlinePlayer(id);
-                        RoleMsg roleMsg = new RoleMsg();
-                        FuncUtils.copyProperties(player, roleMsg);
-                        message.setPlayerMsg(roleMsg);
-                        sendStack.push(message);
-                    });
+                    buildMessages();
                 } catch (Exception e) {
                     log.error(e.getMessage());
                     e.printStackTrace();
@@ -109,12 +145,7 @@ public class ClientService {
         threadPool.submit(() -> {
             while (true) {
                 try {
-                    if (sendStack.isEmpty()) {
-                        Thread.sleep(1);
-                        continue;
-                    }
-                    WsMessage message = sendStack.pop();
-                    websocket.sendMessage(message);
+                    sendMessages();
                 } catch (Exception e) {
                     log.error(e.getMessage());
                     e.printStackTrace();
@@ -125,12 +156,7 @@ public class ClientService {
         threadPool.submit(() -> {
             while (true) {
                 try {
-                    if (websocket.getReceiveStack().isEmpty()) {
-                        Thread.sleep(1);
-                        continue;
-                    }
-                    WsMessage message = websocket.getReceiveStack().pop();
-                    processMessage(message);
+                    processMessages();
                 } catch (Exception e) {
                     log.error(e.getMessage());
                     e.printStackTrace();
