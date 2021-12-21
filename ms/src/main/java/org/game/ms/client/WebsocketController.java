@@ -20,6 +20,7 @@ import javax.websocket.server.ServerEndpoint;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.func.JsonUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
@@ -35,6 +36,12 @@ public class WebsocketController {
     private final static Stack<WsMessage> receiveStack = new Stack<>();
     private final static BiMap<Long, String> playerSession = HashBiMap.create();
 
+//    private static ClientService clientService;
+//    @Autowired
+//    public void setClientService(ClientService clientService) {
+//        WebsocketController.clientService = clientService;
+//    }
+
     public Stack<WsMessage> getReceiveStack() {
         return receiveStack;
     }
@@ -44,6 +51,10 @@ public class WebsocketController {
             return;
         }
         playerSession.put(playerId, sessionId);
+    }
+
+    public BiMap<Long, String> playerSession() {
+        return playerSession;
     }
 
     @OnOpen
@@ -74,11 +85,7 @@ public class WebsocketController {
     }
 
     public void sendMessage(WsMessage message) {
-        String sessionId = playerSession.get(message.getPlayerId());
-        if (FuncUtils.isEmpty(sessionId)) {
-            return;
-        }
-        Session session = clients.get(sessionId);
+        Session session = clients.get(message.getSeesionId());
         if (FuncUtils.isEmpty(session)) {
             return;
         }

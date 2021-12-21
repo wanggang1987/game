@@ -5,6 +5,7 @@
  */
 package org.game.ms.client;
 
+import com.google.common.collect.BiMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -82,32 +83,36 @@ public class ClientService {
         buildMessage = true;
     }
 
-    private void buildPlayerUpdate() {
+    private void buildPlayerUpdate(BiMap<Long, String> playerSession) {
         Collection<Long> temp = playerUpdate;
         playerUpdate = new HashSet<>();
         temp.forEach(id -> {
-            WsMessage message = new WsMessage();
-            message.setMessageType(MessageType.PLAYER_ATTRIBUTE);
-            message.setPlayerId(id);
-            Player player = lifeCycle.onlinePlayer(id);
-            RoleMsg roleMsg = new RoleMsg();
-            FuncUtils.copyProperties(player, roleMsg);
-            message.setPlayerMsg(roleMsg);
-            sendStack.push(message);
+            if (playerSession.containsKey(id)) {
+                WsMessage message = new WsMessage();
+                message.setMessageType(MessageType.PLAYER_ATTRIBUTE);
+                message.setPlayerId(id);
+                message.setSeesionId(playerSession.get(id));
+                Player player = lifeCycle.onlinePlayer(id);
+                RoleMsg roleMsg = new RoleMsg();
+                FuncUtils.copyProperties(player, roleMsg);
+                message.setPlayerMsg(roleMsg);
+                sendStack.push(message);
+            }
         });
     }
 
     private void buildMessages() throws InterruptedException {
+        Thread.sleep(20);
         if (!buildMessage) {
             return;
         }
         buildMessage = false;
-
         if (playerUpdate.isEmpty()) {
             Thread.sleep(1);
             return;
         }
-        buildPlayerUpdate();
+        BiMap<Long, String> playerSession = websocket.playerSession();
+        buildPlayerUpdate(playerSession);
     }
 
     private void sendMessages() throws InterruptedException {
@@ -130,7 +135,7 @@ public class ClientService {
 
     @PostConstruct
     private void pushMessage() throws InterruptedException {
-        ForkJoinPool threadPool = new ForkJoinPool(3);
+        ForkJoinPool threadPool = new ForkJoinPool(6);
         threadPool.submit(() -> {
             while (true) {
                 try {
