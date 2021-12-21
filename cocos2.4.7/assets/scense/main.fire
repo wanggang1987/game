@@ -1247,7 +1247,7 @@
     },
     "component": "",
     "_componentId": "a0b88NepnJAkr/molmobvVn",
-    "handler": "createUser",
+    "handler": "clickStartButton",
     "customEventData": ""
   },
   {

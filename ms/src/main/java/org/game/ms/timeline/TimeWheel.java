@@ -25,7 +25,6 @@ public class TimeWheel {
     private TaskService taskService;
 
     private WheelBucket[] wheels;
-    private ForkJoinPool threadPool;
 
     private void addTaskToMs(TickTask task) {
         Long n = task.getTick() % wheelConfig.getTicksPerWheel();
@@ -43,7 +42,7 @@ public class TimeWheel {
         for (int i = 0; i < wheelConfig.getTicksPerWheel(); i++) {
             wheels[i] = new WheelBucket();
         }
-        threadPool = new ForkJoinPool(1);
+        ForkJoinPool threadPool = new ForkJoinPool(1);
 
         threadPool.submit(() -> {
             //start the thread

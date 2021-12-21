@@ -8,6 +8,7 @@ import org.game.ms.client.msg.WsMessage;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -17,7 +18,6 @@ import javax.websocket.server.ServerEndpoint;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.func.JsonUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
@@ -30,16 +30,16 @@ import org.springframework.stereotype.Controller;
 public class WebsocketController {
 
     private final static Map<String, Session> clients = new HashMap<>();
-    private final static Map<Long, String> players = new HashMap<>();
-    private static ClientService clientService;
+    private final static Stack<WsMessage> receiveStack = new Stack<>();
+//    private static ClientService clientService;
+//
+//    @Autowired
+//    public void setClientService(ClientService clientService) {
+//        WebsocketController.clientService = clientService;
+//    }
 
-    @Autowired
-    public void setClientService(ClientService clientService) {
-        WebsocketController.clientService = clientService;
-    }
-
-    public void addPlayer(Long playerId, String seessionId) {
-        players.put(playerId, seessionId);
+    public Stack<WsMessage> getReceiveStack() {
+        return receiveStack;
     }
 
     @OnOpen
@@ -60,7 +60,7 @@ public class WebsocketController {
         log.debug("get client msg. ID:{} msg:{}", session.getId(), message);
         WsMessage wsMessage = JsonUtils.json2bean(message, WsMessage.class);
         wsMessage.setSeesionId(session.getId());
-        clientService.processMessage(wsMessage);
+        receiveStack.add(wsMessage);
     }
 
     @OnError
@@ -69,11 +69,10 @@ public class WebsocketController {
     }
 
     public void sendMessage(WsMessage message) {
-        String sessionId = players.get(message.getPlayerId());
-        if (FuncUtils.isEmpty(sessionId)) {
+        if (FuncUtils.isEmpty(message.getSeesionId())) {
             return;
         }
-        Session session = clients.get(sessionId);
+        Session session = clients.get(message.getSeesionId());
         if (FuncUtils.isEmpty(session)) {
             return;
         }

@@ -6,8 +6,10 @@
 package org.game.ms.client;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.ForkJoinPool;
@@ -47,9 +49,9 @@ public class ClientService {
     @Autowired
     private WebsocketController websocketController;
 
-    private ForkJoinPool threadPool;
-    private Stack<WsMessage> messageStack = new Stack<>();
-    private Set<Long> playerUpdate = new HashSet<>();
+    private final Stack<WsMessage> sendStack = new Stack<>();
+    private final Set<Long> playerUpdate = new HashSet<>();
+    private final Map<Long, String> playerSession = new HashMap<>();
 
     public void addPlayerMoveMsg(Long id, RoleType type) {
         if (FuncUtils.equals(type, RoleType.PLAYER)) {
@@ -57,14 +59,15 @@ public class ClientService {
         }
     }
 
-    public void processMessage(WsMessage wsMessage) {
+    private void processMessage(WsMessage wsMessage) {
         if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.PLAYER_CREATE)) {
             Long playerId = createPlayer(wsMessage.getCreatePlayerMsg());
-            websocketController.addPlayer(playerId, wsMessage.getSeesionId());
+            playerSession.put(playerId, wsMessage.getSeesionId());
             playerUpdate.add(playerId);
         } else if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.PLAYER_LOGIN)) {
-            websocketController.addPlayer(wsMessage.getPlayerId(), wsMessage.getSeesionId());
+            playerSession.put(wsMessage.getPlayerId(), wsMessage.getSeesionId());
         }
+
     }
 
     private Long createPlayer(CreatePlayerMsg msg) {
@@ -78,9 +81,8 @@ public class ClientService {
 
     @PostConstruct
     private void pushMessage() throws InterruptedException {
-        threadPool = new ForkJoinPool(2);
+        ForkJoinPool threadPool = new ForkJoinPool(3);
         threadPool.submit(() -> {
-            //start the thread
             while (true) {
                 try {
                     if (playerUpdate.isEmpty()) {
@@ -98,7 +100,7 @@ public class ClientService {
                         RoleMsg roleMsg = new RoleMsg();
                         FuncUtils.copyProperties(player, roleMsg);
                         message.setPlayerMsg(roleMsg);
-                        messageStack.push(message);
+                        sendStack.push(message);
                     });
                 } catch (Exception e) {
                     log.error(e.getMessage());
@@ -108,15 +110,32 @@ public class ClientService {
         });
 
         threadPool.submit(() -> {
-            //start the thread
             while (true) {
                 try {
-                    if (messageStack.isEmpty()) {
+                    if (sendStack.isEmpty()) {
                         Thread.sleep(1);
                         continue;
                     }
-                    WsMessage message = messageStack.pop();
+                    WsMessage message = sendStack.pop();
+                    String sessionId = playerSession.get(message.getPlayerId());
+                    message.setSeesionId(sessionId);
                     websocketController.sendMessage(message);
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        threadPool.submit(() -> {
+            while (true) {
+                try {
+                    if (websocketController.getReceiveStack().isEmpty()) {
+                        Thread.sleep(1);
+                        continue;
+                    }
+                    WsMessage message = websocketController.getReceiveStack().pop();
+                    processMessage(message);
                 } catch (Exception e) {
                     log.error(e.getMessage());
                     e.printStackTrace();
