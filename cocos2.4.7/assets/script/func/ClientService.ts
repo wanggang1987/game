@@ -11,6 +11,7 @@ const { ccclass, property } = cc._decorator;
 export enum MessageType {
     PLAYER_CREATE = 'PLAYER_CREATE',
     PLAYER_ATTRIBUTE = 'PLAYER_ATTRIBUTE',
+    PLAYER_LOGIN = 'PLAYER_LOGIN',
 }
 
 export interface CreatePlayerMsg {
@@ -55,6 +56,17 @@ export default class ClientService extends cc.Component {
             }
         });
         this.websocket.clearMessageStack();
+    }
+
+    private heartBeat() {
+        if (this.websocket.isConnect() && this.roleCollection.player) {
+            let message = { messageType: MessageType.PLAYER_LOGIN, playerId: this.roleCollection.player.id };
+            this.websocket.send(JSON.stringify(message));
+        }
+    }
+
+    protected start() {
+        this.schedule(this.heartBeat, 1);
     }
 
 }

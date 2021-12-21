@@ -16,10 +16,11 @@ export default class MainPage extends cc.Component {
     })
     private clientService: ClientService = null;
 
-    private createUser(){
+    private clickStartButton(){
         let message = { name: 'test' };
         this.clientService.createPlayer(message);
         console.log("craate user");
+        this.node.active = false;
     }
 
 }

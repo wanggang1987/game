@@ -62,6 +62,8 @@ public class ClientService {
             Long playerId = createPlayer(wsMessage.getCreatePlayerMsg());
             websocketController.addPlayer(playerId, wsMessage.getSeesionId());
             playerUpdate.add(playerId);
+        } else if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.PLAYER_LOGIN)) {
+            websocketController.addPlayer(wsMessage.getPlayerId(), wsMessage.getSeesionId());
         }
     }
 

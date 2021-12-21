@@ -20,7 +20,7 @@ public class IdService {
     @Autowired
     private GidMapper gidMapper;
 
-    private long id = 0;
+    private long id = 1;
     private long idMax = 0;
     private final int range = 1000;
 
