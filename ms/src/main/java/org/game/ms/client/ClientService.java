@@ -6,12 +6,14 @@
 package org.game.ms.client;
 
 import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.ForkJoinPool;
 import javax.annotation.PostConstruct;
+import javax.websocket.Session;
 import org.game.ms.client.msg.MessageType;
 import org.game.ms.client.msg.CreatePlayerMsg;
 import org.game.ms.client.msg.WsMessage;
@@ -25,6 +27,7 @@ import org.game.ms.lifecycle.LifeCycle;
 import org.game.ms.map.WorldMap;
 import org.game.ms.player.Player;
 import org.game.ms.player.PlayerService;
+import org.game.ms.role.Role;
 import org.game.ms.role.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,46 +51,58 @@ public class ClientService {
     @Autowired
     private WebsocketController websocket;
 
-    private final Stack<WsMessage> sendStack = new Stack<>();
     private boolean buildMessage = false;
+    private final Stack<WsMessage> sendStack = new Stack<>();
+    private final BiMap<Long, String> playerSession = HashBiMap.create();
     private Set<Long> playerUpdate = new HashSet<>();
-    private Set<Long> playerMove = new HashSet<>();
-    private Set<Long> monsterMove = new HashSet<>();
+    private Set<Role> playerMove = new HashSet<>();
+    private Set<Role> monsterMove = new HashSet<>();
 
-    public void addRoleMoveMsg(Long id, RoleType type) {
-        if (FuncUtils.equals(type, RoleType.PLAYER)) {
-            playerMove.add(id);
-        } else if (FuncUtils.equals(type, RoleType.MONSTER)) {
-            monsterMove.add(id);
+    private void addPlayerSession(Long playerId, String sessionId) {
+        if (playerSession.containsKey(playerId)) {
+            return;
+        }
+        playerSession.put(playerId, sessionId);
+    }
+
+    public void removeSession(Session session) {
+        playerSession.inverse().remove(session.getId());
+    }
+
+    public void addRoleMoveMsg(Role role) {
+        if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
+            playerMove.add(role);
+        } else if (FuncUtils.equals(role.getRoleType(), RoleType.MONSTER)) {
+            monsterMove.add(role);
         }
     }
 
     private void processMessage(WsMessage wsMessage) {
         if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.PLAYER_CREATE)) {
-            Long playerId = createPlayer(wsMessage.getCreatePlayerMsg());
-            websocket.addPlayerSession(playerId, wsMessage.getSeesionId());
-            playerUpdate.add(playerId);
-            playerMove.add(playerId);
+            Player player = createPlayer(wsMessage.getCreatePlayerMsg());
+            addPlayerSession(player.getId(), wsMessage.getSeesionId());
+            playerUpdate.add(player.getId());
+            playerMove.add(player);
         } else if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.LOGIN)) {
-            websocket.addPlayerSession(wsMessage.getPlayerId(), wsMessage.getSeesionId());
+            addPlayerSession(playerSession.inverse().get(wsMessage.getSeesionId()), wsMessage.getSeesionId());
         }
 
     }
 
-    private Long createPlayer(CreatePlayerMsg msg) {
+    private Player createPlayer(CreatePlayerMsg msg) {
         Player player = playerService.createPlayer(msg.getName());
         lifeCycle.playerOnline(player);
         playerService.playerGotoMap(player, worldMap);
         autoPlay.startPlayerAutoPlay(player);
         log.debug("createPlayer{}", JsonUtils.bean2json(player));
-        return player.getId();
+        return player;
     }
 
     public void readyBuildMessage() {
         buildMessage = true;
     }
 
-    private void buildPlayerUpdate(BiMap<Long, String> playerSession) {
+    private void buildPlayerUpdate() {
         Collection<Long> temp = playerUpdate;
         playerUpdate = new HashSet<>();
         temp.forEach(id -> {
@@ -104,18 +119,16 @@ public class ClientService {
         });
     }
 
-    private void buildRoleMove(BiMap<Long, String> playerSession) {
-        Collection<Long> temp = playerMove;
+    private void buildRoleMove() {
+        Collection<Role> tempPlayer = playerMove;
         playerMove = new HashSet<>();
-        temp.forEach(id -> {
-            if (playerSession.containsKey(id)) {
+        tempPlayer.forEach(player -> {
+            if (playerSession.containsKey(player.getId())) {
                 WsMessage message = new WsMessage();
                 message.setMessageType(MessageType.HERO_LOCATION);
-                message.setSeesionId(playerSession.get(id));
-                Player player = lifeCycle.onlinePlayer(id);
+                message.setSeesionId(playerSession.get(player.getId()));
                 LocationMsg locaionMsg = new LocationMsg();
                 FuncUtils.copyProperties(player.getLocation(), locaionMsg);
-                locaionMsg.setId(id);
                 message.setLocationMsg(locaionMsg);
                 sendStack.push(message);
             }
@@ -134,9 +147,8 @@ public class ClientService {
             Thread.sleep(1);
             return;
         }
-        BiMap<Long, String> playerSession = websocket.playerSession();
-        buildPlayerUpdate(playerSession);
-        buildRoleMove(playerSession);
+        buildPlayerUpdate();
+        buildRoleMove();
     }
 
     private void sendMessages() throws InterruptedException {

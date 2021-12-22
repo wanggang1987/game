@@ -17,7 +17,6 @@ import lombok.Data;
 public class WsMessage {
 
     private String seesionId;
-    private Long playerId;
     private MessageType messageType;
     private CreatePlayerMsg createPlayerMsg;
     private AttributeMsg attributeMsg;

@@ -153,6 +153,6 @@ public class RootMap {
                 role.setLocation(location);
             }
         }
-        clientService.addRoleMoveMsg(role.getId(), role.getRoleType());
+        clientService.addRoleMoveMsg(role);
     }
 }
