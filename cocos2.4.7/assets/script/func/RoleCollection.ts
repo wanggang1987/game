@@ -21,7 +21,6 @@ export interface Attribute {
     attackRange: number;
     healthPoint: number;
     healthMax: number;
-    location: Location;
 }
 
 export class Role {
