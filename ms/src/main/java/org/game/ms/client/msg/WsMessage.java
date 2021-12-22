@@ -20,5 +20,6 @@ public class WsMessage {
     private Long playerId;
     private MessageType messageType;
     private CreatePlayerMsg createPlayerMsg;
-    private RoleMsg playerMsg;
+    private AttributeMsg attributeMsg;
+    private LocationMsg locationMsg;
 }

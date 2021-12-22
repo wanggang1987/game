@@ -5,13 +5,18 @@
  */
 package org.game.ms.client.msg;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
+
 /**
  *
  * @author wanggang
  */
-public enum MessageType {
-    HERO_CREATE,
-    LOGIN,
-    HERO_ATTRIBUTE,
-    HERO_LOCATION,
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class LocationMsg {
+
+    private long id;
+    private double x;
+    private double y;
 }

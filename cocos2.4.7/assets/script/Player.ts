@@ -19,17 +19,18 @@ export default class Player extends cc.Component {
         type: cc.Label
     })
     private lable: cc.Label = null;
-    private role: Role = null;
 
     protected onLoad() {
     }
 
     protected update(dt: number): void {
-        this.role = this.roleCollection.getPlayer();
-        if (this.role){
-            this.node.setPosition(this.role.location.x,this.role.location.y );
-            this.lable.string = this.role.name + ":(" + this.node.position.x.toFixed(2) + ","
+        let hero :Role = this.roleCollection.getHero();
+        if (hero.attribute){
+            this.lable.string = hero.attribute.name + ":(" + this.node.position.x.toFixed(2) + ","
                 + this.node.position.y.toFixed(2) + ")";
+        }
+        if (hero.location) {
+            this.node.setPosition(hero.location.x * 50, hero.location.y * 50);
         }
     }
 

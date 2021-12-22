@@ -8,12 +8,12 @@
 const { ccclass, property } = cc._decorator;
 
 export interface Location {
+    id: number;
     x: number;
     y: number;
-    grid: string;
 }
 
-export interface Role {
+export interface Attribute {
     id: number;
     name: string;
     level: number;
@@ -24,19 +24,29 @@ export interface Role {
     location: Location;
 }
 
+export class Role {
+    public attribute: Attribute;
+    public location: Location;
+}
+
 @ccclass
 export default class RoleCollection extends cc.Component {
 
     private default = 0;
-    public player: Role = null;
+    private hero: Role = new Role();
 
-    public getPlayer() {
-        return this.player;
+    public getHero() {
+        return this.hero;
     }
 
-    public updatePlayer(player: Role) {
-        this.player = player;
-        console.log(player, 'updatePlayer');
+    public updateHeroLocation(location: Location) {
+        this.hero.location = location;
+        console.log(location, 'updateLocation');
+    }
+
+    public updateHeroAttribute(attribute: Attribute) {
+        this.hero.attribute = attribute;
+        console.log(attribute, 'updateHero');
     }
 
 }

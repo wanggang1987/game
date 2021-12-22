@@ -16,7 +16,8 @@ import org.game.ms.client.msg.MessageType;
 import org.game.ms.client.msg.CreatePlayerMsg;
 import org.game.ms.client.msg.WsMessage;
 import lombok.extern.slf4j.Slf4j;
-import org.game.ms.client.msg.RoleMsg;
+import org.game.ms.client.msg.AttributeMsg;
+import org.game.ms.client.msg.LocationMsg;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.func.JsonUtils;
 import org.game.ms.lifecycle.AutoPlayer;
@@ -50,22 +51,24 @@ public class ClientService {
     private final Stack<WsMessage> sendStack = new Stack<>();
     private boolean buildMessage = false;
     private Set<Long> playerUpdate = new HashSet<>();
+    private Set<Long> playerMove = new HashSet<>();
     private Set<Long> monsterMove = new HashSet<>();
 
     public void addRoleMoveMsg(Long id, RoleType type) {
         if (FuncUtils.equals(type, RoleType.PLAYER)) {
-            playerUpdate.add(id);
+            playerMove.add(id);
         } else if (FuncUtils.equals(type, RoleType.MONSTER)) {
             monsterMove.add(id);
         }
     }
 
     private void processMessage(WsMessage wsMessage) {
-        if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.PLAYER_CREATE)) {
+        if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.HERO_CREATE)) {
             Long playerId = createPlayer(wsMessage.getCreatePlayerMsg());
             websocket.addPlayerSession(playerId, wsMessage.getSeesionId());
             playerUpdate.add(playerId);
-        } else if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.PLAYER_LOGIN)) {
+            playerMove.add(playerId);
+        } else if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.LOGIN)) {
             websocket.addPlayerSession(wsMessage.getPlayerId(), wsMessage.getSeesionId());
         }
 
@@ -90,13 +93,30 @@ public class ClientService {
         temp.forEach(id -> {
             if (playerSession.containsKey(id)) {
                 WsMessage message = new WsMessage();
-                message.setMessageType(MessageType.PLAYER_ATTRIBUTE);
-                message.setPlayerId(id);
+                message.setMessageType(MessageType.HERO_ATTRIBUTE);
                 message.setSeesionId(playerSession.get(id));
                 Player player = lifeCycle.onlinePlayer(id);
-                RoleMsg roleMsg = new RoleMsg();
-                FuncUtils.copyProperties(player, roleMsg);
-                message.setPlayerMsg(roleMsg);
+                AttributeMsg attribute = new AttributeMsg();
+                FuncUtils.copyProperties(player, attribute);
+                message.setAttributeMsg(attribute);
+                sendStack.push(message);
+            }
+        });
+    }
+
+    private void buildRoleMove(BiMap<Long, String> playerSession) {
+        Collection<Long> temp = playerMove;
+        playerMove = new HashSet<>();
+        temp.forEach(id -> {
+            if (playerSession.containsKey(id)) {
+                WsMessage message = new WsMessage();
+                message.setMessageType(MessageType.HERO_LOCATION);
+                message.setSeesionId(playerSession.get(id));
+                Player player = lifeCycle.onlinePlayer(id);
+                LocationMsg locaionMsg = new LocationMsg();
+                FuncUtils.copyProperties(player.getLocation(), locaionMsg);
+                locaionMsg.setId(id);
+                message.setLocationMsg(locaionMsg);
                 sendStack.push(message);
             }
         });
@@ -108,12 +128,15 @@ public class ClientService {
             return;
         }
         buildMessage = false;
-        if (playerUpdate.isEmpty()) {
+        if (playerUpdate.isEmpty()
+                && playerMove.isEmpty()
+                && monsterMove.isEmpty()) {
             Thread.sleep(1);
             return;
         }
         BiMap<Long, String> playerSession = websocket.playerSession();
         buildPlayerUpdate(playerSession);
+        buildRoleMove(playerSession);
     }
 
     private void sendMessages() throws InterruptedException {

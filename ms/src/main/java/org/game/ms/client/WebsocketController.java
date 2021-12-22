@@ -36,11 +36,12 @@ public class WebsocketController {
     private final static Stack<WsMessage> receiveStack = new Stack<>();
     private final static BiMap<Long, String> playerSession = HashBiMap.create();
 
-//    private static ClientService clientService;
-//    @Autowired
-//    public void setClientService(ClientService clientService) {
-//        WebsocketController.clientService = clientService;
-//    }
+    private static ClientService clientService;
+
+    @Autowired
+    public void setClientService(ClientService clientService) {
+        WebsocketController.clientService = clientService;
+    }
 
     public Stack<WsMessage> getReceiveStack() {
         return receiveStack;
