@@ -8,7 +8,7 @@ import RoleCollection, { Role } from "./func/RoleCollection";
 const { ccclass, property } = cc._decorator;
 
 @ccclass
-export default class Player extends cc.Component {
+export default class Hero extends cc.Component {
 
     private default = 0;
     @property({
@@ -24,8 +24,8 @@ export default class Player extends cc.Component {
     }
 
     protected update(dt: number): void {
-        let hero :Role = this.roleCollection.getHero();
-        if (hero.attribute){
+        let hero: Role = this.roleCollection.getHero();
+        if (hero.attribute) {
             this.lable.string = hero.attribute.name + ":(" + this.node.position.x.toFixed(2) + ","
                 + this.node.position.y.toFixed(2) + ")";
         }

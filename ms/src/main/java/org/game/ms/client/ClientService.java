@@ -63,7 +63,7 @@ public class ClientService {
     }
 
     private void processMessage(WsMessage wsMessage) {
-        if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.HERO_CREATE)) {
+        if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.PLAYER_CREATE)) {
             Long playerId = createPlayer(wsMessage.getCreatePlayerMsg());
             websocket.addPlayerSession(playerId, wsMessage.getSeesionId());
             playerUpdate.add(playerId);

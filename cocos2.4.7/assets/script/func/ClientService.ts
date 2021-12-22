@@ -10,7 +10,7 @@ const { ccclass, property } = cc._decorator;
 
 export enum MessageType {
     LOGIN = 'LOGIN',
-    HERO_CREATE = 'HERO_CREATE',
+    PLAYER_CREATE = 'PLAYER_CREATE',
     HERO_ATTRIBUTE = 'HERO_ATTRIBUTE',
     HERO_LOCATION = 'HERO_LOCATION',
 }
@@ -42,7 +42,7 @@ export default class ClientService extends cc.Component {
     private roleCollection: RoleCollection = null;
 
     public createPlayer(createPlayerMsg: CreatePlayerMsg) {
-        let message = { messageType: MessageType.HERO_CREATE, createPlayerMsg: createPlayerMsg };
+        let message = { messageType: MessageType.PLAYER_CREATE, createPlayerMsg: createPlayerMsg };
         this.websocket.send(JSON.stringify(message));
     }
 
