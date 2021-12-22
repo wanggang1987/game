@@ -35,9 +35,9 @@ public class RootMap {
     final protected int gridSize = 20;
     protected final List<Long> inMapPlayerIdList = new ArrayList<>();
     protected final Map<String, List<Long>> gridMonsterIdsMap = new ConcurrentHashMap<>();
+    protected final Map<String, List<Long>> gridPlayerIdsMap = new ConcurrentHashMap<>();
 
     protected void addMonsterToMap(Role monster, Location location) {
-        location.setGrid(locationInGrid(location));
         monster.setMap(this);
         monster.setLocation(location);
         addMonsterToGrid(monster);
@@ -83,39 +83,33 @@ public class RootMap {
         return new StringBuilder().append("x:").append(x).append("y:").append(y).append("z:0").toString();
     }
 
-    protected String locationInGrid(Location location) {
-        return gridStr(location.getX(), location.getY(), location.getZ());
+    protected void locationGrids(Location location) {
+        location.setGrid(gridStr(location.getX(), location.getY(), location.getZ()));
+        location.setNearGrids(new ArrayList<>());
+        location.getNearGrids().add(gridStr(location.getX(), location.getY(), location.getZ()));
+        location.getNearGrids().add(gridStr(location.getX() + 20, location.getY(), location.getZ()));
+        location.getNearGrids().add(gridStr(location.getX(), location.getY() - 20, location.getZ()));
+        location.getNearGrids().add(gridStr(location.getX() - 20, location.getY(), location.getZ()));
+        location.getNearGrids().add(gridStr(location.getX(), location.getY() + 20, location.getZ()));
+        location.getNearGrids().add(gridStr(location.getX() + 20, location.getY() - 20, location.getZ()));
+        location.getNearGrids().add(gridStr(location.getX() - 20, location.getY() - 20, location.getZ()));
+        location.getNearGrids().add(gridStr(location.getX() - 20, location.getY() + 20, location.getZ()));
+        location.getNearGrids().add(gridStr(location.getX() + 20, location.getY() + 20, location.getZ()));
     }
 
-    protected List<String> nearByGrids(Location location) {
-        List<String> grids = new ArrayList<>();
-        grids.add(gridStr(location.getX(), location.getY(), location.getZ()));
-        grids.add(gridStr(location.getX() + 20, location.getY(), location.getZ()));
-        grids.add(gridStr(location.getX(), location.getY() - 20, location.getZ()));
-        grids.add(gridStr(location.getX() - 20, location.getY(), location.getZ()));
-        grids.add(gridStr(location.getX(), location.getY() + 20, location.getZ()));
-        grids.add(gridStr(location.getX() + 20, location.getY() - 20, location.getZ()));
-        grids.add(gridStr(location.getX() - 20, location.getY() - 20, location.getZ()));
-        grids.add(gridStr(location.getX() - 20, location.getY() + 20, location.getZ()));
-        grids.add(gridStr(location.getX() + 20, location.getY() + 20, location.getZ()));
-        return grids;
-    }
-
-    public List<Long> findNearByMonsterIdsForPlayer(Player player) {
-        List<Long> monsterIds = new ArrayList<>();
-        List<String> grids = nearByGrids(player.getLocation());
-        for (String grid : grids) {
+    public int findNearByMonsterNumForPlayer(Player player) {
+        int n = 0;
+        for (String grid : player.getLocation().getNearGrids()) {
             List<Long> gridMonsters = gridMonsterIdsMap.get(grid);
             if (FuncUtils.notEmpty(gridMonsters)) {
-                monsterIds.addAll(gridMonsters);
+                n += gridMonsters.size();
             }
         }
-        return monsterIds;
+        return n;
     }
 
     public Long findNearByMonsterIdForPlayer(Player player) {
-        List<String> grids = nearByGrids(player.getLocation());
-        for (String grid : grids) {
+        for (String grid : player.getLocation().getNearGrids()) {
             List<Long> gridMonsterIds = gridMonsterIdsMap.get(grid);
             if (FuncUtils.notEmpty(gridMonsterIds)) {
                 int index = FuncUtils.randomZeroToRange(gridMonsterIds.size());
@@ -134,21 +128,23 @@ public class RootMap {
         double moveDistance = role.getSpeed() * wheelConfig.getTickDuration();
         if (moveDistance > targetDistance) {
             role.setMoveStatus(MoveStatus.STANDING);
-            moveRoleToLocation(role, target.getLocation().getX(), target.getLocation().getY());
+            moveRoleToLocation(role, target.getLocation().getX(), target.getLocation().getY(), 0);
         } else {
             double x = role.getLocation().getX() + (xDistance / targetDistance) * moveDistance;
             double y = role.getLocation().getY() + (yDistance / targetDistance) * moveDistance;
             role.setMoveStatus(MoveStatus.MOVEING);
-            moveRoleToLocation(role, x, y);
+            moveRoleToLocation(role, x, y, 0);
         }
     }
 
-    private void moveRoleToLocation(Role role, double x, double y) {
-        Location location = new Location(x, y, 0);
-        location.setGrid(locationInGrid(location));
-        if (FuncUtils.equals(role.getLocation().getGrid(), location.getGrid())) {
-            role.setLocation(location);
+    private void moveRoleToLocation(Role role, double x, double y, double z) {
+        if (FuncUtils.equals(role.getLocation().getGrid(), gridStr(x, y, z))) {
+            role.getLocation().setX(x);
+            role.getLocation().setY(y);
+            role.getLocation().setZ(z);
         } else {
+            Location location = new Location(x, y, z);
+            locationGrids(location);
             if (FuncUtils.equals(role.getRoleType(), RoleType.MONSTER)) {
                 removeMonsterFromGrid(role);
                 role.setLocation(location);
@@ -157,6 +153,6 @@ public class RootMap {
                 role.setLocation(location);
             }
         }
-        clientService.addPlayerMoveMsg(role.getId(), role.getRoleType());
+        clientService.addRoleMoveMsg(role.getId(), role.getRoleType());
     }
 }

@@ -5,6 +5,7 @@
  */
 package org.game.ms.map;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -20,6 +21,7 @@ public class Location {
     private double y;
     private double z;
     private String grid;
+    private List<String> nearGrids;
 
     public Location(double x, double y, double z) {
         this.x = x;

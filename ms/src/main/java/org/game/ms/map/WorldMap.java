@@ -5,7 +5,6 @@
  */
 package org.game.ms.map;
 
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.func.JsonUtils;
@@ -33,7 +32,7 @@ public class WorldMap extends RootMap {
     public void playerComeInMap(Player player) {
         super.playerComeInMap(player);
         Location location = new Location(FuncUtils.randomInRange(0, comeInLocationRandomRange), FuncUtils.randomInRange(0, comeInLocationRandomRange), 0);
-        location.setGrid(locationInGrid(location));
+        locationGrids(location);
         player.setLocation(location);
     }
 
@@ -42,8 +41,7 @@ public class WorldMap extends RootMap {
         log.debug("start to flushAndRrmoveMonsterForPlayer");
         int totalNum = inMapPlayerIdList.stream().map(playerId -> {
             Player player = lifeCycle.onlinePlayer(playerId);
-            List<Long> monsterIds = findNearByMonsterIdsForPlayer(player);
-            int addNum = flushMonsterAroundNum - monsterIds.size();
+            int addNum = flushMonsterAroundNum - findNearByMonsterNumForPlayer(player);
             createMonsterAroundPlayer(player, addNum);
             return addNum;
         }).mapToInt(Integer::intValue).sum();
@@ -56,6 +54,7 @@ public class WorldMap extends RootMap {
             Location location = new Location(
                     FuncUtils.randomInRange(player.getLocation().getX(), gridSize),
                     FuncUtils.randomInRange(player.getLocation().getY(), gridSize), 0);
+            locationGrids(location);
             addMonsterToMap(monster, location);
             log.debug("createMonsterAroundPlayer player:{}  monster:{} ", player.getId(), JsonUtils.bean2json(monster));
         }

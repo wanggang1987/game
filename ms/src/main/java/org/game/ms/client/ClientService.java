@@ -6,10 +6,8 @@
 package org.game.ms.client;
 
 import com.google.common.collect.BiMap;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.ForkJoinPool;
@@ -52,10 +50,13 @@ public class ClientService {
     private final Stack<WsMessage> sendStack = new Stack<>();
     private boolean buildMessage = false;
     private Set<Long> playerUpdate = new HashSet<>();
+    private Set<Long> monsterMove = new HashSet<>();
 
-    public void addPlayerMoveMsg(Long id, RoleType type) {
+    public void addRoleMoveMsg(Long id, RoleType type) {
         if (FuncUtils.equals(type, RoleType.PLAYER)) {
             playerUpdate.add(id);
+        } else if (FuncUtils.equals(type, RoleType.MONSTER)) {
+            monsterMove.add(id);
         }
     }
 
@@ -102,7 +103,7 @@ public class ClientService {
     }
 
     private void buildMessages() throws InterruptedException {
-        Thread.sleep(20);
+        Thread.sleep(1);
         if (!buildMessage) {
             return;
         }
