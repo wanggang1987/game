@@ -84,7 +84,7 @@ public class ClientService {
             playerUpdate.add(player.getId());
             playerMove.add(player);
         } else if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.LOGIN)) {
-            addPlayerSession(playerSession.inverse().get(wsMessage.getSeesionId()), wsMessage.getSeesionId());
+            addPlayerSession(wsMessage.getPlayerId(), wsMessage.getSeesionId());
         }
 
     }

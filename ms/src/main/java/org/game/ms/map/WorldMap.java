@@ -27,13 +27,15 @@ public class WorldMap extends RootMap {
     private LifeCycle lifeCycle;
     final protected int comeInLocationRandomRange = 200;
     final private int flushMonsterAroundNum = 20;
+    @Autowired
+    private GridService gridService;
 
     @Override
-    public void playerComeInMap(Player player) {
-        super.playerComeInMap(player);
+    public void addPlayerToMap(Player player) {
         Location location = new Location(FuncUtils.randomInRange(0, comeInLocationRandomRange), FuncUtils.randomInRange(0, comeInLocationRandomRange), 0);
-        locationGrids(location);
+        gridService.locationGrids(location);
         player.setLocation(location);
+        super.addPlayerToMap(player);
     }
 
     @Scheduled(fixedRate = 1000 * 20)
@@ -52,9 +54,9 @@ public class WorldMap extends RootMap {
         for (int i = 0; i < num; i++) {
             Monster monster = lifeCycle.createMonsterByLevel(player.getLevel());
             Location location = new Location(
-                    FuncUtils.randomInRange(player.getLocation().getX(), gridSize),
-                    FuncUtils.randomInRange(player.getLocation().getY(), gridSize), 0);
-            locationGrids(location);
+                    FuncUtils.randomInRange(player.getLocation().getX(), gridService.gridSize()),
+                    FuncUtils.randomInRange(player.getLocation().getY(), gridService.gridSize()), 0);
+            gridService.locationGrids(location);
             addMonsterToMap(monster, location);
             log.debug("createMonsterAroundPlayer player:{}  monster:{} ", player.getId(), JsonUtils.bean2json(monster));
         }

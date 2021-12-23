@@ -133,13 +133,13 @@ public class PlayerService extends RoleService {
 
     public void playerGotoMap(Player player, RootMap map) {
         player.setMap(map);
-        map.playerComeInMap(player);
+        map.addPlayerToMap(player);
     }
 
     public void playerReborn(Player player) {
         initPlayer(player);
         player.getMap().playerLeaveMap(player);
-        player.getMap().playerComeInMap(player);
+        player.getMap().addPlayerToMap(player);
         player.setLivingStatus(LivingStatus.LIVING);
         log.debug("playerReborn {} {}", player.getId(), player.getLocation());
     }

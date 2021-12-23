@@ -3,9 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.game.ms.client.msg;
+package org.game.ms.map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Data;
 
 /**
@@ -14,12 +16,10 @@ import lombok.Data;
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class WsMessage {
+public class Grid {
 
-    private String seesionId;
-    private Long playerId;
-    private MessageType messageType;
-    private CreatePlayerMsg createPlayerMsg;
-    private AttributeMsg attributeMsg;
-    private LocationMsg locationMsg;
+    private String grid;
+
+    private List<Long> monsterIds = new ArrayList<>();
+    private List<Long> playerIds = new ArrayList<>();
 }

@@ -14,4 +14,5 @@ public enum MessageType {
     LOGIN,
     HERO_ATTRIBUTE,
     HERO_LOCATION,
+    MONSTER_LOCATION,
 }

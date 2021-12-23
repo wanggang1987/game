@@ -7,8 +7,6 @@ package org.game.ms.map;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.client.ClientService;
 import org.game.ms.func.FuncUtils;
@@ -16,7 +14,6 @@ import org.game.ms.monster.Monster;
 import org.game.ms.player.Player;
 import org.game.ms.role.MoveStatus;
 import org.game.ms.role.Role;
-import org.game.ms.role.RoleType;
 import org.game.ms.timeline.WheelConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,43 +28,30 @@ public class RootMap {
     private WheelConfig wheelConfig;
     @Autowired
     private ClientService clientService;
+    @Autowired
+    private GridService gridService;
 
-    final protected int gridSize = 20;
     protected final List<Long> inMapPlayerIdList = new ArrayList<>();
-    protected final Map<String, List<Long>> gridMonsterIdsMap = new ConcurrentHashMap<>();
-    protected final Map<String, List<Long>> gridPlayerIdsMap = new ConcurrentHashMap<>();
 
-    protected void addMonsterToMap(Role monster, Location location) {
-        monster.setMap(this);
-        monster.setLocation(location);
-        addMonsterToGrid(monster);
-    }
-
-    private void addMonsterToGrid(Role monster) {
-        List<Long> gridMonsterIds = gridMonsterIdsMap.get(monster.getLocation().getGrid());
-        if (gridMonsterIds == null) {
-            gridMonsterIds = new ArrayList<>();
-            gridMonsterIdsMap.put(monster.getLocation().getGrid(), gridMonsterIds);
-        }
-        gridMonsterIds.add(monster.getId());
-    }
-
-    public void playerComeInMap(Player player) {
+    public void addPlayerToMap(Player player) {
         inMapPlayerIdList.add(player.getId());
+        gridService.addRoleToGrid(player);
     }
 
     public void playerLeaveMap(Player player) {
         inMapPlayerIdList.remove(player.getId());
+        gridService.removeRoleFromGrid(player);
         player.setLocation(null);
     }
 
-    private void removeMonsterFromGrid(Role monster) {
-        List<Long> gridMonsterIds = gridMonsterIdsMap.get(monster.getLocation().getGrid());
-        gridMonsterIds.remove(monster.getId());
+    protected void addMonsterToMap(Role monster, Location location) {
+        monster.setMap(this);
+        monster.setLocation(location);
+        gridService.addRoleToGrid(monster);
     }
 
     public void removeMonsterFromMap(Role monster) {
-        removeMonsterFromGrid(monster);
+        gridService.removeRoleFromGrid(monster);
         log.debug("removeMonsterFromMap monster {} ", monster.getId());
     }
 
@@ -75,32 +59,10 @@ public class RootMap {
         monsters.forEach(monster -> removeMonsterFromMap(monster));
     }
 
-    private String gridStr(double lx, double ly, double lz) {
-        int x = (int) (lx / gridSize);
-        x = lx > 0 ? x + 1 : x - 1;
-        int y = (int) (ly / gridSize);
-        y = ly > 0 ? y + 1 : y - 1;
-        return new StringBuilder().append("x:").append(x).append("y:").append(y).append("z:0").toString();
-    }
-
-    protected void locationGrids(Location location) {
-        location.setGrid(gridStr(location.getX(), location.getY(), location.getZ()));
-        location.setNearGrids(new ArrayList<>());
-        location.getNearGrids().add(gridStr(location.getX(), location.getY(), location.getZ()));
-        location.getNearGrids().add(gridStr(location.getX() + 20, location.getY(), location.getZ()));
-        location.getNearGrids().add(gridStr(location.getX(), location.getY() - 20, location.getZ()));
-        location.getNearGrids().add(gridStr(location.getX() - 20, location.getY(), location.getZ()));
-        location.getNearGrids().add(gridStr(location.getX(), location.getY() + 20, location.getZ()));
-        location.getNearGrids().add(gridStr(location.getX() + 20, location.getY() - 20, location.getZ()));
-        location.getNearGrids().add(gridStr(location.getX() - 20, location.getY() - 20, location.getZ()));
-        location.getNearGrids().add(gridStr(location.getX() - 20, location.getY() + 20, location.getZ()));
-        location.getNearGrids().add(gridStr(location.getX() + 20, location.getY() + 20, location.getZ()));
-    }
-
     public int findNearByMonsterNumForPlayer(Player player) {
         int n = 0;
         for (String grid : player.getLocation().getNearGrids()) {
-            List<Long> gridMonsters = gridMonsterIdsMap.get(grid);
+            List<Long> gridMonsters = gridService.monsterIdsInGrid(grid);
             if (FuncUtils.notEmpty(gridMonsters)) {
                 n += gridMonsters.size();
             }
@@ -110,7 +72,7 @@ public class RootMap {
 
     public Long findNearByMonsterIdForPlayer(Player player) {
         for (String grid : player.getLocation().getNearGrids()) {
-            List<Long> gridMonsterIds = gridMonsterIdsMap.get(grid);
+            List<Long> gridMonsterIds = gridService.monsterIdsInGrid(grid);
             if (FuncUtils.notEmpty(gridMonsterIds)) {
                 int index = FuncUtils.randomZeroToRange(gridMonsterIds.size());
                 Long id = gridMonsterIds.get(index);
@@ -138,20 +100,16 @@ public class RootMap {
     }
 
     private void moveRoleToLocation(Role role, double x, double y, double z) {
-        if (FuncUtils.equals(role.getLocation().getGrid(), gridStr(x, y, z))) {
+        if (FuncUtils.equals(role.getLocation().getGrid(), gridService.gridStr(x, y, z))) {
             role.getLocation().setX(x);
             role.getLocation().setY(y);
             role.getLocation().setZ(z);
         } else {
+            gridService.removeRoleFromGrid(role);
             Location location = new Location(x, y, z);
-            locationGrids(location);
-            if (FuncUtils.equals(role.getRoleType(), RoleType.MONSTER)) {
-                removeMonsterFromGrid(role);
-                role.setLocation(location);
-                addMonsterToGrid(role);
-            } else if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
-                role.setLocation(location);
-            }
+            gridService.locationGrids(location);
+            role.setLocation(location);
+            gridService.addRoleToGrid(role);
         }
         clientService.addRoleMoveMsg(role);
     }

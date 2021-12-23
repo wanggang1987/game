@@ -26,8 +26,8 @@ export default class Hero extends cc.Component {
     protected update(dt: number): void {
         let hero: Role = this.roleCollection.getHero();
         if (hero.attribute) {
-            this.lable.string = hero.attribute.name + ":(" + this.node.position.x.toFixed(2) + ","
-                + this.node.position.y.toFixed(2) + ")";
+            this.lable.string = hero.attribute.name + ":(" + hero.location.x.toFixed(2) + ","
+                + hero.location.y.toFixed(2) + ")";
         }
         if (hero.location) {
             this.node.setPosition(hero.location.x * 50, hero.location.y * 50);
