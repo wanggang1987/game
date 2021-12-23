@@ -23,6 +23,10 @@ export default class RoleCollection extends cc.Component {
     @property({ type: Monsters })
     private monstersNode: Monsters = null;
 
+    public getHero(): Role {
+        return this.hero;
+    }
+
     protected onLoad(): void {
         this.hero = this.heroNode.getHero();
         this.monsters = this.monstersNode.getMonsters();

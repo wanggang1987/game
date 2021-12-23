@@ -10,9 +10,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.client.ClientService;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.role.Role;
 import org.game.ms.role.RoleType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,6 +25,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class GridService {
 
+    @Autowired
+    private ClientService clientService;
+    
     private final int gridSize = 20;
     private final Map<String, Grid> gridMap = new HashMap<>();
 
@@ -73,6 +78,7 @@ public class GridService {
 
     public void addRoleToGrid(Role role) {
         roleIdsInGrid(role).add(role.getId());
+        clientService.addRoleToGridMsg(role);
     }
 
     public void removeRoleFromGrid(Role role) {

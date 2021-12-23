@@ -27,6 +27,7 @@ import org.game.ms.lifecycle.AutoPlayer;
 import org.game.ms.lifecycle.LifeCycle;
 import org.game.ms.map.GridService;
 import org.game.ms.map.WorldMap;
+import org.game.ms.monster.Monster;
 import org.game.ms.player.Player;
 import org.game.ms.player.PlayerService;
 import org.game.ms.role.Role;
@@ -61,6 +62,7 @@ public class ClientService {
     private Set<Long> playerUpdate = new HashSet<>();
     private Set<Role> playerMove = new HashSet<>();
     private Set<Role> monsterMove = new HashSet<>();
+    private Set<Role> flashGrid = new HashSet<>();
 
     private void addPlayerSession(Long playerId, String sessionId) {
         if (playerSession.containsKey(playerId)) {
@@ -76,6 +78,14 @@ public class ClientService {
     public void addRoleMoveMsg(Role role) {
         if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
             playerMove.add(role);
+        } else if (FuncUtils.equals(role.getRoleType(), RoleType.MONSTER)) {
+            monsterMove.add(role);
+        }
+    }
+
+    public void addRoleToGridMsg(Role role) {
+        if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
+            flashGrid.add(role);
         } else if (FuncUtils.equals(role.getRoleType(), RoleType.MONSTER)) {
             monsterMove.add(role);
         }
@@ -157,6 +167,27 @@ public class ClientService {
         });
     }
 
+    private void buildPlayerGrid() {
+        Collection<Role> temp = flashGrid;
+        flashGrid = new HashSet<>();
+        temp.forEach(player -> {
+            if (playerSession.containsKey(player.getId())) {
+                List<Long> gridMonsterIds = gridService.monsterIdsInGrid(player.getLocation().getGrid());
+                gridMonsterIds.forEach(monsterId -> {
+                    Monster monster = lifeCycle.onlineMonster(monsterId);
+                    WsMessage message = new WsMessage();
+                    message.setMessageType(MessageType.MONSTER_LOCATION);
+                    message.setSeesionId(playerSession.get(player.getId()));
+                    LocationMsg locaionMsg = new LocationMsg();
+                    locaionMsg.setId(monster.getId());
+                    FuncUtils.copyProperties(monster.getLocation(), locaionMsg);
+                    message.setLocationMsg(locaionMsg);
+                    sendStack.push(message);
+                });
+            }
+        });
+    }
+
     private void buildMessages() throws InterruptedException {
         Thread.sleep(1);
         if (!buildMessage) {
@@ -165,12 +196,14 @@ public class ClientService {
         buildMessage = false;
         if (playerUpdate.isEmpty()
                 && playerMove.isEmpty()
-                && monsterMove.isEmpty()) {
+                && monsterMove.isEmpty()
+                && flashGrid.isEmpty()) {
             Thread.sleep(1);
             return;
         }
         buildPlayerUpdate();
         buildRoleMove();
+        buildPlayerGrid();
     }
 
     private void sendMessages() throws InterruptedException {

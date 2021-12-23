@@ -6,7 +6,7 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 import WsConnection from "./WsConnection";
 import RoleCollection from "./RoleCollection"
-import { CreatePlayerMsg, MessageType } from "./BasicObjects";
+import { CreatePlayerMsg, MessageType, Role } from "./BasicObjects";
 const { ccclass, property } = cc._decorator;
 
 @ccclass
@@ -42,11 +42,11 @@ export default class ClientService extends cc.Component {
     }
 
     private heartBeat() {
-        // let hero: Role = this.roleCollection.getHero();
-        // if (this.websocket.isConnect() && hero.attribute) {
-        //     let message = { messageType: MessageType.LOGIN, playerId: hero.attribute.id };
-        //     this.websocket.send(JSON.stringify(message));
-        // }
+        let hero: Role = this.roleCollection.getHero();
+        if (this.websocket.isConnect() && hero.attribute) {
+            let message = { messageType: MessageType.LOGIN, playerId: hero.attribute.id };
+            this.websocket.send(JSON.stringify(message));
+        }
     }
 
     protected start() {

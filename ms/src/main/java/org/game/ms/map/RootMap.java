@@ -36,6 +36,7 @@ public class RootMap {
     public void addPlayerToMap(Player player) {
         inMapPlayerIdList.add(player.getId());
         gridService.addRoleToGrid(player);
+
     }
 
     public void playerLeaveMap(Player player) {
@@ -104,13 +105,15 @@ public class RootMap {
             role.getLocation().setX(x);
             role.getLocation().setY(y);
             role.getLocation().setZ(z);
+            clientService.addRoleMoveMsg(role);
         } else {
             gridService.removeRoleFromGrid(role);
             Location location = new Location(x, y, z);
             gridService.locationGrids(location);
+            log.debug("{} {} change grid from {} to {}",
+                    role.getRoleType(), role.getId(), role.getLocation().getGrid(), location.getGrid());
             role.setLocation(location);
             gridService.addRoleToGrid(role);
         }
-        clientService.addRoleMoveMsg(role);
     }
 }

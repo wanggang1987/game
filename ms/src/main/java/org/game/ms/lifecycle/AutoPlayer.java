@@ -84,7 +84,7 @@ public class AutoPlayer {
     private void autoMove(Player player) {
         if (FuncUtils.equals(player.getAttackStatus(), AttackStatus.OUT_RANGE)
                 && FuncUtils.equals(player.getMoveStatus(), MoveStatus.STANDING)) {
-            log.debug("player {} start move to {} {}", player.getId(), player.getTargetType(), player.getTargetId());
+            log.debug("player {} start move {} to {} {}", player.getId(), player.getLocation(), player.getTargetType(), player.getTargetId());
             player.setMoveStatus(MoveStatus.MOVEING);
         } else if (FuncUtils.notEquals(player.getAttackStatus(), AttackStatus.OUT_RANGE)) {
             player.setMoveStatus(MoveStatus.STANDING);
