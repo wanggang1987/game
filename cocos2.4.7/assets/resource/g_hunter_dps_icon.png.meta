@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "e1db50e7-c24a-492f-b60e-afd8a051ade5",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 180,
+  "height": 206,
+  "platformSettings": {},
+  "subMetas": {
+    "g_hunter_dps_icon": {
+      "ver": "1.0.6",
+      "uuid": "c8a24c5c-ee6d-4fe9-afa6-d534303c03b3",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "e1db50e7-c24a-492f-b60e-afd8a051ade5",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": -3.5,
+      "offsetY": -10,
+      "trimX": 0,
+      "trimY": 20,
+      "width": 173,
+      "height": 186,
+      "rawWidth": 180,
+      "rawHeight": 206,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}
