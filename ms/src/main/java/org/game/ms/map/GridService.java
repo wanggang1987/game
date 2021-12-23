@@ -82,4 +82,8 @@ public class GridService {
     public List<Long> monsterIdsInGrid(String grid) {
         return roleIdsInGrid(RoleType.MONSTER, grid);
     }
+
+    public List<Long> playerIdsInGrid(String grid) {
+        return roleIdsInGrid(RoleType.PLAYER, grid);
+    }
 }

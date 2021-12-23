@@ -9,6 +9,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.ForkJoinPool;
@@ -24,6 +25,7 @@ import org.game.ms.func.FuncUtils;
 import org.game.ms.func.JsonUtils;
 import org.game.ms.lifecycle.AutoPlayer;
 import org.game.ms.lifecycle.LifeCycle;
+import org.game.ms.map.GridService;
 import org.game.ms.map.WorldMap;
 import org.game.ms.player.Player;
 import org.game.ms.player.PlayerService;
@@ -50,6 +52,8 @@ public class ClientService {
     private PlayerService playerService;
     @Autowired
     private WebsocketController websocket;
+    @Autowired
+    private GridService gridService;
 
     private boolean buildMessage = false;
     private final Stack<WsMessage> sendStack = new Stack<>();
@@ -132,6 +136,24 @@ public class ClientService {
                 message.setLocationMsg(locaionMsg);
                 sendStack.push(message);
             }
+        });
+
+        Collection<Role> tempMonster = monsterMove;
+        monsterMove = new HashSet<>();
+        tempMonster.forEach(monster -> {
+            List<Long> gridPlayerIds = gridService.playerIdsInGrid(monster.getLocation().getGrid());
+            gridPlayerIds.forEach(playerId -> {
+                if (playerSession.containsKey(playerId)) {
+                    WsMessage message = new WsMessage();
+                    message.setMessageType(MessageType.MONSTER_LOCATION);
+                    message.setSeesionId(playerSession.get(playerId));
+                    LocationMsg locaionMsg = new LocationMsg();
+                    locaionMsg.setId(monster.getId());
+                    FuncUtils.copyProperties(monster.getLocation(), locaionMsg);
+                    message.setLocationMsg(locaionMsg);
+                    sendStack.push(message);
+                }
+            });
         });
     }
 
