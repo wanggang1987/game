@@ -13,6 +13,7 @@ export enum MessageType {
     HERO_ATTRIBUTE = 'HERO_ATTRIBUTE',
     HERO_LOCATION = 'HERO_LOCATION',
     MONSTER_LOCATION = 'MONSTER_LOCATION',
+    MONSTER_DIE = 'MONSTER_DIE',
 }
 
 export interface CreatePlayerMsg {
@@ -25,6 +26,11 @@ export interface WsMessage {
     createPlayerMsg: CreatePlayerMsg;
     attributeMsg: Attribute;
     locationMsg: Location;
+    roleDieMsg: RoleDie;
+}
+
+export interface RoleDie {
+    id: number;
 }
 
 export interface Location {

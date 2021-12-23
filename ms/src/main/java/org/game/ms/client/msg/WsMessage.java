@@ -22,4 +22,5 @@ public class WsMessage {
     private CreatePlayerMsg createPlayerMsg;
     private AttributeMsg attributeMsg;
     private LocationMsg locationMsg;
+    private RoleDieMsg roleDieMsg;
 }

@@ -7,7 +7,7 @@
 
 import Hero from "../Hero";
 import Monsters from "../Monsters";
-import { Attribute, Role, Location } from "./BasicObjects";
+import { Attribute, Role, Location, RoleDie } from "./BasicObjects";
 
 const { ccclass, property } = cc._decorator;
 
@@ -16,12 +16,13 @@ const { ccclass, property } = cc._decorator;
 export default class RoleCollection extends cc.Component {
 
     private default = 0;
-    private hero: Role = null;
     @property({ type: Hero })
     private heroNode: Hero = null;
-    private monsters: Map<number, Role> = null;
+    private hero: Role = null;
     @property({ type: Monsters })
     private monstersNode: Monsters = null;
+    private monsters: Map<number, Role> = null;
+    private deadMonsters: number[] = null;
 
     public getHero(): Role {
         return this.hero;
@@ -30,6 +31,7 @@ export default class RoleCollection extends cc.Component {
     protected onLoad(): void {
         this.hero = this.heroNode.getHero();
         this.monsters = this.monstersNode.getMonsters();
+        this.deadMonsters = this.monstersNode.getDeadMonsters();
     }
 
     public updateHeroLocation(location: Location) {
@@ -53,5 +55,9 @@ export default class RoleCollection extends cc.Component {
         }
         monster.location = location;
         monster.isUpdate = true;
+    }
+
+    public monsterDie(roleDie: RoleDie) {
+        this.deadMonsters.push(roleDie.id);
     }
 }

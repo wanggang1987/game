@@ -9,6 +9,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ForkJoinPool;
 import javax.annotation.PostConstruct;
@@ -19,6 +20,7 @@ import org.game.ms.client.msg.WsMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.client.msg.AttributeMsg;
 import org.game.ms.client.msg.LocationMsg;
+import org.game.ms.client.msg.RoleDieMsg;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.func.JsonUtils;
 import org.game.ms.lifecycle.AutoPlayer;
@@ -57,10 +59,11 @@ public class ClientService {
     private boolean buildMessage = false;
     private final Queue<WsMessage> sendQueue = new ConcurrentLinkedQueue<>();
     private final BiMap<Long, String> playerSession = HashBiMap.create();
-    private Queue<Long> playerUpdate = new ConcurrentLinkedQueue<>();
-    private Queue<Role> playerMove = new ConcurrentLinkedQueue<>();
-    private Queue<Role> monsterMove = new ConcurrentLinkedQueue<>();
-    private Queue<Role> flashGrid = new ConcurrentLinkedQueue<>();
+    private final Queue<Long> playerUpdate = new ConcurrentLinkedQueue<>();
+    private final Queue<Role> playerMove = new ConcurrentLinkedQueue<>();
+    private final Queue<Role> monsterMove = new ConcurrentLinkedQueue<>();
+    private final Queue<Role> flashGrid = new ConcurrentLinkedQueue<>();
+    private final Queue<Role> monsterDie = new ConcurrentLinkedDeque<>();
 
     private void addPlayerSession(Long playerId, String sessionId) {
         if (playerSession.containsKey(playerId)) {
@@ -71,6 +74,13 @@ public class ClientService {
 
     public void removeSession(Session session) {
         playerSession.inverse().remove(session.getId());
+    }
+
+    public void addRoleDieMsg(Role role) {
+        if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
+        } else if (FuncUtils.equals(role.getRoleType(), RoleType.MONSTER)) {
+            monsterDie.add(role);
+        }
     }
 
     public void addRoleMoveMsg(Role role) {
@@ -98,7 +108,6 @@ public class ClientService {
         } else if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.LOGIN)) {
             addPlayerSession(wsMessage.getPlayerId(), wsMessage.getSeesionId());
         }
-
     }
 
     private Player createPlayer(CreatePlayerMsg msg) {
@@ -115,11 +124,10 @@ public class ClientService {
     }
 
     private void buildPlayerUpdate() {
-        Long playerId = playerUpdate.peek();
+        Long playerId = playerUpdate.poll();
         if (FuncUtils.isEmpty(playerId)) {
             return;
         }
-        playerId = playerUpdate.poll();
         if (!playerSession.containsKey(playerId)) {
             return;
         }
@@ -134,11 +142,10 @@ public class ClientService {
     }
 
     private void buildPlayerMove() {
-        Role player = playerMove.peek();
+        Role player = playerMove.poll();
         if (FuncUtils.isEmpty(player)) {
             return;
         }
-        player = playerMove.poll();
         if (!playerSession.containsKey(player.getId())) {
             return;
         }
@@ -152,11 +159,10 @@ public class ClientService {
     }
 
     private void buildMonsterMove() {
-        Role monster = monsterMove.peek();
+        Role monster = monsterMove.poll();
         if (FuncUtils.isEmpty(monster)) {
             return;
         }
-        monster = monsterMove.poll();
         List<Long> gridPlayerIds = gridService.playerIdsInGrid(monster.getLocation().getGrid());
         for (Long playerId : gridPlayerIds) {
             if (playerSession.containsKey(playerId)) {
@@ -173,11 +179,10 @@ public class ClientService {
     }
 
     private void buildPlayerGrid() {
-        Role player = flashGrid.peek();
+        Role player = flashGrid.poll();
         if (FuncUtils.isEmpty(player)) {
             return;
         }
-        player = flashGrid.poll();
         if (!playerSession.containsKey(player.getId())) {
             return;
         }
@@ -195,23 +200,41 @@ public class ClientService {
         }
     }
 
+    private void buildMonsterDie() {
+        Role monster = monsterDie.poll();
+        if (FuncUtils.isEmpty(monster)) {
+            return;
+        }
+        List<Long> gridPlayerIds = gridService.playerIdsInGrid(monster.getLocation().getGrid());
+        for (Long playerId : gridPlayerIds) {
+            if (playerSession.containsKey(playerId)) {
+                WsMessage message = new WsMessage();
+                message.setMessageType(MessageType.MONSTER_DIE);
+                message.setSeesionId(playerSession.get(playerId));
+                RoleDieMsg roleDieMsg = new RoleDieMsg();
+                roleDieMsg.setId(monster.getId());
+                message.setRoleDieMsg(roleDieMsg);
+                sendQueue.offer(message);
+            }
+        }
+    }
+
     private void buildMessages() throws InterruptedException {
         Thread.sleep(1);
         if (!buildMessage) {
             return;
         }
-        buildMessage = false;
-        if (playerUpdate.isEmpty()
-                && playerMove.isEmpty()
-                && monsterMove.isEmpty()
-                && flashGrid.isEmpty()) {
-            Thread.sleep(1);
-            return;
+        while (FuncUtils.notEmpty(playerUpdate)
+                || FuncUtils.notEmpty(playerMove)
+                || FuncUtils.notEmpty(monsterMove)
+                || FuncUtils.notEmpty(flashGrid)) {
+            buildPlayerUpdate();
+            buildPlayerMove();
+            buildMonsterMove();
+            buildPlayerGrid();
+            buildMonsterDie();
         }
-        buildPlayerUpdate();
-        buildPlayerMove();
-        buildMonsterMove();
-        buildPlayerGrid();
+        buildMessage = false;
     }
 
     private void sendMessages() throws InterruptedException {

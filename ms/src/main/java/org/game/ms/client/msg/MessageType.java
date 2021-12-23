@@ -15,4 +15,5 @@ public enum MessageType {
     HERO_ATTRIBUTE,
     HERO_LOCATION,
     MONSTER_LOCATION,
+    MONSTER_DIE,
 }

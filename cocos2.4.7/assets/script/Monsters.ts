@@ -14,6 +14,11 @@ export default class Monsters extends cc.Component {
     @property({ type: cc.Prefab })
     private monsterPrefab: cc.Prefab = null;
     private monsters: Map<number, Role> = new Map();
+    private deadMonster: number[] = new Array();
+
+    public getDeadMonsters() :number[] {
+        return this.deadMonster;
+    }
 
     public getMonsters(): Map<number, Role> {
         return this.monsters;
@@ -34,5 +39,14 @@ export default class Monsters extends cc.Component {
                 monster.isUpdate = false;
             }
         });
+
+        for (let monsterId of this.deadMonster ){
+            let monsterNode: cc.Node = this.node.getChildByName(monsterId.toString());
+            if (monsterNode) {
+                monsterNode.destroy();
+                console.log("destory monsterNode " + monsterNode.name);
+            }
+        }
+        this.deadMonster.length = 0;
     }
 }

@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "c29aa8d2-9dd8-428e-a6f3-71361e377740",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 422,
+  "height": 296,
+  "platformSettings": {},
+  "subMetas": {
+    "m_3_fenlusi_icon_big": {
+      "ver": "1.0.6",
+      "uuid": "6d0f0d89-2d7b-4798-918f-8190df8e8962",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "c29aa8d2-9dd8-428e-a6f3-71361e377740",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": -7.5,
+      "offsetY": -44.5,
+      "trimX": 41,
+      "trimY": 89,
+      "width": 325,
+      "height": 207,
+      "rawWidth": 422,
+      "rawHeight": 296,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

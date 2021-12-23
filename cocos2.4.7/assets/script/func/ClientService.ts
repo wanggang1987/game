@@ -37,6 +37,8 @@ export default class ClientService extends cc.Component {
                 this.roleCollection.updateHeroLocation(message.locationMsg);
             } else if (message.messageType == MessageType.MONSTER_LOCATION) {
                 this.roleCollection.updateMonsterLocation(message.locationMsg);
+            } else if (message.messageType == MessageType.MONSTER_DIE){
+                this.roleCollection.monsterDie(message.roleDieMsg);
             }
         });
         this.websocket.clearMessageStack();

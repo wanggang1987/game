@@ -38,7 +38,7 @@ public class WorldMap extends RootMap {
         super.addPlayerToMap(player);
     }
 
-    @Scheduled(fixedRate = 1000 * 20)
+    @Scheduled(fixedRate = 1000 * 5)
     protected void flushAndRrmoveMonsterForPlayer() {
         log.debug("start to flushAndRrmoveMonsterForPlayer");
         int totalNum = inMapPlayerIdList.stream().map(playerId -> {

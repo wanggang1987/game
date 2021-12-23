@@ -160,7 +160,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "a2b0af85-aa9b-4a6e-9e49-20cb5793d47e"
+      "__uuid__": "6d0f0d89-2d7b-4798-918f-8190df8e8962"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -303,7 +303,6 @@
       "__id__": 1
     },
     "_enabled": true,
-    "roleCollection": null,
     "lable": {
       "__id__": 6
     },
