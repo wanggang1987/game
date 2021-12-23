@@ -17,6 +17,7 @@ export default class ClientService extends cc.Component {
     private websocket: WsConnection = null;
     @property({ type: RoleCollection })
     private roleCollection: RoleCollection = null;
+    private hero: Role = null;
 
     public createPlayer(createPlayerMsg: CreatePlayerMsg) {
         let message = { messageType: MessageType.PLAYER_CREATE, createPlayerMsg: createPlayerMsg };
@@ -41,10 +42,13 @@ export default class ClientService extends cc.Component {
         this.websocket.clearMessageStack();
     }
 
+    protected onLoad(): void {
+        this.hero = this.roleCollection.getHero();
+    }
+
     private heartBeat() {
-        let hero: Role = this.roleCollection.getHero();
-        if (this.websocket.isConnect() && hero.attribute) {
-            let message = { messageType: MessageType.LOGIN, playerId: hero.attribute.id };
+        if (this.websocket.isConnect() && this.hero.attribute) {
+            let message = { messageType: MessageType.LOGIN, playerId: this.hero.attribute.id };
             this.websocket.send(JSON.stringify(message));
         }
     }

@@ -8,7 +8,8 @@ import org.game.ms.client.msg.WsMessage;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Stack;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -31,7 +32,7 @@ import org.springframework.stereotype.Controller;
 public class WebsocketController {
 
     private final static Map<String, Session> clients = new HashMap<>();
-    private final static Stack<WsMessage> receiveStack = new Stack<>();
+    private final static Queue<WsMessage> receiveQueue = new ConcurrentLinkedQueue<>();
 
     private static ClientService clientService;
 
@@ -40,8 +41,8 @@ public class WebsocketController {
         WebsocketController.clientService = clientService;
     }
 
-    public Stack<WsMessage> getReceiveStack() {
-        return receiveStack;
+    public Queue<WsMessage> getReceiveQueue() {
+        return receiveQueue;
     }
 
     @OnOpen
@@ -63,7 +64,7 @@ public class WebsocketController {
         log.debug("get client msg. ID:{} msg:{}", session.getId(), message);
         WsMessage wsMessage = JsonUtils.json2bean(message, WsMessage.class);
         wsMessage.setSeesionId(session.getId());
-        receiveStack.add(wsMessage);
+        receiveQueue.offer(wsMessage);
     }
 
     @OnError

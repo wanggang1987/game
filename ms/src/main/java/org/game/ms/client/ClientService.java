@@ -7,11 +7,9 @@ package org.game.ms.client;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.Stack;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ForkJoinPool;
 import javax.annotation.PostConstruct;
 import javax.websocket.Session;
@@ -57,12 +55,12 @@ public class ClientService {
     private GridService gridService;
 
     private boolean buildMessage = false;
-    private final Stack<WsMessage> sendStack = new Stack<>();
+    private final Queue<WsMessage> sendQueue = new ConcurrentLinkedQueue<>();
     private final BiMap<Long, String> playerSession = HashBiMap.create();
-    private Set<Long> playerUpdate = new HashSet<>();
-    private Set<Role> playerMove = new HashSet<>();
-    private Set<Role> monsterMove = new HashSet<>();
-    private Set<Role> flashGrid = new HashSet<>();
+    private Queue<Long> playerUpdate = new ConcurrentLinkedQueue<>();
+    private Queue<Role> playerMove = new ConcurrentLinkedQueue<>();
+    private Queue<Role> monsterMove = new ConcurrentLinkedQueue<>();
+    private Queue<Role> flashGrid = new ConcurrentLinkedQueue<>();
 
     private void addPlayerSession(Long playerId, String sessionId) {
         if (playerSession.containsKey(playerId)) {
@@ -117,75 +115,84 @@ public class ClientService {
     }
 
     private void buildPlayerUpdate() {
-        Collection<Long> temp = playerUpdate;
-        playerUpdate = new HashSet<>();
-        temp.forEach(id -> {
-            if (playerSession.containsKey(id)) {
-                WsMessage message = new WsMessage();
-                message.setMessageType(MessageType.HERO_ATTRIBUTE);
-                message.setSeesionId(playerSession.get(id));
-                Player player = lifeCycle.onlinePlayer(id);
-                AttributeMsg attribute = new AttributeMsg();
-                FuncUtils.copyProperties(player, attribute);
-                message.setAttributeMsg(attribute);
-                sendStack.push(message);
-            }
-        });
+        Long playerId = playerUpdate.peek();
+        if (FuncUtils.isEmpty(playerId)) {
+            return;
+        }
+        playerId = playerUpdate.poll();
+        if (!playerSession.containsKey(playerId)) {
+            return;
+        }
+        WsMessage message = new WsMessage();
+        message.setMessageType(MessageType.HERO_ATTRIBUTE);
+        message.setSeesionId(playerSession.get(playerId));
+        Player player = lifeCycle.onlinePlayer(playerId);
+        AttributeMsg attribute = new AttributeMsg();
+        FuncUtils.copyProperties(player, attribute);
+        message.setAttributeMsg(attribute);
+        sendQueue.offer(message);
     }
 
-    private void buildRoleMove() {
-        Collection<Role> tempPlayer = playerMove;
-        playerMove = new HashSet<>();
-        tempPlayer.forEach(player -> {
-            if (playerSession.containsKey(player.getId())) {
-                WsMessage message = new WsMessage();
-                message.setMessageType(MessageType.HERO_LOCATION);
-                message.setSeesionId(playerSession.get(player.getId()));
-                LocationMsg locaionMsg = new LocationMsg();
-                FuncUtils.copyProperties(player.getLocation(), locaionMsg);
-                message.setLocationMsg(locaionMsg);
-                sendStack.push(message);
-            }
-        });
+    private void buildPlayerMove() {
+        Role player = playerMove.peek();
+        if (FuncUtils.isEmpty(player)) {
+            return;
+        }
+        player = playerMove.poll();
+        if (!playerSession.containsKey(player.getId())) {
+            return;
+        }
+        WsMessage message = new WsMessage();
+        message.setMessageType(MessageType.HERO_LOCATION);
+        message.setSeesionId(playerSession.get(player.getId()));
+        LocationMsg locaionMsg = new LocationMsg();
+        FuncUtils.copyProperties(player.getLocation(), locaionMsg);
+        message.setLocationMsg(locaionMsg);
+        sendQueue.offer(message);
+    }
 
-        Collection<Role> tempMonster = monsterMove;
-        monsterMove = new HashSet<>();
-        tempMonster.forEach(monster -> {
-            List<Long> gridPlayerIds = gridService.playerIdsInGrid(monster.getLocation().getGrid());
-            gridPlayerIds.forEach(playerId -> {
-                if (playerSession.containsKey(playerId)) {
-                    WsMessage message = new WsMessage();
-                    message.setMessageType(MessageType.MONSTER_LOCATION);
-                    message.setSeesionId(playerSession.get(playerId));
-                    LocationMsg locaionMsg = new LocationMsg();
-                    locaionMsg.setId(monster.getId());
-                    FuncUtils.copyProperties(monster.getLocation(), locaionMsg);
-                    message.setLocationMsg(locaionMsg);
-                    sendStack.push(message);
-                }
-            });
-        });
+    private void buildMonsterMove() {
+        Role monster = monsterMove.peek();
+        if (FuncUtils.isEmpty(monster)) {
+            return;
+        }
+        monster = monsterMove.poll();
+        List<Long> gridPlayerIds = gridService.playerIdsInGrid(monster.getLocation().getGrid());
+        for (Long playerId : gridPlayerIds) {
+            if (playerSession.containsKey(playerId)) {
+                WsMessage message = new WsMessage();
+                message.setMessageType(MessageType.MONSTER_LOCATION);
+                message.setSeesionId(playerSession.get(playerId));
+                LocationMsg locaionMsg = new LocationMsg();
+                locaionMsg.setId(monster.getId());
+                FuncUtils.copyProperties(monster.getLocation(), locaionMsg);
+                message.setLocationMsg(locaionMsg);
+                sendQueue.offer(message);
+            }
+        }
     }
 
     private void buildPlayerGrid() {
-        Collection<Role> temp = flashGrid;
-        flashGrid = new HashSet<>();
-        temp.forEach(player -> {
-            if (playerSession.containsKey(player.getId())) {
-                List<Long> gridMonsterIds = gridService.monsterIdsInGrid(player.getLocation().getGrid());
-                gridMonsterIds.forEach(monsterId -> {
-                    Monster monster = lifeCycle.onlineMonster(monsterId);
-                    WsMessage message = new WsMessage();
-                    message.setMessageType(MessageType.MONSTER_LOCATION);
-                    message.setSeesionId(playerSession.get(player.getId()));
-                    LocationMsg locaionMsg = new LocationMsg();
-                    locaionMsg.setId(monster.getId());
-                    FuncUtils.copyProperties(monster.getLocation(), locaionMsg);
-                    message.setLocationMsg(locaionMsg);
-                    sendStack.push(message);
-                });
-            }
-        });
+        Role player = flashGrid.peek();
+        if (FuncUtils.isEmpty(player)) {
+            return;
+        }
+        player = flashGrid.poll();
+        if (!playerSession.containsKey(player.getId())) {
+            return;
+        }
+        List<Long> gridMonsterIds = gridService.monsterIdsInGrid(player.getLocation().getGrid());
+        for (Long monsterId : gridMonsterIds) {
+            Monster monster = lifeCycle.onlineMonster(monsterId);
+            WsMessage message = new WsMessage();
+            message.setMessageType(MessageType.MONSTER_LOCATION);
+            message.setSeesionId(playerSession.get(player.getId()));
+            LocationMsg locaionMsg = new LocationMsg();
+            locaionMsg.setId(monster.getId());
+            FuncUtils.copyProperties(monster.getLocation(), locaionMsg);
+            message.setLocationMsg(locaionMsg);
+            sendQueue.offer(message);
+        }
     }
 
     private void buildMessages() throws InterruptedException {
@@ -202,25 +209,28 @@ public class ClientService {
             return;
         }
         buildPlayerUpdate();
-        buildRoleMove();
+        buildPlayerMove();
+        buildMonsterMove();
         buildPlayerGrid();
     }
 
     private void sendMessages() throws InterruptedException {
-        if (sendStack.isEmpty()) {
+        WsMessage message = sendQueue.peek();
+        if (FuncUtils.isEmpty(message)) {
             Thread.sleep(1);
             return;
         }
-        WsMessage message = sendStack.pop();
+        message = sendQueue.poll();
         websocket.sendMessage(message);
     }
 
     private void processMessages() throws InterruptedException {
-        if (websocket.getReceiveStack().isEmpty()) {
+        WsMessage message = websocket.getReceiveQueue().peek();
+        if (FuncUtils.isEmpty(message)) {
             Thread.sleep(1);
             return;
         }
-        WsMessage message = websocket.getReceiveStack().pop();
+        message = websocket.getReceiveQueue().poll();
         processMessage(message);
     }
 
