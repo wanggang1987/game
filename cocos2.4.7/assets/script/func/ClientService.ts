@@ -5,40 +5,17 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 import WsConnection from "./WsConnection";
-import RoleCollection, { Attribute, Location, Role } from "./RoleCollection"
+import RoleCollection from "./RoleCollection"
+import { CreatePlayerMsg, MessageType } from "./BasicObjects";
 const { ccclass, property } = cc._decorator;
-
-export enum MessageType {
-    LOGIN = 'LOGIN',
-    PLAYER_CREATE = 'PLAYER_CREATE',
-    HERO_ATTRIBUTE = 'HERO_ATTRIBUTE',
-    HERO_LOCATION = 'HERO_LOCATION',
-}
-
-export interface CreatePlayerMsg {
-    name: string;
-}
-
-export interface WsMessage {
-    messageType: MessageType;
-    playerId: number;
-    createPlayerMsg: CreatePlayerMsg;
-    attributeMsg: Attribute;
-    locationMsg: Location;
-}
-
 
 @ccclass
 export default class ClientService extends cc.Component {
 
     private default = 0;
-    @property({
-        type: WsConnection
-    })
+    @property({ type: WsConnection })
     private websocket: WsConnection = null;
-    @property({
-        type: RoleCollection
-    })
+    @property({ type: RoleCollection })
     private roleCollection: RoleCollection = null;
 
     public createPlayer(createPlayerMsg: CreatePlayerMsg) {
@@ -54,23 +31,22 @@ export default class ClientService extends cc.Component {
         const messageStack = this.websocket.getMessageStack();
         messageStack.forEach(message => {
             if (message.messageType == MessageType.HERO_ATTRIBUTE) {
-                const attribute: Attribute = message.attributeMsg;
-                this.roleCollection.updateHeroAttribute(attribute);
-            }
-            if (message.messageType == MessageType.HERO_LOCATION) {
-                const location: Location = message.locationMsg;
-                this.roleCollection.updateHeroLocation(location);
+                this.roleCollection.updateHeroAttribute(message.attributeMsg);
+            } else if (message.messageType == MessageType.HERO_LOCATION) {
+                this.roleCollection.updateHeroLocation(message.locationMsg);
+            } else if (message.messageType == MessageType.MONSTER_LOCATION) {
+                this.roleCollection.updateMonsterLocation(message.locationMsg);
             }
         });
         this.websocket.clearMessageStack();
     }
 
     private heartBeat() {
-        let hero :Role = this.roleCollection.getHero();
-        if (this.websocket.isConnect() && hero.attribute) {
-            let message = { messageType: MessageType.LOGIN, playerId: hero.attribute.id };
-            this.websocket.send(JSON.stringify(message));
-        }
+        // let hero: Role = this.roleCollection.getHero();
+        // if (this.websocket.isConnect() && hero.attribute) {
+        //     let message = { messageType: MessageType.LOGIN, playerId: hero.attribute.id };
+        //     this.websocket.send(JSON.stringify(message));
+        // }
     }
 
     protected start() {

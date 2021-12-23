@@ -5,47 +5,49 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
+import Hero from "../Hero";
+import Monsters from "../Monsters";
+import { Attribute, Role, Location } from "./BasicObjects";
+
 const { ccclass, property } = cc._decorator;
 
-export interface Location {
-    id: number;
-    x: number;
-    y: number;
-}
-
-export interface Attribute {
-    id: number;
-    name: string;
-    level: number;
-    speed: number;
-    attackRange: number;
-    healthPoint: number;
-    healthMax: number;
-}
-
-export class Role {
-    public attribute: Attribute;
-    public location: Location;
-}
 
 @ccclass
 export default class RoleCollection extends cc.Component {
 
     private default = 0;
-    private hero: Role = new Role();
+    private hero: Role = null;
+    @property({ type: Hero })
+    private heroNode: Hero = null;
+    private monsters: Map<number, Role> = null;
+    @property({ type: Monsters })
+    private monstersNode: Monsters = null;
 
-    public getHero() {
-        return this.hero;
+    protected onLoad(): void {
+        this.hero = this.heroNode.getHero();
+        this.monsters = this.monstersNode.getMonsters();
     }
 
     public updateHeroLocation(location: Location) {
         this.hero.location = location;
-        console.log(location, 'updateLocation');
+        this.hero.isUpdate = true;
     }
-
     public updateHeroAttribute(attribute: Attribute) {
         this.hero.attribute = attribute;
-        console.log(attribute, 'updateHero');
+        this.hero.isUpdate = true;
     }
 
+    public updateMonsterLocation(location: Location) {
+        let monsterId: number = location.id;
+        let monster: Role = null;
+        if (this.monsters.has(monsterId)) {
+            monster = this.monsters.get(monsterId);
+        } else {
+            monster = new Role();
+            monster.id = monsterId;
+            this.monsters.set(monsterId, monster);
+        }
+        monster.location = location;
+        monster.isUpdate = true;
+    }
 }

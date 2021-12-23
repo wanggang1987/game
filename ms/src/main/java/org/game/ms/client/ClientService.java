@@ -193,7 +193,7 @@ public class ClientService {
 
     @PostConstruct
     private void pushMessage() throws InterruptedException {
-        ForkJoinPool threadPool = new ForkJoinPool(6);
+        ForkJoinPool threadPool = new ForkJoinPool(3);
         threadPool.submit(() -> {
             while (true) {
                 try {
