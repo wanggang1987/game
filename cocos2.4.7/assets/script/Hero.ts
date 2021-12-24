@@ -12,7 +12,7 @@ export default class Hero extends cc.Component {
 
     private default = 0;
     @property({ type: cc.Label })
-    private lable: cc.Label = null;
+    private Name: cc.Label = null;
     private hero: Role = new Role();
 
     public getHero(): Role {
@@ -20,16 +20,15 @@ export default class Hero extends cc.Component {
     }
 
     protected update(dt: number): void {
-        if (!this.hero.isUpdate) return;
-
-        if (this.hero.location) {
+        if (this.hero.location && this.hero.location.isUpdate) {
             this.node.setPosition(this.hero.location.x * 50, this.hero.location.y * 50);
+            this.hero.location.isUpdate = false;
         }
-        if (this.hero.attribute && this.hero.location) {
-            this.lable.string = this.hero.attribute.name + ":(" + this.hero.location.x.toFixed(2) + ","
-                + this.hero.location.y.toFixed(2) + ")";
+
+        if (this.hero.attribute && this.hero.attribute.isUpdate) {
+            this.Name.string = "玩家:" + this.hero.attribute.id;
+            this.hero.attribute.isUpdate = false;
         }
-        this.hero.isUpdate = false;
     }
 
 }

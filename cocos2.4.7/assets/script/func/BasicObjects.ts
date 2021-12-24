@@ -5,11 +5,8 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
-const { ccclass, property } = cc._decorator;
-
 export enum MessageType {
-    LOGIN = 'LOGIN',
-    PLAYER_CREATE = 'PLAYER_CREATE',
+    //receive
     HERO_ATTRIBUTE = 'HERO_ATTRIBUTE',
     HERO_LOCATION = 'HERO_LOCATION',
     PLAYER_ATTRIBUTE = 'PLAYER_ATTRIBUTE',
@@ -18,6 +15,15 @@ export enum MessageType {
     MONSTER_ATTRIBUTE = 'MONSTER_ATTRIBUTE',
     MONSTER_LOCATION = 'MONSTER_LOCATION',
     MONSTER_DIE = 'MONSTER_DIE',
+    //send
+    LOGIN = 'LOGIN',
+    PLAYER_CREATE = 'PLAYER_CREATE',
+    ATTRIBUTE_REQUEST = 'ATTRIBUTE_REQUEST',
+}
+
+export enum RoleType {
+    MONSTER = 'MONSTER',
+    PLAYER = 'PLAYER',
 }
 
 export interface CreatePlayerMsg {
@@ -25,12 +31,15 @@ export interface CreatePlayerMsg {
 }
 
 export interface WsMessage {
+    //receive
     messageType: MessageType;
-    playerId: number;
-    createPlayerMsg: CreatePlayerMsg;
     attributeMsg: Attribute;
     locationMsg: Location;
     roleDieMsg: RoleDie;
+    //send
+    playerId: number;
+    createPlayerMsg: CreatePlayerMsg;
+    attributeRequest: AttributeRequest;
 }
 
 export interface RoleDie {
@@ -38,12 +47,19 @@ export interface RoleDie {
 }
 
 export interface Location {
+    isUpdate: boolean;
     id: number;
     x: number;
     y: number;
 }
 
+export interface AttributeRequest {
+    roleId: number;
+    roleType: RoleType;
+}
+
 export interface Attribute {
+    isUpdate: boolean;
     id: number;
     name: string;
     level: number;
@@ -55,12 +71,6 @@ export interface Attribute {
 
 export class Role {
     public id: number;
-    public isUpdate: boolean = false;
     public attribute: Attribute;
     public location: Location;
-}
-
-@ccclass
-export default class NewClass extends cc.Component {
-
 }

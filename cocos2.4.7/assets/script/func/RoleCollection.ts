@@ -31,6 +31,13 @@ export default class RoleCollection extends cc.Component {
         return this.hero;
     }
 
+    public getPlayers() {
+        return this.players;
+    }
+    public getMonsters() {
+        return this.monsters;
+    }
+
     protected onLoad(): void {
         this.hero = this.heroService.getHero();
         this.monsters = this.monstersService.getMonsters();
@@ -41,34 +48,40 @@ export default class RoleCollection extends cc.Component {
 
     public updateHeroLocation(location: Location) {
         this.hero.location = location;
-        this.hero.isUpdate = true;
+        this.hero.location.isUpdate = true;
     }
     public updateHeroAttribute(attribute: Attribute) {
         this.hero.id = attribute.id;
         this.hero.attribute = attribute;
-        this.hero.isUpdate = true;
+        this.hero.attribute.isUpdate = true;
+    }
+
+    private monsterRole(id: number): Role {
+        let monster: Role = null;
+        if (this.monsters.has(id)) {
+            monster = this.monsters.get(id);
+        } else {
+            monster = new Role();
+            monster.id = id;
+            this.monsters.set(id, monster);
+        }
+        return monster;
+    }
+
+    public updateMonsterAttribute(attribute: Attribute) {
+        let monster: Role = this.monsterRole(attribute.id);
+        monster.attribute = attribute;
+        monster.attribute.isUpdate = true;
     }
 
     public updateMonsterLocation(location: Location) {
-        let monsterId: number = location.id;
-        let monster: Role = null;
-        if (this.monsters.has(monsterId)) {
-            monster = this.monsters.get(monsterId);
-        } else {
-            monster = new Role();
-            monster.id = monsterId;
-            this.monsters.set(monsterId, monster);
-        }
+        let monster: Role = this.monsterRole(location.id);
         monster.location = location;
-        monster.isUpdate = true;
+        monster.location.isUpdate = true;
     }
 
     public monsterDie(roleDie: RoleDie) {
         this.deadMonsters.push(roleDie.id);
-    }
-
-    public playerDie(roleDie: RoleDie) {
-        this.deadPlayers.push(roleDie.id);
     }
 
     public updatePlayerLocation(location: Location) {
@@ -86,7 +99,7 @@ export default class RoleCollection extends cc.Component {
             this.players.set(playerId, player);
         }
         player.location = location;
-        player.isUpdate = true;
+        player.location.isUpdate = true;
     }
 
     public updatePlayerAttribute(attribute: Attribute) {
@@ -94,5 +107,9 @@ export default class RoleCollection extends cc.Component {
             this.updateHeroAttribute(attribute);
             return;
         }
+    }
+
+    public playerDie(roleDie: RoleDie) {
+        this.deadPlayers.push(roleDie.id);
     }
 }

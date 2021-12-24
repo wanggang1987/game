@@ -10,8 +10,7 @@ package org.game.ms.client.msg;
  * @author wanggang
  */
 public enum MessageType {
-    PLAYER_CREATE,
-    LOGIN,
+    //send
     HERO_ATTRIBUTE,
     HERO_LOCATION,
     MONSTER_ATTRIBUTE,
@@ -20,4 +19,8 @@ public enum MessageType {
     PLAYER_ATTRIBUTE,
     PLAYER_LOCATION,
     PLAYER_DIE,
+    //reveive
+    PLAYER_CREATE,
+    LOGIN,
+    ATTRIBUTE_REQUEST,
 }

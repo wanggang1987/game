@@ -16,11 +16,14 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WsMessage {
 
+    //send
     private String seesionId;
-    private Long playerId;
     private MessageType messageType;
-    private CreatePlayerMsg createPlayerMsg;
     private AttributeMsg attributeMsg;
     private LocationMsg locationMsg;
     private RoleDieMsg roleDieMsg;
+    //receive
+    private Long playerId;
+    private AttributeRequest attributeRequest;
+    private CreatePlayerMsg createPlayerMsg;
 }

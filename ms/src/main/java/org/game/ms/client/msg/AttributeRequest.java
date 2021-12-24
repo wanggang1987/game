@@ -6,7 +6,6 @@
 package org.game.ms.client.msg;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.game.ms.role.RoleType;
 
@@ -15,7 +14,6 @@ import org.game.ms.role.RoleType;
  * @author wanggang
  */
 @Data
-@AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AttributeRequest {
 

@@ -5,6 +5,7 @@
 // Learn life-cycle callbacks:
 
 import { Role } from "./func/BasicObjects";
+import Roles from "./Roles";
 const { ccclass, property } = cc._decorator;
 
 @ccclass
@@ -16,7 +17,7 @@ export default class Monsters extends cc.Component {
     private monsters: Map<number, Role> = new Map();
     private deadMonster: number[] = new Array();
 
-    public getDeadMonsters() :number[] {
+    public getDeadMonsters(): number[] {
         return this.deadMonster;
     }
 
@@ -25,6 +26,15 @@ export default class Monsters extends cc.Component {
     }
 
     protected update(dt: number): void {
+        for (let monsterId of this.deadMonster) {
+            let monsterNode: cc.Node = this.node.getChildByName(monsterId.toString());
+            if (monsterNode) {
+                monsterNode.destroy();
+                console.log("destory monsterNode " + monsterNode.name);
+            }
+        }
+        this.deadMonster.length = 0;
+
         this.monsters.forEach((monster, monsterId) => {
             let monsterNode: cc.Node = this.node.getChildByName(monsterId.toString());
             if (!monsterNode) {
@@ -34,19 +44,21 @@ export default class Monsters extends cc.Component {
                 console.log("add monsterNode " + monsterNode.name);
             }
 
-            if (monster.isUpdate) {
+            if (monster.location && monster.location.isUpdate) {
                 monsterNode.setPosition(monster.location.x * 50, monster.location.y * 50);
-                monster.isUpdate = false;
+                monster.location.isUpdate = false;
+            }
+
+            if (monster.attribute && monster.attribute.isUpdate) {
+                let name: cc.Node = monsterNode.getChildByName("Name");
+                if (name) {
+                    let nameLabel = name.getComponent(cc.Label);
+                    nameLabel.string = monster.attribute.name + ":" + monster.attribute.id;
+                    monster.attribute.isUpdate = false;
+                }
+
             }
         });
 
-        for (let monsterId of this.deadMonster ){
-            let monsterNode: cc.Node = this.node.getChildByName(monsterId.toString());
-            if (monsterNode) {
-                monsterNode.destroy();
-                console.log("destory monsterNode " + monsterNode.name);
-            }
-        }
-        this.deadMonster.length = 0;
     }
 }

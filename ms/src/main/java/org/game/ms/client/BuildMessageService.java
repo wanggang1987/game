@@ -126,6 +126,9 @@ public class BuildMessageService {
                 message.setMessageType(MessageType.PLAYER_ATTRIBUTE);
                 role = lifeCycle.onlinePlayer(request.getRoleId());
             }
+            if (FuncUtils.isEmpty(role)) {
+                continue;
+            }
             AttributeMsg attributeMsg = new AttributeMsg();
             FuncUtils.copyProperties(role, attributeMsg);
             message.setSeesionId(request.getSessionId());

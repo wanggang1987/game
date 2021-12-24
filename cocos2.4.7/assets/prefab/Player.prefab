@@ -184,7 +184,7 @@
     "asset": {
       "__id__": 0
     },
-    "fileId": "954i8U7E9K8bf61OnV1zvS",
+    "fileId": "42UBS+SuZP7aZVsYu3BpYd",
     "sync": false
   },
   {
@@ -214,7 +214,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 80,
+      "width": 48.94,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -266,8 +266,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "其他玩家",
-    "_N$string": "其他玩家",
+    "_string": "Label",
+    "_N$string": "Label",
     "_fontSize": 20,
     "_lineHeight": 40,
     "_enableWrapText": true,
@@ -292,18 +292,18 @@
     "asset": {
       "__id__": 0
     },
-    "fileId": "b7KfWTcFpOz5UAlylPWPiA",
+    "fileId": "2d1TWFcqhLf7IDhveIvM1G",
     "sync": false
   },
   {
-    "__type__": "07d31HOCLVAUIwCV6eq4Xzh",
+    "__type__": "5e5af0z01ZOdpmMQEWKD6bb",
     "_name": "",
     "_objFlags": 0,
     "node": {
       "__id__": 1
     },
     "_enabled": true,
-    "lable": {
+    "Name": {
       "__id__": 6
     },
     "_id": ""

@@ -508,7 +508,7 @@
       "__id__": 3
     },
     "_enabled": true,
-    "lable": {
+    "Name": {
       "__id__": 9
     },
     "_id": "01t6qVboJEEJJrEDufYdMn"
@@ -584,7 +584,7 @@
     },
     "_enabled": true,
     "playerPrefab": {
-      "__uuid__": "aa4b9c95-7d8c-4fc9-a8af-69727538792b"
+      "__uuid__": "76f779fa-7094-4bc2-bc03-eaf7327aae99"
     },
     "_id": "99qXhb7F1GlJyteIR2/IF1"
   },
@@ -659,7 +659,7 @@
     },
     "_enabled": true,
     "monsterPrefab": {
-      "__uuid__": "0da0fd8c-97fd-47a1-83fd-89ff43c884c4"
+      "__uuid__": "7da9d22e-7997-43da-a53d-6ede70386b29"
     },
     "_id": "dcyT+3z7VFJq4Z8kmXd5Ge"
   },

@@ -6,7 +6,7 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 import WsConnection from "./WsConnection";
 import RoleCollection from "./RoleCollection"
-import { CreatePlayerMsg, MessageType, Role } from "./BasicObjects";
+import { CreatePlayerMsg, MessageType, Role, RoleType } from "./BasicObjects";
 const { ccclass, property } = cc._decorator;
 
 @ccclass
@@ -18,9 +18,18 @@ export default class ClientService extends cc.Component {
     @property({ type: RoleCollection })
     private roleCollection: RoleCollection = null;
     private hero: Role = null;
+    private monsters: Map<number, Role> = null;
 
     public createPlayer(createPlayerMsg: CreatePlayerMsg) {
         let message = { messageType: MessageType.PLAYER_CREATE, createPlayerMsg: createPlayerMsg };
+        this.websocket.send(JSON.stringify(message));
+    }
+
+    private sendAttributeRequest(roleId: number, roleType: RoleType) {
+        let message = {
+            messageType: MessageType.ATTRIBUTE_REQUEST,
+            attributeRequest: { roleId: roleId, roleType: roleType }
+        };
         this.websocket.send(JSON.stringify(message));
     }
 
@@ -41,6 +50,8 @@ export default class ClientService extends cc.Component {
                 this.roleCollection.updatePlayerLocation(message.locationMsg);
             } else if (message.messageType == MessageType.PLAYER_DIE) {
                 this.roleCollection.playerDie(message.roleDieMsg);
+            } else if (message.messageType == MessageType.MONSTER_ATTRIBUTE) {
+                this.roleCollection.updateMonsterAttribute(message.attributeMsg);
             } else if (message.messageType == MessageType.MONSTER_LOCATION) {
                 this.roleCollection.updateMonsterLocation(message.locationMsg);
             } else if (message.messageType == MessageType.MONSTER_DIE) {
@@ -50,6 +61,11 @@ export default class ClientService extends cc.Component {
         this.websocket.clearMessageStack();
     }
 
+    private roleCheck() {
+        this.heartBeat();
+        this.attributeCheck();
+    }
+
     private heartBeat() {
         if (this.websocket.isConnect() && this.hero.attribute) {
             let message = { messageType: MessageType.LOGIN, playerId: this.hero.attribute.id };
@@ -57,9 +73,18 @@ export default class ClientService extends cc.Component {
         }
     }
 
+    private attributeCheck() {
+        this.monsters.forEach((monster, monsterId) => {
+            if (!monster.attribute) {
+                this.sendAttributeRequest(monsterId, RoleType.MONSTER);
+            }
+        });
+    }
+
     protected start() {
         this.hero = this.roleCollection.getHero();
-        this.schedule(this.heartBeat, 1);
+        this.monsters = this.roleCollection.getMonsters();
+        this.schedule(this.roleCheck, 1);
     }
 
 }

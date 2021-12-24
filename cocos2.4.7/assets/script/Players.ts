@@ -22,11 +22,20 @@ export default class Players extends cc.Component {
         return this.players;
     }
 
-    public getDeadPlayers() :number[] {
+    public getDeadPlayers(): number[] {
         return this.deadPlayers;
     }
 
     protected update(dt: number): void {
+        for (let playerId of this.deadPlayers) {
+            let playerNode: cc.Node = this.node.getChildByName(playerId.toString());
+            if (playerNode) {
+                playerNode.destroy();
+                console.log("destory playerNode " + playerNode.name);
+            }
+        }
+        this.deadPlayers.length = 0;
+
         this.players.forEach((player, playerId) => {
             let playerNode: cc.Node = this.node.getChildByName(playerId.toString());
             if (!playerNode) {
@@ -35,20 +44,11 @@ export default class Players extends cc.Component {
                 this.node.addChild(playerNode);
                 console.log("add playerNode " + playerNode.name);
             }
-
-            if (player.isUpdate) {
+            
+            if (player.location && player.location.isUpdate) {
                 playerNode.setPosition(player.location.x * 50, player.location.y * 50);
-                player.isUpdate = false;
+                player.location.isUpdate = false;
             }
         });
-
-        for (let playerId of this.deadPlayers ){
-            let playerNode: cc.Node = this.node.getChildByName(playerId.toString());
-            if (playerNode) {
-                playerNode.destroy();
-                console.log("destory playerNode " + playerNode.name);
-            }
-        }
-        this.deadPlayers.length = 0;
     }
 }

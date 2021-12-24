@@ -6,7 +6,6 @@ package org.game.ms.client;
 
 import java.util.concurrent.ForkJoinPool;
 import javax.annotation.PostConstruct;
-import javax.websocket.Session;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.client.msg.AttributeRequest;
 import org.game.ms.client.msg.CreatePlayerMsg;
@@ -16,7 +15,6 @@ import org.game.ms.func.FuncUtils;
 import org.game.ms.func.JsonUtils;
 import org.game.ms.lifecycle.AutoPlayer;
 import org.game.ms.lifecycle.LifeCycle;
-import org.game.ms.map.WorldMap;
 import org.game.ms.player.Player;
 import org.game.ms.player.PlayerService;
 import org.game.ms.role.RoleType;
@@ -69,11 +67,10 @@ public class ProcessMessageService {
             messageService.heroUpdate(player.getId());
         } else if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.LOGIN)) {
             messageService.addPlayerSession(wsMessage.getPlayerId(), wsMessage.getSeesionId());
+        } else if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.ATTRIBUTE_REQUEST)) {
+            wsMessage.getAttributeRequest().setSessionId(wsMessage.getSeesionId());
+            messageService.getRoleAttribute().add(wsMessage.getAttributeRequest());
         }
-    }
-
-    private void sendRoleAttribute(String sessionId, long roleIdL, RoleType roleType) {
-        messageService.getRoleAttribute().add(new AttributeRequest(sessionId, roleIdL, roleType));
     }
 
     private Player createPlayer(CreatePlayerMsg msg) {

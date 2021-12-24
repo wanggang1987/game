@@ -32,7 +32,7 @@ public class WorldMap extends RootMap {
 
     @Override
     public void addPlayerToMap(Player player) {
-        Location location = new Location(FuncUtils.randomInRange(0, comeInLocationRandomRange), FuncUtils.randomInRange(0, comeInLocationRandomRange), 0);       
+        Location location = new Location(FuncUtils.randomInRange(0, comeInLocationRandomRange), FuncUtils.randomInRange(0, comeInLocationRandomRange), 0);
         gridService.locationGrids(location);
         player.setLocation(location);
         super.addPlayerToMap(player);
@@ -40,14 +40,12 @@ public class WorldMap extends RootMap {
 
     @Scheduled(fixedRate = 1000 * 5)
     protected void flushAndRrmoveMonsterForPlayer() {
-        log.debug("start to flushAndRrmoveMonsterForPlayer");
         int totalNum = inMapPlayerIdList.stream().map(playerId -> {
             Player player = lifeCycle.onlinePlayer(playerId);
             int addNum = flushMonsterAroundNum - findNearByMonsterNumForPlayer(player);
             createMonsterAroundPlayer(player, addNum);
             return addNum;
         }).mapToInt(Integer::intValue).sum();
-        log.debug("flushAndRrmoveMonsterForPlayer add {} monsters", totalNum);
     }
 
     private void createMonsterAroundPlayer(Player player, int num) {
