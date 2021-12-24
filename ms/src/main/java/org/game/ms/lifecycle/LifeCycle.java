@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import org.game.ms.client.ClientService;
+import org.game.ms.client.MessageService;
 import org.game.ms.fight.BattleService;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.map.RootMap;
@@ -42,7 +42,7 @@ public class LifeCycle {
     @Autowired
     private BattleService battleService;
     @Autowired
-    private ClientService clientService;
+    private MessageService messageService;
     
     private final Map<Long, RootMap> maps = new ConcurrentHashMap<>();
     private final Map<Long, Player> onlinePlayers = new ConcurrentHashMap<>();
@@ -101,7 +101,7 @@ public class LifeCycle {
             onlineMonsters.remove(monster.getId());
             monsterReward(monster);
             battleService.removeRoleFromBattle(monster);
-            clientService.addRoleDieMsg(monster);
+            messageService.addRoleDieMsg(monster);
             log.debug("monster {} die", monster.getId());
         });
     }

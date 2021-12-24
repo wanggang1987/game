@@ -35,17 +35,19 @@ export default class ClientService extends cc.Component {
                 this.roleCollection.updateHeroAttribute(message.attributeMsg);
             } else if (message.messageType == MessageType.HERO_LOCATION) {
                 this.roleCollection.updateHeroLocation(message.locationMsg);
+            } else if (message.messageType == MessageType.PLAYER_ATTRIBUTE) {
+                this.roleCollection.updatePlayerAttribute(message.attributeMsg);
+            } else if (message.messageType == MessageType.PLAYER_LOCATION) {
+                this.roleCollection.updatePlayerLocation(message.locationMsg);
+            } else if (message.messageType == MessageType.PLAYER_DIE) {
+                this.roleCollection.playerDie(message.roleDieMsg);
             } else if (message.messageType == MessageType.MONSTER_LOCATION) {
                 this.roleCollection.updateMonsterLocation(message.locationMsg);
-            } else if (message.messageType == MessageType.MONSTER_DIE){
+            } else if (message.messageType == MessageType.MONSTER_DIE) {
                 this.roleCollection.monsterDie(message.roleDieMsg);
             }
         });
         this.websocket.clearMessageStack();
-    }
-
-    protected onLoad(): void {
-        this.hero = this.roleCollection.getHero();
     }
 
     private heartBeat() {
@@ -56,6 +58,7 @@ export default class ClientService extends cc.Component {
     }
 
     protected start() {
+        this.hero = this.roleCollection.getHero();
         this.schedule(this.heartBeat, 1);
     }
 

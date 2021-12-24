@@ -4,7 +4,11 @@
  */
 package org.game.ms.client;
 
+import java.util.concurrent.ForkJoinPool;
+import javax.annotation.PostConstruct;
+import javax.websocket.Session;
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.client.msg.AttributeRequest;
 import org.game.ms.client.msg.CreatePlayerMsg;
 import org.game.ms.client.msg.MessageType;
 import org.game.ms.client.msg.WsMessage;
@@ -15,6 +19,7 @@ import org.game.ms.lifecycle.LifeCycle;
 import org.game.ms.map.WorldMap;
 import org.game.ms.player.Player;
 import org.game.ms.player.PlayerService;
+import org.game.ms.role.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,39 +40,42 @@ public class ProcessMessageService {
     @Autowired
     private PlayerService playerService;
     @Autowired
-    private ClientService clientService;
+    private MessageService messageService;
     @Autowired
     private WebsocketController websocket;
 
-    public void sendMessages() throws InterruptedException {
-        WsMessage message = clientService.getSendQueue().peek();
+    private void sendMessages() throws InterruptedException {
+        WsMessage message = messageService.getSendQueue().peek();
         if (FuncUtils.isEmpty(message)) {
             Thread.sleep(1);
             return;
         }
-        message = clientService.getSendQueue().poll();
+        message = messageService.getSendQueue().poll();
         websocket.sendMessage(message);
     }
 
-    public void receiveMessages() throws InterruptedException {
-        WsMessage message = clientService.getReceiveQueue().peek();
+    private void receiveMessages() throws InterruptedException {
+        WsMessage message = messageService.getReceiveQueue().peek();
         if (FuncUtils.isEmpty(message)) {
             Thread.sleep(1);
             return;
         }
-        message = clientService.getReceiveQueue().poll();
+        message = messageService.getReceiveQueue().poll();
         processMessage(message);
     }
 
     private void processMessage(WsMessage wsMessage) {
         if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.PLAYER_CREATE)) {
             Player player = createPlayer(wsMessage.getCreatePlayerMsg());
-            clientService.addPlayerSession(player.getId(), wsMessage.getSeesionId());
-            clientService.getPlayerUpdate().add(player.getId());
-            clientService.getPlayerMove().add(player);
+            messageService.addPlayerSession(player.getId(), wsMessage.getSeesionId());
+            messageService.getHeroUpdate().add(player.getId());
         } else if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.LOGIN)) {
-            clientService.addPlayerSession(wsMessage.getPlayerId(), wsMessage.getSeesionId());
+            messageService.addPlayerSession(wsMessage.getPlayerId(), wsMessage.getSeesionId());
         }
+    }
+
+    private void sendRoleAttribute(String sessionId, long roleIdL, RoleType roleType) {
+        messageService.getRoleAttribute().add(new AttributeRequest(sessionId, roleIdL, roleType));
     }
 
     private Player createPlayer(CreatePlayerMsg msg) {
@@ -79,4 +87,29 @@ public class ProcessMessageService {
         return player;
     }
 
+    @PostConstruct
+    private void startThread() throws InterruptedException {
+        ForkJoinPool threadPool = new ForkJoinPool(2);
+        threadPool.submit(() -> {
+            while (true) {
+                try {
+                    sendMessages();
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        threadPool.submit(() -> {
+            while (true) {
+                try {
+                    receiveMessages();
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 }

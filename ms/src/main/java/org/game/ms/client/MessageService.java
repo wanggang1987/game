@@ -10,12 +10,11 @@ import com.google.common.collect.HashBiMap;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ForkJoinPool;
-import javax.annotation.PostConstruct;
 import javax.websocket.Session;
 import lombok.Data;
 import org.game.ms.client.msg.WsMessage;
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.client.msg.AttributeRequest;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.role.Role;
 import org.game.ms.role.RoleType;
@@ -29,21 +28,19 @@ import org.springframework.stereotype.Service;
 @Data
 @Slf4j
 @Service
-public class ClientService {
+public class MessageService {
 
     @Autowired
     private BuildMessageService buildMessageService;
-    @Autowired
-    private ProcessMessageService processMessageService;
 
     private final BiMap<Long, String> playerSession = HashBiMap.create();
     private final Queue<WsMessage> receiveQueue = new ConcurrentLinkedQueue<>();
     private final Queue<WsMessage> sendQueue = new ConcurrentLinkedQueue<>();
-    private final Queue<Long> playerUpdate = new ConcurrentLinkedQueue<>();
-    private final Queue<Role> playerMove = new ConcurrentLinkedQueue<>();
-    private final Queue<Role> monsterMove = new ConcurrentLinkedQueue<>();
+    private final Queue<Role> roleMove = new ConcurrentLinkedQueue<>();
     private final Queue<Role> flashGrid = new ConcurrentLinkedQueue<>();
-    private final Queue<Role> monsterDie = new ConcurrentLinkedDeque<>();
+    private final Queue<Role> roleDie = new ConcurrentLinkedDeque<>();
+    private final Queue<AttributeRequest> roleAttribute = new ConcurrentLinkedDeque<>();
+    private final Queue<Long> heroUpdate = new ConcurrentLinkedDeque<>();
 
     public void addPlayerSession(Long playerId, String sessionId) {
         if (playerSession.containsKey(playerId)) {
@@ -63,60 +60,21 @@ public class ClientService {
     public void addRoleDieMsg(Role role) {
         if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
         } else if (FuncUtils.equals(role.getRoleType(), RoleType.MONSTER)) {
-            monsterDie.add(role);
         }
+        roleDie.add(role);
     }
 
     public void addRoleMoveMsg(Role role) {
-        if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
-            playerMove.add(role);
-        } else if (FuncUtils.equals(role.getRoleType(), RoleType.MONSTER)) {
-            monsterMove.add(role);
-        }
+        roleMove.add(role);
     }
 
     public void addRoleToGridMsg(Role role) {
         if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
             flashGrid.add(role);
+            roleMove.add(role);
         } else if (FuncUtils.equals(role.getRoleType(), RoleType.MONSTER)) {
-            monsterMove.add(role);
+            roleMove.add(role);
         }
     }
 
-    @PostConstruct
-    private void pushMessage() throws InterruptedException {
-        ForkJoinPool threadPool = new ForkJoinPool(3);
-        threadPool.submit(() -> {
-            while (true) {
-                try {
-                    buildMessageService.buildMessages();
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        threadPool.submit(() -> {
-            while (true) {
-                try {
-                    processMessageService.sendMessages();
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        threadPool.submit(() -> {
-            while (true) {
-                try {
-                    processMessageService.receiveMessages();
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
 }

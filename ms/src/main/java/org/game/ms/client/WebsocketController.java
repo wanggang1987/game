@@ -31,11 +31,11 @@ public class WebsocketController {
 
     private final static Map<String, Session> clients = new HashMap<>();
 
-    private static ClientService clientService;
+    private static MessageService messsageService;
 
     @Autowired
-    public void setClientService(ClientService clientService) {
-        WebsocketController.clientService = clientService;
+    public void setClientService(MessageService messageService) {
+        WebsocketController.messsageService = messageService;
     }
 
     @OnOpen
@@ -48,7 +48,7 @@ public class WebsocketController {
     @OnClose
     public void onClose(Session session) {
         clients.remove(session.getId());
-        clientService.removeSession(session);
+        messsageService.removeSession(session);
         log.debug("session close. ID:{}", session.getId());
     }
 
@@ -57,7 +57,7 @@ public class WebsocketController {
         log.debug("get client msg. ID:{} msg:{}", session.getId(), message);
         WsMessage wsMessage = JsonUtils.json2bean(message, WsMessage.class);
         wsMessage.setSeesionId(session.getId());
-        clientService.getReceiveQueue().offer(wsMessage);
+        messsageService.getReceiveQueue().offer(wsMessage);
     }
 
     @OnError

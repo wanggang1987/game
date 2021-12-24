@@ -25,14 +25,14 @@ public class WorldMap extends RootMap {
 
     @Autowired
     private LifeCycle lifeCycle;
-    final protected int comeInLocationRandomRange = 200;
+    final protected int comeInLocationRandomRange = 20;
     final private int flushMonsterAroundNum = 20;
     @Autowired
     private GridService gridService;
 
     @Override
     public void addPlayerToMap(Player player) {
-        Location location = new Location(FuncUtils.randomInRange(0, comeInLocationRandomRange), FuncUtils.randomInRange(0, comeInLocationRandomRange), 0);
+        Location location = new Location(FuncUtils.randomInRange(0, comeInLocationRandomRange), FuncUtils.randomInRange(0, comeInLocationRandomRange), 0);       
         gridService.locationGrids(location);
         player.setLocation(location);
         super.addPlayerToMap(player);

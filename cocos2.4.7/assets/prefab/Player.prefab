@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "Monster",
+    "_name": "Player",
     "_objFlags": 0,
     "_parent": null,
     "_children": [
@@ -160,7 +160,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "6d0f0d89-2d7b-4798-918f-8190df8e8962"
+      "__uuid__": "c8a24c5c-ee6d-4fe9-afa6-d534303c03b3"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -214,7 +214,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 40,
+      "width": 80,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -266,8 +266,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "怪物",
-    "_N$string": "怪物",
+    "_string": "其他玩家",
+    "_N$string": "其他玩家",
     "_fontSize": 20,
     "_lineHeight": 40,
     "_enableWrapText": true,

@@ -8,7 +8,7 @@ package org.game.ms.map;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.game.ms.client.ClientService;
+import org.game.ms.client.MessageService;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.monster.Monster;
 import org.game.ms.player.Player;
@@ -27,7 +27,7 @@ public class RootMap {
     @Autowired
     private WheelConfig wheelConfig;
     @Autowired
-    private ClientService clientService;
+    private MessageService messageService;
     @Autowired
     private GridService gridService;
 
@@ -105,7 +105,7 @@ public class RootMap {
             role.getLocation().setX(x);
             role.getLocation().setY(y);
             role.getLocation().setZ(z);
-            clientService.addRoleMoveMsg(role);
+            messageService.addRoleMoveMsg(role);
         } else {
             gridService.removeRoleFromGrid(role);
             Location location = new Location(x, y, z);
