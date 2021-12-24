@@ -34,7 +34,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class LifeCycle {
-    
+
     @Autowired
     private PlayerService playerService;
     @Autowired
@@ -43,29 +43,29 @@ public class LifeCycle {
     private BattleService battleService;
     @Autowired
     private MessageService messageService;
-    
+
     private final Map<Long, RootMap> maps = new ConcurrentHashMap<>();
     private final Map<Long, Player> onlinePlayers = new ConcurrentHashMap<>();
     private final Map<Long, Monster> onlineMonsters = new ConcurrentHashMap<>();
-    
+
     public void playerOnline(Player player) {
         onlinePlayers.put(player.getId(), player);
     }
-    
+
     public Player onlinePlayer(Long id) {
         if (id == null) {
             return null;
         }
         return onlinePlayers.get(id);
     }
-    
+
     public Monster onlineMonster(Long id) {
         if (id == null) {
             return null;
         }
         return onlineMonsters.get(id);
     }
-    
+
     public Role getRole(RoleType type, Long id) {
         if (FuncUtils.equals(type, RoleType.MONSTER)) {
             return onlineMonster(id);
@@ -75,22 +75,22 @@ public class LifeCycle {
         }
         return null;
     }
-    
+
     public Collection<Player> onlinePlayers() {
         return onlinePlayers.values();
     }
-    
+
     public Collection<Monster> onlineMonsters() {
         return onlineMonsters.values();
     }
-    
+
     public Monster createMonsterByLevel(int level) {
         Monster monster = monsterService.initMonsterByLevel(level);
         onlineMonsters.put(monster.getId(), monster);
         log.debug("createMonster {}", monster.getId());
         return monster;
     }
-    
+
     private void monsterDie() {
         List<Monster> deadList = onlineMonsters.values().stream()
                 .filter(monster -> monster.getHealthPoint() < 1)
@@ -105,7 +105,7 @@ public class LifeCycle {
             log.debug("monster {} die", monster.getId());
         });
     }
-    
+
     private void monsterReward(Monster monster) {
         int exp = Experience.MonsterExp(monster.getLevel());
         int coin = Gold.MonsterCoin(monster.getLevel());
@@ -115,13 +115,13 @@ public class LifeCycle {
             playerService.playerGetCoin(player, coin);
         });
     }
-    
+
     public void lifeEnd() {
         monsterDie();
         playerDie();
         battleService.removeEndBattle();
     }
-    
+
     private void playerDie() {
         List<Player> deadList = onlinePlayers.values().stream()
                 .filter(player -> player.getHealthPoint() < 1)
@@ -129,8 +129,9 @@ public class LifeCycle {
         deadList.forEach(player -> {
             player.setLivingStatus(LivingStatus.DEAD);
             battleService.removeRoleFromBattle(player);
+            messageService.addRoleDieMsg(player);
             log.debug("player {} die", player.getId());
         });
     }
-    
+
 }

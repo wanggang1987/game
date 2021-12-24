@@ -11,9 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.client.MessageService;
 import org.game.ms.func.JsonUtils;
 import org.game.ms.id.IdService;
 import org.game.ms.map.RootMap;
+import org.game.ms.map.WorldMap;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.reward.Experience;
 import org.game.ms.role.LivingStatus;
@@ -32,7 +34,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class PlayerService extends RoleService {
-
+    
     @Autowired
     private IdService idService;
     @Autowired
@@ -41,13 +43,17 @@ public class PlayerService extends RoleService {
     private PlayerTemplate playerTemplate;
     @Autowired
     private WarriorTample warriorTample;
+    @Autowired
+    private WorldMap worldMap;
+    @Autowired
+    private MessageService messageService;
     private final Map<Profession, PlayerTemplate> professionMap = new HashMap<>();
-
+    
     @PostConstruct
     private void init() {
         professionMap.put(Profession.WARRIOR, warriorTample);
     }
-
+    
     public Player createPlayer(String name) {
         //init role
         Player player = new Player();
@@ -56,16 +62,31 @@ public class PlayerService extends RoleService {
         player.getProfession().add(Profession.WARRIOR);
         player.setLevel(1);
         initPlayer(player);
+        playerGotoMap(player, worldMap);
 
         //insert to db
         PlayerPO ppo = new PlayerPO();
         ppo.setStr(JsonUtils.bean2json(player));
         playerMapper.insert(ppo);
-
+        
         log.debug("init player {} ", player.getId());
         return player;
     }
-
+    
+    public void playerGotoMap(Player player, RootMap map) {
+        player.setMap(map);
+        map.addPlayerToMap(player);
+    }
+    
+    public void playerReborn(Player player) {
+        initPlayer(player);
+        player.getMap().playerLeaveMap(player);
+        player.getMap().addPlayerToMap(player);
+        player.setLivingStatus(LivingStatus.LIVING);
+        messageService.heroUpdate(player.getId());
+        log.debug("playerReborn {} {}", player.getId(), player.getLocation());
+    }
+    
     public void playerGetExp(Player player, int exp) {
         int now = player.getExperience() + exp;
         int need = Experience.UpgradeNead(player.getLevel());
@@ -78,13 +99,13 @@ public class PlayerService extends RoleService {
         }
         player.setExperience(now);
     }
-
+    
     public void playerGetCoin(Player player, int coin) {
         int now = player.getCoin() + coin;
         player.setCoin(now);
         log.info("player {} coin {}", player.getId(), now);
     }
-
+    
     private void initPlayer(Player player) {
         player.setRoleType(RoleType.PLAYER);
         player.setAttackStatus(AttackStatus.NOT_ATTACK);
@@ -95,11 +116,11 @@ public class PlayerService extends RoleService {
         skillInit(player);
         bufferInit(player);
     }
-
+    
     private void bufferInit(Player player) {
         player.getBuffers().clear();
     }
-
+    
     private void attributeInit(Player player) {
         player.setSpeed(playerTemplate.getSpeed() / 1000);
         player.setAttackRange(playerTemplate.getAttackRange());
@@ -107,14 +128,14 @@ public class PlayerService extends RoleService {
         player.setHealthPoint(player.getHealthMax());
         player.setAttack(playerTemplate.getAttack());
         player.setDefense(playerTemplate.getDeffence());
-
+        
         Resource resource = player.getResource();
         resource.setAttackCooldownMax(playerTemplate.getAttackCooldown() * 1000);
         resource.setSkillCooldownMax(1.5 * 1000);
         resource.setAngerMax(100);
         resource.setAngerPoint(resource.getAngerMax());
     }
-
+    
     private void skillInit(Player player) {
         player.getSkills().clear();
         player.getProfession().forEach(profession -> {
@@ -126,21 +147,8 @@ public class PlayerService extends RoleService {
             });
         });
     }
-
+    
     public Long findNearByMonster(Player player) {
         return player.getMap().findNearByMonsterIdForPlayer(player);
-    }
-
-    public void playerGotoMap(Player player, RootMap map) {
-        player.setMap(map);
-        map.addPlayerToMap(player);
-    }
-
-    public void playerReborn(Player player) {
-        initPlayer(player);
-        player.getMap().playerLeaveMap(player);
-        player.getMap().addPlayerToMap(player);
-        player.setLivingStatus(LivingStatus.LIVING);
-        log.debug("playerReborn {} {}", player.getId(), player.getLocation());
     }
 }

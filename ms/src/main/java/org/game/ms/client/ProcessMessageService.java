@@ -36,8 +36,6 @@ public class ProcessMessageService {
     @Autowired
     private AutoPlayer autoPlay;
     @Autowired
-    private WorldMap worldMap;
-    @Autowired
     private PlayerService playerService;
     @Autowired
     private MessageService messageService;
@@ -68,7 +66,7 @@ public class ProcessMessageService {
         if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.PLAYER_CREATE)) {
             Player player = createPlayer(wsMessage.getCreatePlayerMsg());
             messageService.addPlayerSession(player.getId(), wsMessage.getSeesionId());
-            messageService.getHeroUpdate().add(player.getId());
+            messageService.heroUpdate(player.getId());
         } else if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.LOGIN)) {
             messageService.addPlayerSession(wsMessage.getPlayerId(), wsMessage.getSeesionId());
         }
@@ -81,7 +79,6 @@ public class ProcessMessageService {
     private Player createPlayer(CreatePlayerMsg msg) {
         Player player = playerService.createPlayer(msg.getName());
         lifeCycle.playerOnline(player);
-        playerService.playerGotoMap(player, worldMap);
         autoPlay.startPlayerAutoPlay(player);
         log.debug("createPlayer{}", JsonUtils.bean2json(player));
         return player;

@@ -25,7 +25,7 @@ public class WorldMap extends RootMap {
 
     @Autowired
     private LifeCycle lifeCycle;
-    final protected int comeInLocationRandomRange = 20;
+    final protected int comeInLocationRandomRange = 200;
     final private int flushMonsterAroundNum = 20;
     @Autowired
     private GridService gridService;

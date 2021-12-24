@@ -42,6 +42,10 @@ public class MessageService {
     private final Queue<AttributeRequest> roleAttribute = new ConcurrentLinkedDeque<>();
     private final Queue<Long> heroUpdate = new ConcurrentLinkedDeque<>();
 
+    public void heroUpdate(Long playerId) {
+        heroUpdate.add(playerId);
+    }
+
     public void addPlayerSession(Long playerId, String sessionId) {
         if (playerSession.containsKey(playerId)) {
             return;
