@@ -7,7 +7,6 @@ package org.game.ms.client;
 import java.util.concurrent.ForkJoinPool;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.game.ms.client.msg.AttributeRequest;
 import org.game.ms.client.msg.CreatePlayerMsg;
 import org.game.ms.client.msg.MessageType;
 import org.game.ms.client.msg.WsMessage;
@@ -15,9 +14,9 @@ import org.game.ms.func.FuncUtils;
 import org.game.ms.func.JsonUtils;
 import org.game.ms.lifecycle.AutoPlayer;
 import org.game.ms.lifecycle.LifeCycle;
+import org.game.ms.map.WorldMap;
 import org.game.ms.player.Player;
 import org.game.ms.player.PlayerService;
-import org.game.ms.role.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +27,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class ProcessMessageService {
-
+    
     @Autowired
     private LifeCycle lifeCycle;
     @Autowired
@@ -39,7 +38,9 @@ public class ProcessMessageService {
     private MessageService messageService;
     @Autowired
     private WebsocketController websocket;
-
+    @Autowired
+    private WorldMap worldMap;
+    
     private void sendMessages() throws InterruptedException {
         WsMessage message = messageService.getSendQueue().peek();
         if (FuncUtils.isEmpty(message)) {
@@ -49,7 +50,7 @@ public class ProcessMessageService {
         message = messageService.getSendQueue().poll();
         websocket.sendMessage(message);
     }
-
+    
     private void receiveMessages() throws InterruptedException {
         WsMessage message = messageService.getReceiveQueue().peek();
         if (FuncUtils.isEmpty(message)) {
@@ -59,7 +60,7 @@ public class ProcessMessageService {
         message = messageService.getReceiveQueue().poll();
         processMessage(message);
     }
-
+    
     private void processMessage(WsMessage wsMessage) {
         if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.PLAYER_CREATE)) {
             Player player = createPlayer(wsMessage.getCreatePlayerMsg());
@@ -72,15 +73,16 @@ public class ProcessMessageService {
             messageService.getRoleAttribute().add(wsMessage.getAttributeRequest());
         }
     }
-
+    
     private Player createPlayer(CreatePlayerMsg msg) {
         Player player = playerService.createPlayer(msg.getName());
         lifeCycle.playerOnline(player);
+        worldMap.addPlayerToMap(player);
         autoPlay.startPlayerAutoPlay(player);
         log.debug("createPlayer{}", JsonUtils.bean2json(player));
         return player;
     }
-
+    
     @PostConstruct
     private void startThread() throws InterruptedException {
         ForkJoinPool threadPool = new ForkJoinPool(2);
@@ -94,7 +96,7 @@ public class ProcessMessageService {
                 }
             }
         });
-
+        
         threadPool.submit(() -> {
             while (true) {
                 try {

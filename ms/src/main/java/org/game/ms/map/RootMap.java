@@ -34,9 +34,9 @@ public class RootMap {
     protected final List<Long> inMapPlayerIdList = new ArrayList<>();
 
     public void addPlayerToMap(Player player) {
+        player.setMap(this);
         inMapPlayerIdList.add(player.getId());
         gridService.addRoleToGrid(player);
-
     }
 
     public void playerLeaveMap(Player player) {

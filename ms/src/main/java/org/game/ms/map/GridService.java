@@ -27,7 +27,7 @@ public class GridService {
 
     @Autowired
     private MessageService messageService;
-    
+
     private final int gridSize = 20;
     private final Map<String, Grid> gridMap = new HashMap<>();
 
@@ -57,10 +57,6 @@ public class GridService {
         location.getNearGrids().add(gridStr(location.getX() + 20, location.getY() + 20, location.getZ()));
     }
 
-    private List<Long> roleIdsInGrid(Role role) {
-        return roleIdsInGrid(role.getRoleType(), role.getLocation().getGrid());
-    }
-
     private List<Long> roleIdsInGrid(RoleType type, String gridStr) {
         Grid grid = gridMap.get(gridStr);
         if (FuncUtils.isEmpty(grid)) {
@@ -77,12 +73,14 @@ public class GridService {
     }
 
     public void addRoleToGrid(Role role) {
-        roleIdsInGrid(role).add(role.getId());
+        List<Long> roleIdsInGrid = roleIdsInGrid(role.getRoleType(), role.getLocation().getGrid());
+        roleIdsInGrid.add(role.getId());
         messageService.addRoleToGridMsg(role);
     }
 
     public void removeRoleFromGrid(Role role) {
-        roleIdsInGrid(role).remove(role.getId());
+        List<Long> roleIdsInGrid = roleIdsInGrid(role.getRoleType(), role.getLocation().getGrid());
+        roleIdsInGrid.remove(role.getId());
     }
 
     public List<Long> monsterIdsInGrid(String grid) {
