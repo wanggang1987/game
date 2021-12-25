@@ -17,7 +17,6 @@ import org.game.ms.role.RoleType;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AttributeRequest {
 
-    private String sessionId;
     private long roleId;
     private RoleType roleType;
 }

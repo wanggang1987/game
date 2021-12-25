@@ -20,8 +20,5 @@ public class AttributeMsg {
     private String name;
     private int level;
     private double speed;
-    private double attackRange;
-    private double healthPoint;
-    private double healthMax;
 
 }

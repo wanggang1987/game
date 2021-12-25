@@ -31,9 +31,11 @@ export interface CreatePlayerMsg {
 }
 
 export interface WsMessage {
+    time: number;
     //receive
     messageType: MessageType;
     attributeMsg: Attribute;
+    fightStatusMsg: FightStatus;
     locationMsg: Location;
     roleDieMsg: RoleDie;
     //send
@@ -64,7 +66,9 @@ export interface Attribute {
     name: string;
     level: number;
     speed: number;
-    attackRange: number;
+}
+
+export interface FightStatus{
     healthPoint: number;
     healthMax: number;
 }
@@ -73,4 +77,5 @@ export class Role {
     public id: number;
     public attribute: Attribute;
     public location: Location;
+    public fight: FightStatus;
 }

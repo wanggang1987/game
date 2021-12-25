@@ -24,7 +24,7 @@ import org.springframework.beans.BeanUtils;
  */
 public class FuncUtils {
 
-    private static final Random randomSeed = new Random(new Date().getTime());
+    private static final Random randomSeed = new Random(currentTime().getTime());
 
     public static int randomZeroToRange(int range) {
         return randomSeed.nextInt(range);

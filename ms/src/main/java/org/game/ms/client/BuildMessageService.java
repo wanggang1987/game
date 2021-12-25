@@ -13,6 +13,7 @@ import org.game.ms.client.msg.AttributeRequest;
 import org.game.ms.client.msg.LocationMsg;
 import org.game.ms.client.msg.MessageType;
 import org.game.ms.client.msg.RoleDieMsg;
+import org.game.ms.client.msg.FightStatusMsg;
 import org.game.ms.client.msg.WsMessage;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.lifecycle.LifeCycle;
@@ -113,11 +114,11 @@ public class BuildMessageService {
 
     private void buildRoleAttribute() {
         while (buildMessage) {
-            AttributeRequest request = messageService.getRoleAttribute().poll();
-            if (FuncUtils.isEmpty(request)) {
+            WsMessage message = messageService.getRoleAttribute().poll();
+            if (FuncUtils.isEmpty(message)) {
                 return;
             }
-            WsMessage message = new WsMessage();
+            AttributeRequest request = message.getAttributeRequest();
             Role role = null;
             if (FuncUtils.equals(request.getRoleType(), RoleType.MONSTER)) {
                 message.setMessageType(MessageType.MONSTER_ATTRIBUTE);
@@ -131,7 +132,6 @@ public class BuildMessageService {
             }
             AttributeMsg attributeMsg = new AttributeMsg();
             FuncUtils.copyProperties(role, attributeMsg);
-            message.setSeesionId(request.getSessionId());
             message.setAttributeMsg(attributeMsg);
             messageService.getSendQueue().offer(message);
         }
@@ -174,11 +174,14 @@ public class BuildMessageService {
             }
             WsMessage message = new WsMessage();
             message.setMessageType(MessageType.HERO_ATTRIBUTE);
+            message.setSeesionId(messageService.getPlayerSession().get(playerId));
             Player player = lifeCycle.onlinePlayer(playerId);
             AttributeMsg attributeMsg = new AttributeMsg();
             FuncUtils.copyProperties(player, attributeMsg);
-            message.setSeesionId(messageService.getPlayerSession().get(playerId));
             message.setAttributeMsg(attributeMsg);
+            FightStatusMsg fightStatusMsg = new FightStatusMsg();
+            FuncUtils.copyProperties(player, fightStatusMsg);
+            message.setFightStatusMsg(fightStatusMsg);
             messageService.getSendQueue().offer(message);
         }
     }

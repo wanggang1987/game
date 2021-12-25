@@ -39,7 +39,7 @@ public class MessageService {
     private final Queue<Role> roleMove = new ConcurrentLinkedQueue<>();
     private final Queue<Role> flashGrid = new ConcurrentLinkedQueue<>();
     private final Queue<Role> roleDie = new ConcurrentLinkedDeque<>();
-    private final Queue<AttributeRequest> roleAttribute = new ConcurrentLinkedDeque<>();
+    private final Queue<WsMessage> roleAttribute = new ConcurrentLinkedDeque<>();
     private final Queue<Long> heroUpdate = new ConcurrentLinkedDeque<>();
 
     public void heroUpdate(Long playerId) {

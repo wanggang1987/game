@@ -24,30 +24,31 @@ import org.game.ms.skill.buffer.Buffer;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Role {
 
+    //attribut
     private RoleType roleType;
     private long id;
     private String name;
     private int level;
     private double speed;
     private double attackRange;
-    private double healthPoint;
-    private double healthMax;
     private double attack;
     private double defense;
     private double attackPower;
     private double magicPower;
 
-    private RootMap map;
-    private Location location;
-
+    //status
+    private double healthPoint;
+    private double healthMax;
     private RoleType targetType;
     private Long targetId;
-    private double targetDistance;
     private LivingStatus livingStatus;
     private MoveStatus moveStatus;
     private AttackStatus attackStatus;
     private Battle battle;
-    private List<Skill> skills = new ArrayList<>();
     private Resource resource = new Resource();
     private List<Buffer> buffers = new ArrayList<>();
+
+    private List<Skill> skills = new ArrayList<>();
+    private RootMap map;
+    private Location location;
 }

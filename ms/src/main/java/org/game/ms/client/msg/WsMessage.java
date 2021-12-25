@@ -5,7 +5,9 @@
  */
 package org.game.ms.client.msg;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.sql.Timestamp;
 import lombok.Data;
 
 /**
@@ -16,10 +18,13 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WsMessage {
 
-    //send
+    private Timestamp time;
+    @JsonIgnore
     private String seesionId;
+    //send
     private MessageType messageType;
     private AttributeMsg attributeMsg;
+    private FightStatusMsg fightStatusMsg;
     private LocationMsg locationMsg;
     private RoleDieMsg roleDieMsg;
     //receive

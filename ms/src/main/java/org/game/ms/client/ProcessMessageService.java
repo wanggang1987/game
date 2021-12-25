@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class ProcessMessageService {
-    
+
     @Autowired
     private LifeCycle lifeCycle;
     @Autowired
@@ -40,7 +40,7 @@ public class ProcessMessageService {
     private WebsocketController websocket;
     @Autowired
     private WorldMap worldMap;
-    
+
     private void sendMessages() throws InterruptedException {
         WsMessage message = messageService.getSendQueue().peek();
         if (FuncUtils.isEmpty(message)) {
@@ -50,7 +50,7 @@ public class ProcessMessageService {
         message = messageService.getSendQueue().poll();
         websocket.sendMessage(message);
     }
-    
+
     private void receiveMessages() throws InterruptedException {
         WsMessage message = messageService.getReceiveQueue().peek();
         if (FuncUtils.isEmpty(message)) {
@@ -60,7 +60,7 @@ public class ProcessMessageService {
         message = messageService.getReceiveQueue().poll();
         processMessage(message);
     }
-    
+
     private void processMessage(WsMessage wsMessage) {
         if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.PLAYER_CREATE)) {
             Player player = createPlayer(wsMessage.getCreatePlayerMsg());
@@ -69,11 +69,10 @@ public class ProcessMessageService {
         } else if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.LOGIN)) {
             messageService.addPlayerSession(wsMessage.getPlayerId(), wsMessage.getSeesionId());
         } else if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.ATTRIBUTE_REQUEST)) {
-            wsMessage.getAttributeRequest().setSessionId(wsMessage.getSeesionId());
-            messageService.getRoleAttribute().add(wsMessage.getAttributeRequest());
+            messageService.getRoleAttribute().add(wsMessage);
         }
     }
-    
+
     private Player createPlayer(CreatePlayerMsg msg) {
         Player player = playerService.createPlayer(msg.getName());
         lifeCycle.playerOnline(player);
@@ -82,7 +81,7 @@ public class ProcessMessageService {
         log.debug("createPlayer{}", JsonUtils.bean2json(player));
         return player;
     }
-    
+
     @PostConstruct
     private void startThread() throws InterruptedException {
         ForkJoinPool threadPool = new ForkJoinPool(2);
@@ -96,7 +95,7 @@ public class ProcessMessageService {
                 }
             }
         });
-        
+
         threadPool.submit(() -> {
             while (true) {
                 try {
