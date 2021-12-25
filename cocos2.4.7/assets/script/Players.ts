@@ -44,10 +44,17 @@ export default class Players extends cc.Component {
                 this.node.addChild(playerNode);
                 console.log("add playerNode " + playerNode.name);
             }
-            
+
             if (player.location && player.location.isUpdate) {
                 playerNode.setPosition(player.location.x * 50, player.location.y * 50);
                 player.location.isUpdate = false;
+            }
+
+            if (player.attribute && player.attribute.isUpdate) {
+                let name: cc.Node = playerNode.getChildByName("Name");
+                let nameLabel = name.getComponent(cc.Label);
+                nameLabel.string = player.attribute.name + ":" + player.attribute.id;
+                player.attribute.isUpdate = false;
             }
         });
     }

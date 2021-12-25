@@ -84,20 +84,24 @@ export default class RoleCollection extends cc.Component {
         this.deadMonsters.push(roleDie.id);
     }
 
+    private playerRole(id: number): Role {
+        let player: Role = null;
+        if (this.players.has(id)) {
+            player = this.players.get(id);
+        } else {
+            player = new Role();
+            player.id = id;
+            this.players.set(id, player);
+        }
+        return player;
+    }
+
     public updatePlayerLocation(location: Location) {
         if (location.id === this.hero.id) {
             this.updateHeroLocation(location);
             return;
         }
-        let playerId: number = location.id;
-        let player: Role = null;
-        if (this.players.has(playerId)) {
-            player = this.players.get(playerId);
-        } else {
-            player = new Role();
-            player.id = playerId;
-            this.players.set(playerId, player);
-        }
+        let player :Role = this.playerRole(location.id);
         player.location = location;
         player.location.isUpdate = true;
     }
@@ -107,6 +111,9 @@ export default class RoleCollection extends cc.Component {
             this.updateHeroAttribute(attribute);
             return;
         }
+        let player :Role = this.playerRole(attribute.id);
+        player.attribute = attribute;
+        player.attribute.isUpdate = true;
     }
 
     public playerDie(roleDie: RoleDie) {

@@ -51,12 +51,9 @@ export default class Monsters extends cc.Component {
 
             if (monster.attribute && monster.attribute.isUpdate) {
                 let name: cc.Node = monsterNode.getChildByName("Name");
-                if (name) {
-                    let nameLabel = name.getComponent(cc.Label);
-                    nameLabel.string = monster.attribute.name + ":" + monster.attribute.id;
-                    monster.attribute.isUpdate = false;
-                }
-
+                let nameLabel = name.getComponent(cc.Label);
+                nameLabel.string = monster.attribute.name + ":" + monster.attribute.id;
+                monster.attribute.isUpdate = false;
             }
         });
 

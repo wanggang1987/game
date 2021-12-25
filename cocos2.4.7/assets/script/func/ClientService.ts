@@ -19,6 +19,7 @@ export default class ClientService extends cc.Component {
     private roleCollection: RoleCollection = null;
     private hero: Role = null;
     private monsters: Map<number, Role> = null;
+    private players: Map<number, Role> = null;
 
     public createPlayer(createPlayerMsg: CreatePlayerMsg) {
         let message = { messageType: MessageType.PLAYER_CREATE, createPlayerMsg: createPlayerMsg };
@@ -75,15 +76,19 @@ export default class ClientService extends cc.Component {
 
     private attributeCheck() {
         this.monsters.forEach((monster, monsterId) => {
-            if (!monster.attribute) {
+            if (!monster.attribute)
                 this.sendAttributeRequest(monsterId, RoleType.MONSTER);
-            }
+        });
+        this.players.forEach((player, playerId) => {
+            if (!player.attribute)
+                this.sendAttributeRequest(playerId, RoleType.PLAYER);
         });
     }
 
     protected start() {
         this.hero = this.roleCollection.getHero();
         this.monsters = this.roleCollection.getMonsters();
+        this.players = this.roleCollection.getPlayers();
         this.schedule(this.roleCheck, 1);
     }
 
