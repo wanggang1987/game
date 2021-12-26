@@ -49,7 +49,7 @@ export default class Players extends cc.Component {
             if (player.attribute && player.attribute.isUpdate) {
                 let nameNode: cc.Node = playerNode.getChildByName("Name");
                 let name = nameNode.getComponent(cc.Label);
-                name.string = player.attribute.name + ":" + player.attribute.id;
+                name.string = player.attribute.name + ":" + player.attribute.id + "(lv" + player.attribute.level + ")";
                 player.attribute.isUpdate = false;
             }
 

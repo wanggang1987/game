@@ -29,7 +29,7 @@ export default class Hero extends cc.Component {
         }
 
         if (this.hero.attribute && this.hero.attribute.isUpdate) {
-            this.Name.string = "玩家:" + this.hero.attribute.id;
+            this.Name.string = "玩家:" + this.hero.attribute.id + "(lv" + this.hero.attribute.level + ")";
             this.hero.attribute.isUpdate = false;
         }
 
