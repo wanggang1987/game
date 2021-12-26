@@ -28,6 +28,7 @@ public class WsMessage {
     private LocationMsg locationMsg;
     private RoleDieMsg roleDieMsg;
     private CastSkillMsg castSkillMsg;
+    private FightDamageMsg fightDamageMsg;
     //receive
     private Long playerId;
     private AttributeRequest attributeRequest;

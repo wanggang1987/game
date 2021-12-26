@@ -19,6 +19,7 @@ export enum MessageType {
     MONSTER_DIE = 'MONSTER_DIE',
     MONSTER_FIGHTSTATUS = 'MONSTER_FIGHTSTATUS',
     MONSTER_CASTSKILL = 'MONSTER_CASTSKILL',
+    FIGHTDAMAGE = 'FIGHTDAMAGE',
     //send
     LOGIN = 'LOGIN',
     PLAYER_CREATE = 'PLAYER_CREATE',
@@ -57,6 +58,14 @@ export interface CastSkill {
     skillName: string;
     targetX: number;
     targetY: number;
+}
+
+export interface FightDamage {
+    sourceId: number;
+    sourceType: RoleType;
+    targetId: number;
+    targetType: RoleType;
+    skillName: string;
 }
 
 export interface RoleDie {

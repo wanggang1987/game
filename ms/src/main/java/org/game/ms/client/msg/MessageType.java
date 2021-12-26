@@ -23,6 +23,7 @@ public enum MessageType {
     MONSTER_DIE,
     MONSTER_FIGHTSTATUS,
     MONSTER_CASTSKILL,
+    FIGHTDAMAGE,
     //reveive
     PLAYER_CREATE,
     LOGIN,

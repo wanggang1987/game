@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.game.ms.client.msg.AttributeMsg;
 import org.game.ms.client.msg.AttributeRequest;
 import org.game.ms.client.msg.CastSkillMsg;
+import org.game.ms.client.msg.FightDamageMsg;
 import org.game.ms.client.msg.LocationMsg;
 import org.game.ms.client.msg.MessageType;
 import org.game.ms.client.msg.RoleDieMsg;
@@ -238,6 +239,31 @@ public class BuildMessageService {
         }
     }
 
+    private void buildFightDamage() {
+        while (buildMessage) {
+            FightDamageMsg fightDamageMsg = messageService.getFightDamage().poll();
+            if (FuncUtils.isEmpty(fightDamageMsg)) {
+                break;
+            }
+            if (FuncUtils.equals(fightDamageMsg.getSourceType(), RoleType.PLAYER)
+                    && messageService.getPlayerSession().containsKey(fightDamageMsg.getSourceId())) {
+                WsMessage message = new WsMessage();
+                message.setMessageType(MessageType.FIGHTDAMAGE);
+                message.setSeesionId(messageService.getPlayerSession().get(fightDamageMsg.getSourceId()));
+                message.setFightDamageMsg(fightDamageMsg);
+                messageService.getSendQueue().offer(message);
+            }
+            if (FuncUtils.equals(fightDamageMsg.getTargetType(), RoleType.PLAYER)
+                    && messageService.getPlayerSession().containsKey(fightDamageMsg.getTargetId())) {
+                WsMessage message = new WsMessage();
+                message.setMessageType(MessageType.FIGHTDAMAGE);
+                message.setSeesionId(messageService.getPlayerSession().get(fightDamageMsg.getTargetId()));
+                message.setFightDamageMsg(fightDamageMsg);
+                messageService.getSendQueue().offer(message);
+            }
+        }
+    }
+
     private void buildMessages() throws InterruptedException {
         Thread.sleep(1);
         if (!buildMessage) {
@@ -246,6 +272,7 @@ public class BuildMessageService {
         buildHeroUpdate();
         buildRoleAttribute();
         buildCastSkill();
+        buildFightDamage();
         buildFightStatus();
         buildRoleMove();
         buildFlushGrid();

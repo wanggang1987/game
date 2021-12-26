@@ -1,4 +1,4 @@
-import { CastSkill, Location } from "./BasicObjects";
+import { CastSkill, Location } from "../func/BasicObjects";
 
 export class RoleAction {
 

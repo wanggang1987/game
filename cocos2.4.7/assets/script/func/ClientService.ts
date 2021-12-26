@@ -5,8 +5,8 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 import WsConnection from "./WsConnection";
-import RoleCollection from "./RoleCollection"
 import { CreatePlayerMsg, MessageType, Role, RoleType, WsMessage } from "./BasicObjects";
+import RoleCollection from "../role/RoleCollection";
 const { ccclass, property } = cc._decorator;
 
 @ccclass
@@ -76,6 +76,8 @@ export default class ClientService extends cc.Component {
             } else if (message.messageType == MessageType.MONSTER_CASTSKILL) {
                 console.log(message, message.messageType);
                 this.roleCollection.monsterCastSkill(message.castSkillMsg);
+            } else if (message.messageType == MessageType.FIGHTDAMAGE) {
+                console.log(message, message.messageType);
             }
         });
         this.websocket.clearMessageStack();

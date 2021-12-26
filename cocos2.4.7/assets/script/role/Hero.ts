@@ -4,8 +4,9 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
 // Learn life-cycle callbacks:
 
-import { CastSkill, Role } from "./func/BasicObjects";
-import { RoleAction } from "./func/RoleAction";
+import { CastSkill, Role } from "../func/BasicObjects";
+import { RoleAction } from "./RoleAction";
+
 const { ccclass, property } = cc._decorator;
 
 @ccclass

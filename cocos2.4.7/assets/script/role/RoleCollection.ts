@@ -5,10 +5,11 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import Hero from "../Hero";
-import Monsters from "../Monsters";
-import Players from "../Players";
-import { Attribute, Role, Location, RoleDie, FightStatus, CastSkill } from "./BasicObjects";
+import { Attribute, Role, Location, CastSkill, FightStatus, RoleDie } from "../func/BasicObjects";
+import Hero from "./Hero";
+import Monsters from "./Monsters";
+import Players from "./Players";
+
 const { ccclass, property } = cc._decorator;
 
 @ccclass

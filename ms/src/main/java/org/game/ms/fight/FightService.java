@@ -135,7 +135,7 @@ public class FightService {
                 target.getRoleType(), target.getId(), damage,
                 target.getHealthPoint(), target.getHealthMax());
         battleService.addFightStatus(source, target);
-//        messageService.addFightDamage(source, damage, skill, target);
+        messageService.addFightDamage(source, damage, skill, target);
         messageService.getFightStatus().add(target);
     }
 
