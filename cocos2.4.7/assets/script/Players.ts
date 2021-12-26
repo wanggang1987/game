@@ -31,6 +31,7 @@ export default class Players extends cc.Component {
             let playerNode: cc.Node = this.node.getChildByName(playerId.toString());
             if (playerNode) {
                 playerNode.destroy();
+                this.players.delete(playerId);
                 console.log("destory playerNode " + playerNode.name);
             }
         }
@@ -51,10 +52,17 @@ export default class Players extends cc.Component {
             }
 
             if (player.attribute && player.attribute.isUpdate) {
-                let name: cc.Node = playerNode.getChildByName("Name");
-                let nameLabel = name.getComponent(cc.Label);
-                nameLabel.string = player.attribute.name + ":" + player.attribute.id;
+                let nameNode: cc.Node = playerNode.getChildByName("Name");
+                let name = nameNode.getComponent(cc.Label);
+                name.string = player.attribute.name + ":" + player.attribute.id;
                 player.attribute.isUpdate = false;
+            }
+
+            if (player.fightStatus && player.fightStatus.isUpdate) {
+                let hpNode: cc.Node = playerNode.getChildByName("Hp");
+                let hp:cc.ProgressBar = hpNode.getComponent(cc.ProgressBar);
+                hp.progress = player.fightStatus.healthPoint / player.fightStatus.healthMax;
+                player.fightStatus.isUpdate = false;
             }
         });
     }

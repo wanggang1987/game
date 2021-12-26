@@ -24,6 +24,7 @@ export default class ClientService extends cc.Component {
     public createPlayer(createPlayerMsg: CreatePlayerMsg) {
         let message = { messageType: MessageType.PLAYER_CREATE, createPlayerMsg: createPlayerMsg };
         this.websocket.send(JSON.stringify(message));
+        console.log(message, message.messageType);
     }
 
     private sendAttributeRequest(roleId: number, roleType: RoleType) {
@@ -32,6 +33,7 @@ export default class ClientService extends cc.Component {
             attributeRequest: { roleId: roleId, roleType: roleType }
         };
         this.websocket.send(JSON.stringify(message));
+        console.log(message, message.messageType);
     }
 
     protected update(dt: number) {
@@ -43,24 +45,31 @@ export default class ClientService extends cc.Component {
         messageStack.forEach(wsMessage => {
             let message: WsMessage = wsMessage;
             if (message.messageType == MessageType.HERO_ATTRIBUTE) {
+                console.log(message, message.messageType);
                 this.roleCollection.updateHeroAttribute(message.attributeMsg);
                 this.roleCollection.updateHeroFightstatus(message.fightStatusMsg);
             } else if (message.messageType == MessageType.HERO_LOCATION) {
                 this.roleCollection.updateHeroLocation(message.locationMsg);
             } else if (message.messageType == MessageType.PLAYER_ATTRIBUTE) {
+                console.log(message, message.messageType);
                 this.roleCollection.updatePlayerAttribute(message.attributeMsg);
             } else if (message.messageType == MessageType.PLAYER_LOCATION) {
                 this.roleCollection.updatePlayerLocation(message.locationMsg);
             } else if (message.messageType == MessageType.PLAYER_DIE) {
+                console.log(message, message.messageType);
                 this.roleCollection.playerDie(message.roleDieMsg);
             } else if (message.messageType == MessageType.PLAYER_FIGHTSTATUS) {
                 this.roleCollection.updatePlayerFightStatus(message.fightStatusMsg);
             } else if (message.messageType == MessageType.MONSTER_ATTRIBUTE) {
+                console.log(message, message.messageType);
                 this.roleCollection.updateMonsterAttribute(message.attributeMsg);
             } else if (message.messageType == MessageType.MONSTER_LOCATION) {
                 this.roleCollection.updateMonsterLocation(message.locationMsg);
             } else if (message.messageType == MessageType.MONSTER_DIE) {
+                console.log(message, message.messageType);
                 this.roleCollection.monsterDie(message.roleDieMsg);
+            } else if (message.messageType == MessageType.MONSTER_FIGHTSTATUS) {
+                this.roleCollection.updateMonsterFightStatus(message.fightStatusMsg);
             }
         });
         this.websocket.clearMessageStack();

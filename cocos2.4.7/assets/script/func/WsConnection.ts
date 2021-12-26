@@ -3,7 +3,6 @@
 // Learn Attribute:
 //  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
 // Learn life-cycle callbacks:
-//  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 const { ccclass, property } = cc._decorator;
 
 @ccclass
@@ -82,7 +81,6 @@ export default class WsConnection extends cc.Component {
             try {
                 const message = JSON.parse(event.data);
                 this.messageStack.push(message);
-                console.log(message, 'onmessage')
             } catch (error) {
                 console.log(error, 'onmessage');
             }

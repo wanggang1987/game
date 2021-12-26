@@ -30,6 +30,7 @@ export default class Monsters extends cc.Component {
             let monsterNode: cc.Node = this.node.getChildByName(monsterId.toString());
             if (monsterNode) {
                 monsterNode.destroy();
+                this.monsters.delete(monsterId);
                 console.log("destory monsterNode " + monsterNode.name);
             }
         }
@@ -50,10 +51,17 @@ export default class Monsters extends cc.Component {
             }
 
             if (monster.attribute && monster.attribute.isUpdate) {
-                let name: cc.Node = monsterNode.getChildByName("Name");
-                let nameLabel = name.getComponent(cc.Label);
-                nameLabel.string = monster.attribute.name + ":" + monster.attribute.id;
+                let nameNode: cc.Node = monsterNode.getChildByName("Name");
+                let name = nameNode.getComponent(cc.Label);
+                name.string = monster.attribute.name + ":" + monster.attribute.id;
                 monster.attribute.isUpdate = false;
+            }
+
+            if (monster.fightStatus && monster.fightStatus.isUpdate) {
+                let hpNode: cc.Node = monsterNode.getChildByName("Hp");
+                let hp:cc.ProgressBar = hpNode.getComponent(cc.ProgressBar);
+                hp.progress = monster.fightStatus.healthPoint / monster.fightStatus.healthMax;
+                monster.fightStatus.isUpdate = false;
             }
         });
 

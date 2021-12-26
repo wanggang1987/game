@@ -61,34 +61,6 @@ export default class RoleCollection extends cc.Component {
         this.hero.fightStatus.isUpdate = true;
     }
 
-    private monsterRole(id: number): Role {
-        let monster: Role = null;
-        if (this.monsters.has(id)) {
-            monster = this.monsters.get(id);
-        } else {
-            monster = new Role();
-            monster.id = id;
-            this.monsters.set(id, monster);
-        }
-        return monster;
-    }
-
-    public updateMonsterAttribute(attribute: Attribute) {
-        let monster: Role = this.monsterRole(attribute.id);
-        monster.attribute = attribute;
-        monster.attribute.isUpdate = true;
-    }
-
-    public updateMonsterLocation(location: Location) {
-        let monster: Role = this.monsterRole(location.id);
-        monster.location = location;
-        monster.location.isUpdate = true;
-    }
-
-    public monsterDie(roleDie: RoleDie) {
-        this.deadMonsters.push(roleDie.id);
-    }
-
     private playerRole(id: number): Role {
         let player: Role = null;
         if (this.players.has(id)) {
@@ -125,10 +97,48 @@ export default class RoleCollection extends cc.Component {
         this.deadPlayers.push(roleDie.id);
     }
 
-    public updatePlayerFightStatus(fightStatus: FightStatus){
+    public updatePlayerFightStatus(fightStatus: FightStatus) {
         if (fightStatus.id === this.hero.id) {
             this.updateHeroFightstatus(fightStatus);
             return;
         }
+        let player: Role = this.playerRole(fightStatus.id);
+        player.fightStatus = fightStatus;
+        player.fightStatus.isUpdate = true;
     }
+
+    private monsterRole(id: number): Role {
+        let monster: Role = null;
+        if (this.monsters.has(id)) {
+            monster = this.monsters.get(id);
+        } else {
+            monster = new Role();
+            monster.id = id;
+            this.monsters.set(id, monster);
+        }
+        return monster;
+    }
+
+    public updateMonsterAttribute(attribute: Attribute) {
+        let monster: Role = this.monsterRole(attribute.id);
+        monster.attribute = attribute;
+        monster.attribute.isUpdate = true;
+    }
+
+    public updateMonsterLocation(location: Location) {
+        let monster: Role = this.monsterRole(location.id);
+        monster.location = location;
+        monster.location.isUpdate = true;
+    }
+
+    public updateMonsterFightStatus(fightStatus: FightStatus) {
+        let monster: Role = this.monsterRole(fightStatus.id);
+        monster.fightStatus = fightStatus;
+        monster.fightStatus.isUpdate = true;
+    }
+
+    public monsterDie(roleDie: RoleDie) {
+        this.deadMonsters.push(roleDie.id);
+    }
+
 }
