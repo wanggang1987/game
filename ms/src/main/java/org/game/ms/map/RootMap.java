@@ -93,8 +93,8 @@ public class RootMap {
             role.setMoveStatus(MoveStatus.STANDING);
             moveRoleToLocation(role, target.getLocation().getX(), target.getLocation().getY(), 0);
         } else {
-            double x = role.getLocation().getX() + (xDistance / targetDistance) * moveDistance;
-            double y = role.getLocation().getY() + (yDistance / targetDistance) * moveDistance;
+            double x = role.getLocation().getX() + (moveDistance / targetDistance) * xDistance;
+            double y = role.getLocation().getY() + (moveDistance / targetDistance) * yDistance;
             role.setMoveStatus(MoveStatus.MOVEING);
             moveRoleToLocation(role, x, y, 0);
         }

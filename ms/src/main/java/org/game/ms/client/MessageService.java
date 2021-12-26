@@ -14,6 +14,7 @@ import javax.websocket.Session;
 import lombok.Data;
 import org.game.ms.client.msg.WsMessage;
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.client.msg.CastSkillMsg;
 import org.game.ms.client.msg.FightDamageMsg;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.role.Role;
@@ -43,7 +44,21 @@ public class MessageService {
     private final Queue<WsMessage> roleAttribute = new ConcurrentLinkedDeque<>();
     private final Queue<Long> heroUpdate = new ConcurrentLinkedDeque<>();
     private final Queue<FightDamageMsg> fightDamage = new ConcurrentLinkedDeque<>();
+    private final Queue<CastSkillMsg> castSkill = new ConcurrentLinkedDeque<>();
     private final Queue<Role> fightStatus = new ConcurrentLinkedDeque<>();
+
+    public void addCastSkill(Role source, Skill skill, Role target) {
+        CastSkillMsg castSkillMsg = new CastSkillMsg();
+        castSkillMsg.setSourceId(source.getId());
+        castSkillMsg.setSourceType(source.getRoleType());
+        castSkillMsg.setTargetId(target.getId());
+        castSkillMsg.setTargetType(target.getRoleType());
+        castSkillMsg.setSkillName(skill.getName());
+        castSkillMsg.setGrid(source.getLocation().getGrid());
+        castSkillMsg.setTargetX(target.getLocation().getX());
+        castSkillMsg.setTargetY(target.getLocation().getY());
+        castSkill.add(castSkillMsg);
+    }
 
     public void addFightDamage(Role source, double damage, Skill skill, Role target) {
         FightDamageMsg fightDamageMsg = new FightDamageMsg();

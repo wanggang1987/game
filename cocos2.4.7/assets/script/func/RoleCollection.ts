@@ -8,7 +8,7 @@
 import Hero from "../Hero";
 import Monsters from "../Monsters";
 import Players from "../Players";
-import { Attribute, Role, Location, RoleDie, FightStatus } from "./BasicObjects";
+import { Attribute, Role, Location, RoleDie, FightStatus, CastSkill } from "./BasicObjects";
 const { ccclass, property } = cc._decorator;
 
 @ccclass
@@ -61,6 +61,10 @@ export default class RoleCollection extends cc.Component {
         this.hero.fightStatus.isUpdate = true;
     }
 
+    public heroCastSkill(castskill: CastSkill) {
+        this.heroService.castSkill(castskill);
+    }
+
     private playerRole(id: number): Role {
         let player: Role = null;
         if (this.players.has(id)) {
@@ -107,6 +111,15 @@ export default class RoleCollection extends cc.Component {
         player.fightStatus.isUpdate = true;
     }
 
+    public playerCastSkill(castskill: CastSkill) {
+        if (castskill.sourceId === this.hero.id) {
+            this.heroCastSkill(castskill);
+            return;
+        }
+        let player: Role = this.playerRole(castskill.sourceId);
+        this.playersService.castSkill(castskill, player);
+    }
+
     private monsterRole(id: number): Role {
         let monster: Role = null;
         if (this.monsters.has(id)) {
@@ -139,6 +152,11 @@ export default class RoleCollection extends cc.Component {
 
     public monsterDie(roleDie: RoleDie) {
         this.deadMonsters.push(roleDie.id);
+    }
+
+    public monsterCastSkill(castskill: CastSkill) {
+        let monstser: Role = this.monsterRole(castskill.sourceId);
+        this.monstersService.castSkill(castskill, monstser);
     }
 
 }

@@ -4,7 +4,8 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
 // Learn life-cycle callbacks:
 
-import { Role } from "./func/BasicObjects";
+import { CastSkill, Role } from "./func/BasicObjects";
+import { RoleAction } from "./func/RoleAction";
 const { ccclass, property } = cc._decorator;
 
 @ccclass
@@ -36,6 +37,10 @@ export default class Hero extends cc.Component {
             this.Hp.progress = this.hero.fightStatus.healthPoint / this.hero.fightStatus.healthMax;
             this.hero.fightStatus.isUpdate = false;
         }
+    }
+
+    public castSkill(castskill: CastSkill) {
+        RoleAction.attackSkill(castskill, this.node, this.hero.location);
     }
 
 }

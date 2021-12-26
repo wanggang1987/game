@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.client.msg.AttributeMsg;
 import org.game.ms.client.msg.AttributeRequest;
+import org.game.ms.client.msg.CastSkillMsg;
 import org.game.ms.client.msg.LocationMsg;
 import org.game.ms.client.msg.MessageType;
 import org.game.ms.client.msg.RoleDieMsg;
@@ -52,9 +53,9 @@ public class BuildMessageService {
             if (FuncUtils.isEmpty(role)) {
                 break;
             }
-            List<Long> reveiverIds = gridService.playerIdsInGrid(role.getLocation().getGrid());
-            for (Long revcicerId : reveiverIds) {
-                if (!messageService.getPlayerSession().containsKey(revcicerId)) {
+            List<Long> receiveIDs = gridService.playerIdsInGrid(role.getLocation().getGrid());
+            for (Long receiveId : receiveIDs) {
+                if (!messageService.getPlayerSession().containsKey(receiveId)) {
                     continue;
                 }
                 WsMessage message = new WsMessage();
@@ -63,7 +64,7 @@ public class BuildMessageService {
                 } else if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
                     message.setMessageType(MessageType.PLAYER_LOCATION);
                 }
-                message.setSeesionId(messageService.getPlayerSession().get(revcicerId));
+                message.setSeesionId(messageService.getPlayerSession().get(receiveId));
                 LocationMsg locaionMsg = new LocationMsg();
                 locaionMsg.setId(role.getId());
                 FuncUtils.copyProperties(role.getLocation(), locaionMsg);
@@ -143,9 +144,9 @@ public class BuildMessageService {
             if (FuncUtils.isEmpty(role)) {
                 return;
             }
-            List<Long> reveiverIds = gridService.playerIdsInGrid(role.getLocation().getGrid());
-            for (Long revcicerId : reveiverIds) {
-                if (!messageService.getPlayerSession().containsKey(revcicerId)) {
+            List<Long> receiveIDs = gridService.playerIdsInGrid(role.getLocation().getGrid());
+            for (Long receiveId : receiveIDs) {
+                if (!messageService.getPlayerSession().containsKey(receiveId)) {
                     continue;
                 }
                 WsMessage message = new WsMessage();
@@ -154,7 +155,7 @@ public class BuildMessageService {
                 } else if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
                     message.setMessageType(MessageType.PLAYER_DIE);
                 }
-                message.setSeesionId(messageService.getPlayerSession().get(revcicerId));
+                message.setSeesionId(messageService.getPlayerSession().get(receiveId));
                 RoleDieMsg roleDieMsg = new RoleDieMsg();
                 roleDieMsg.setId(role.getId());
                 message.setRoleDieMsg(roleDieMsg);
@@ -192,9 +193,9 @@ public class BuildMessageService {
             if (FuncUtils.isEmpty(role)) {
                 break;
             }
-            List<Long> reveiverIds = gridService.playerIdsInGrid(role.getLocation().getGrid());
-            for (Long revcicerId : reveiverIds) {
-                if (!messageService.getPlayerSession().containsKey(revcicerId)) {
+            List<Long> receiveIDs = gridService.playerIdsInGrid(role.getLocation().getGrid());
+            for (Long receiveId : receiveIDs) {
+                if (!messageService.getPlayerSession().containsKey(receiveId)) {
                     continue;
                 }
                 WsMessage message = new WsMessage();
@@ -203,11 +204,35 @@ public class BuildMessageService {
                 } else if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
                     message.setMessageType(MessageType.PLAYER_FIGHTSTATUS);
                 }
-                message.setSeesionId(messageService.getPlayerSession().get(revcicerId));
+                message.setSeesionId(messageService.getPlayerSession().get(receiveId));
                 FightStatusMsg fightStatusMsg = new FightStatusMsg();
                 FuncUtils.copyProperties(role, fightStatusMsg);
                 fightStatusMsg.setId(role.getId());
                 message.setFightStatusMsg(fightStatusMsg);
+                messageService.getSendQueue().offer(message);
+            }
+        }
+    }
+
+    private void buildCastSkill() {
+        while (buildMessage) {
+            CastSkillMsg castSkillMsg = messageService.getCastSkill().poll();
+            if (FuncUtils.isEmpty(castSkillMsg)) {
+                break;
+            }
+            List<Long> receiveIDs = gridService.playerIdsInGrid(castSkillMsg.getGrid());
+            for (Long receiveId : receiveIDs) {
+                if (!messageService.getPlayerSession().containsKey(receiveId)) {
+                    continue;
+                }
+                WsMessage message = new WsMessage();
+                if (FuncUtils.equals(castSkillMsg.getSourceType(), RoleType.MONSTER)) {
+                    message.setMessageType(MessageType.MONSTER_CASTSKILL);
+                } else if (FuncUtils.equals(castSkillMsg.getSourceType(), RoleType.PLAYER)) {
+                    message.setMessageType(MessageType.PLAYER_CASTSKILL);
+                }
+                message.setSeesionId(messageService.getPlayerSession().get(receiveId));
+                message.setCastSkillMsg(castSkillMsg);
                 messageService.getSendQueue().offer(message);
             }
         }
@@ -220,6 +245,7 @@ public class BuildMessageService {
         }
         buildHeroUpdate();
         buildRoleAttribute();
+        buildCastSkill();
         buildFightStatus();
         buildRoleMove();
         buildFlushGrid();

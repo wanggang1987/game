@@ -13,10 +13,12 @@ export enum MessageType {
     PLAYER_LOCATION = 'PLAYER_LOCATION',
     PLAYER_DIE = 'PLAYER_DIE',
     PLAYER_FIGHTSTATUS = 'PLAYER_FIGHTSTATUS',
+    PLAYER_CASTSKILL = 'PLAYER_CASTSKILL',
     MONSTER_ATTRIBUTE = 'MONSTER_ATTRIBUTE',
     MONSTER_LOCATION = 'MONSTER_LOCATION',
     MONSTER_DIE = 'MONSTER_DIE',
     MONSTER_FIGHTSTATUS = 'MONSTER_FIGHTSTATUS',
+    MONSTER_CASTSKILL = 'MONSTER_CASTSKILL',
     //send
     LOGIN = 'LOGIN',
     PLAYER_CREATE = 'PLAYER_CREATE',
@@ -40,10 +42,21 @@ export interface WsMessage {
     fightStatusMsg: FightStatus;
     locationMsg: Location;
     roleDieMsg: RoleDie;
+    castSkillMsg: CastSkill;
     //send
     playerId: number;
     createPlayerMsg: CreatePlayerMsg;
     attributeRequest: AttributeRequest;
+}
+
+export interface CastSkill {
+    sourceId: number;
+    sourceType: RoleType;
+    targetId: number;
+    targetType: RoleType;
+    skillName: string;
+    targetX: number;
+    targetY: number;
 }
 
 export interface RoleDie {
@@ -70,7 +83,7 @@ export interface Attribute {
     speed: number;
 }
 
-export interface FightStatus{
+export interface FightStatus {
     isUpdate: boolean;
     id: number;
     healthPoint: number;

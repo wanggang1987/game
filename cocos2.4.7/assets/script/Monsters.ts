@@ -4,7 +4,8 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
 // Learn life-cycle callbacks:
 
-import { Role } from "./func/BasicObjects";
+import { CastSkill, Role } from "./func/BasicObjects";
+import { RoleAction } from "./func/RoleAction";
 import Roles from "./Roles";
 const { ccclass, property } = cc._decorator;
 
@@ -37,13 +38,7 @@ export default class Monsters extends cc.Component {
         this.deadMonster.length = 0;
 
         this.monsters.forEach((monster, monsterId) => {
-            let monsterNode: cc.Node = this.node.getChildByName(monsterId.toString());
-            if (!monsterNode) {
-                monsterNode = cc.instantiate(this.monsterPrefab);
-                monsterNode.name = monsterId.toString();
-                this.node.addChild(monsterNode);
-                console.log("add monsterNode " + monsterNode.name);
-            }
+            let monsterNode: cc.Node = this.monsterNode(monsterId);
 
             if (monster.location && monster.location.isUpdate) {
                 monsterNode.setPosition(monster.location.x * 50, monster.location.y * 50);
@@ -59,11 +54,25 @@ export default class Monsters extends cc.Component {
 
             if (monster.fightStatus && monster.fightStatus.isUpdate) {
                 let hpNode: cc.Node = monsterNode.getChildByName("Hp");
-                let hp:cc.ProgressBar = hpNode.getComponent(cc.ProgressBar);
+                let hp: cc.ProgressBar = hpNode.getComponent(cc.ProgressBar);
                 hp.progress = monster.fightStatus.healthPoint / monster.fightStatus.healthMax;
                 monster.fightStatus.isUpdate = false;
             }
         });
+    }
 
+    private monsterNode(monsterId: number) {
+        let monsterNode: cc.Node = this.node.getChildByName(monsterId.toString());
+        if (!monsterNode) {
+            monsterNode = cc.instantiate(this.monsterPrefab);
+            monsterNode.name = monsterId.toString();
+            this.node.addChild(monsterNode);
+            console.log("add monsterNode " + monsterNode.name);
+        }
+        return monsterNode;
+    }
+
+    public castSkill(castskill: CastSkill, player: Role) {
+        RoleAction.attackSkill(castskill, this.monsterNode(player.id), player.location);
     }
 }

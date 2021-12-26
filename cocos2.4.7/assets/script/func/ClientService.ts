@@ -60,6 +60,9 @@ export default class ClientService extends cc.Component {
                 this.roleCollection.playerDie(message.roleDieMsg);
             } else if (message.messageType == MessageType.PLAYER_FIGHTSTATUS) {
                 this.roleCollection.updatePlayerFightStatus(message.fightStatusMsg);
+            } else if (message.messageType == MessageType.PLAYER_CASTSKILL) {
+                console.log(message, message.messageType);
+                this.roleCollection.playerCastSkill(message.castSkillMsg);
             } else if (message.messageType == MessageType.MONSTER_ATTRIBUTE) {
                 console.log(message, message.messageType);
                 this.roleCollection.updateMonsterAttribute(message.attributeMsg);
@@ -70,6 +73,9 @@ export default class ClientService extends cc.Component {
                 this.roleCollection.monsterDie(message.roleDieMsg);
             } else if (message.messageType == MessageType.MONSTER_FIGHTSTATUS) {
                 this.roleCollection.updateMonsterFightStatus(message.fightStatusMsg);
+            } else if (message.messageType == MessageType.MONSTER_CASTSKILL) {
+                console.log(message, message.messageType);
+                this.roleCollection.monsterCastSkill(message.castSkillMsg);
             }
         });
         this.websocket.clearMessageStack();

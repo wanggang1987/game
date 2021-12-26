@@ -5,7 +5,8 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import { Role } from "./func/BasicObjects";
+import { CastSkill, Role } from "./func/BasicObjects";
+import { RoleAction } from "./func/RoleAction";
 
 const { ccclass, property } = cc._decorator;
 
@@ -38,13 +39,7 @@ export default class Players extends cc.Component {
         this.deadPlayers.length = 0;
 
         this.players.forEach((player, playerId) => {
-            let playerNode: cc.Node = this.node.getChildByName(playerId.toString());
-            if (!playerNode) {
-                playerNode = cc.instantiate(this.playerPrefab);
-                playerNode.name = playerId.toString();
-                this.node.addChild(playerNode);
-                console.log("add playerNode " + playerNode.name);
-            }
+            let playerNode: cc.Node = this.playerNode(playerId);
 
             if (player.location && player.location.isUpdate) {
                 playerNode.setPosition(player.location.x * 50, player.location.y * 50);
@@ -60,10 +55,25 @@ export default class Players extends cc.Component {
 
             if (player.fightStatus && player.fightStatus.isUpdate) {
                 let hpNode: cc.Node = playerNode.getChildByName("Hp");
-                let hp:cc.ProgressBar = hpNode.getComponent(cc.ProgressBar);
+                let hp: cc.ProgressBar = hpNode.getComponent(cc.ProgressBar);
                 hp.progress = player.fightStatus.healthPoint / player.fightStatus.healthMax;
                 player.fightStatus.isUpdate = false;
             }
         });
+    }
+
+    private playerNode(playerId: number) {
+        let playerNode: cc.Node = this.node.getChildByName(playerId.toString());
+        if (!playerNode) {
+            playerNode = cc.instantiate(this.playerPrefab);
+            playerNode.name = playerId.toString();
+            this.node.addChild(playerNode);
+            console.log("add playerNode " + playerNode.name);
+        }
+        return playerNode;
+    }
+
+    public castSkill(castskill: CastSkill, player: Role) {
+        RoleAction.attackSkill(castskill, this.playerNode(player.id), player.location);
     }
 }
