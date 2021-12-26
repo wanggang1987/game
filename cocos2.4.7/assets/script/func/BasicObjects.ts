@@ -12,9 +12,11 @@ export enum MessageType {
     PLAYER_ATTRIBUTE = 'PLAYER_ATTRIBUTE',
     PLAYER_LOCATION = 'PLAYER_LOCATION',
     PLAYER_DIE = 'PLAYER_DIE',
+    PLAYER_FIGHTSTATUS = 'PLAYER_FIGHTSTATUS',
     MONSTER_ATTRIBUTE = 'MONSTER_ATTRIBUTE',
     MONSTER_LOCATION = 'MONSTER_LOCATION',
     MONSTER_DIE = 'MONSTER_DIE',
+    MONSTER_FIGHTSTATUS = 'MONSTER_FIGHTSTATUS',
     //send
     LOGIN = 'LOGIN',
     PLAYER_CREATE = 'PLAYER_CREATE',
@@ -69,6 +71,8 @@ export interface Attribute {
 }
 
 export interface FightStatus{
+    isUpdate: boolean;
+    id: number;
     healthPoint: number;
     healthMax: number;
 }
@@ -77,5 +81,5 @@ export class Role {
     public id: number;
     public attribute: Attribute;
     public location: Location;
-    public fight: FightStatus;
+    public fightStatus: FightStatus;
 }

@@ -6,6 +6,7 @@ package org.game.ms.client.msg;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import org.game.ms.role.RoleType;
 
 /**
  *
@@ -13,9 +14,12 @@ import lombok.Data;
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FightStatusMsg {
+public class FightDamageMsg {
 
-    private long id;
-    private double healthPoint;
-    private double healthMax;
+    private long sourceId;
+    private RoleType sourceType;
+    private long targetId;
+    private RoleType targetType;
+    private String skillName;
+    private double damage;
 }

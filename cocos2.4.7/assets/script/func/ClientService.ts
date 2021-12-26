@@ -6,7 +6,7 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 import WsConnection from "./WsConnection";
 import RoleCollection from "./RoleCollection"
-import { CreatePlayerMsg, MessageType, Role, RoleType } from "./BasicObjects";
+import { CreatePlayerMsg, MessageType, Role, RoleType, WsMessage } from "./BasicObjects";
 const { ccclass, property } = cc._decorator;
 
 @ccclass
@@ -40,9 +40,11 @@ export default class ClientService extends cc.Component {
 
     private parseMessage() {
         const messageStack = this.websocket.getMessageStack();
-        messageStack.forEach(message => {
+        messageStack.forEach(wsMessage => {
+            let message: WsMessage = wsMessage;
             if (message.messageType == MessageType.HERO_ATTRIBUTE) {
                 this.roleCollection.updateHeroAttribute(message.attributeMsg);
+                this.roleCollection.updateHeroFightstatus(message.fightStatusMsg);
             } else if (message.messageType == MessageType.HERO_LOCATION) {
                 this.roleCollection.updateHeroLocation(message.locationMsg);
             } else if (message.messageType == MessageType.PLAYER_ATTRIBUTE) {
@@ -51,6 +53,8 @@ export default class ClientService extends cc.Component {
                 this.roleCollection.updatePlayerLocation(message.locationMsg);
             } else if (message.messageType == MessageType.PLAYER_DIE) {
                 this.roleCollection.playerDie(message.roleDieMsg);
+            } else if (message.messageType == MessageType.PLAYER_FIGHTSTATUS) {
+                this.roleCollection.updatePlayerFightStatus(message.fightStatusMsg);
             } else if (message.messageType == MessageType.MONSTER_ATTRIBUTE) {
                 this.roleCollection.updateMonsterAttribute(message.attributeMsg);
             } else if (message.messageType == MessageType.MONSTER_LOCATION) {

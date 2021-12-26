@@ -137,7 +137,7 @@ public class BuildMessageService {
         }
     }
 
-    private void buildMonsterDie() {
+    private void buildRoleDie() {
         while (buildMessage) {
             Role role = messageService.getRoleDie().poll();
             if (FuncUtils.isEmpty(role)) {
@@ -186,6 +186,33 @@ public class BuildMessageService {
         }
     }
 
+    private void buildFightStatus() {
+        while (buildMessage) {
+            Role role = messageService.getFightStatus().poll();
+            if (FuncUtils.isEmpty(role)) {
+                break;
+            }
+            List<Long> reveiverIds = gridService.playerIdsInGrid(role.getLocation().getGrid());
+            for (Long revcicerId : reveiverIds) {
+                if (!messageService.getPlayerSession().containsKey(revcicerId)) {
+                    continue;
+                }
+                WsMessage message = new WsMessage();
+                if (FuncUtils.equals(role.getRoleType(), RoleType.MONSTER)) {
+                    message.setMessageType(MessageType.MONSTER_FIGHTSTATUS);
+                } else if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
+                    message.setMessageType(MessageType.PLAYER_FIGHTSTATUS);
+                }
+                message.setSeesionId(messageService.getPlayerSession().get(revcicerId));
+                FightStatusMsg fightStatusMsg = new FightStatusMsg();
+                FuncUtils.copyProperties(role, fightStatusMsg);
+                fightStatusMsg.setId(role.getId());
+                message.setFightStatusMsg(fightStatusMsg);
+                messageService.getSendQueue().offer(message);
+            }
+        }
+    }
+
     private void buildMessages() throws InterruptedException {
         Thread.sleep(1);
         if (!buildMessage) {
@@ -193,9 +220,10 @@ public class BuildMessageService {
         }
         buildHeroUpdate();
         buildRoleAttribute();
+        buildFightStatus();
         buildRoleMove();
         buildFlushGrid();
-        buildMonsterDie();
+        buildRoleDie();
         buildMessage = false;
     }
 

@@ -6,6 +6,8 @@
 package org.game.ms.fight;
 
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.client.MessageService;
+import org.game.ms.client.msg.FightDamageMsg;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.lifecycle.LifeCycle;
 import org.game.ms.role.AttackStatus;
@@ -44,6 +46,8 @@ public class FightService {
     private ResourceService resourceService;
     @Autowired
     private BufferService bufferService;
+    @Autowired
+    private MessageService messageService;
 
     public void autoFight(Role role) {
         Role target = lifeCycle.getRole(role.getTargetType(), role.getTargetId());
@@ -124,12 +128,14 @@ public class FightService {
         return FuncUtils.randomInPersentRange(damage, 30);
     }
 
-    private void damageTarget(Role role, double damage, Skill skill, Role target) {
+    private void damageTarget(Role source, double damage, Skill skill, Role target) {
         target.setHealthPoint(target.getHealthPoint() - damage);
-        log.debug("{} {} {} {} {} damage {} health {}/{}", role.getRoleType(), role.getId(), skill.getName(),
+        log.debug("{} {} {} {} {} damage {} health {}/{}", source.getRoleType(), source.getId(), skill.getName(),
                 target.getRoleType(), target.getId(), damage,
                 target.getHealthPoint(), target.getHealthMax());
-        battleService.addFightStatus(role, target);
+        battleService.addFightStatus(source, target);
+        messageService.addFightDamage(source, damage, skill, target);
+        messageService.getFightStatus().add(target);
     }
 
     public void loopDamage(LoopDamageTask task) {
