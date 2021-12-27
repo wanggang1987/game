@@ -45,8 +45,8 @@ public class BattleService {
                 .filter(battle -> battle.getPlayers().isEmpty() || battle.getMonsters().isEmpty())
                 .collect(Collectors.toList());
         removeList.forEach(battle -> {
-            battle.getPlayers().forEach(id -> lifeCycle.onlinePlayer(id).setBattle(null));
-            battle.getMonsters().forEach(id -> lifeCycle.onlineMonster(id).setBattle(null));
+            battle.getPlayers().forEach(player -> player.setBattle(null));
+            battle.getMonsters().forEach(monster -> monster.setBattle(null));
             log.debug("battle end {}", battle);
         });
         battles.removeAll(removeList);
@@ -55,10 +55,32 @@ public class BattleService {
     private void addRoleToBattle(Role role, Battle battle) {
         role.setBattle(battle);
         if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
-            battle.getPlayers().add(role.getId());
+            Player player = lifeCycle.onlinePlayer(role.getId());
+            battle.getPlayers().add(player);
         } else if (FuncUtils.equals(role.getRoleType(), RoleType.MONSTER)) {
-            battle.getMonsters().add(role.getId());
+            Monster monster = lifeCycle.onlineMonster(role.getId());
+            battle.getMonsters().add(monster);
         }
+    }
+
+    public void removePlayerFromBattle(Player player) {
+        Battle battle = player.getBattle();
+        if (battle == null) {
+            return;
+        }
+        battle.getPlayers().remove(player);
+        player.setBattle(null);
+        log.debug("battle {} players {} monsters {}", battle.getId(), battle.getPlayers().size(), battle.getMonsters().size());
+    }
+
+    public void removeMonsterFromBattle(Monster monster) {
+        Battle battle = monster.getBattle();
+        if (battle == null) {
+            return;
+        }
+        battle.getMonsters().remove(monster);
+        monster.setBattle(null);
+        log.debug("battle {} players {} monsters {}", battle.getId(), battle.getPlayers().size(), battle.getMonsters().size());
     }
 
     public void removeRoleFromBattle(Role role) {
@@ -67,11 +89,13 @@ public class BattleService {
             return;
         }
         if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
-            battle.getPlayers().remove(role.getId());
-            role.setBattle(null);
+            Player player = lifeCycle.onlinePlayer(role.getId());
+            battle.getPlayers().remove(player);
+            player.setBattle(null);
         } else if (FuncUtils.equals(role.getRoleType(), RoleType.MONSTER)) {
-            battle.getMonsters().remove(role.getId());
-            role.setBattle(null);
+            Monster monster = lifeCycle.onlineMonster(role.getId());
+            battle.getMonsters().remove(monster);
+            monster.setBattle(null);
         }
         log.debug("battle {} players {} monsters {}", battle.getId(), battle.getPlayers().size(), battle.getMonsters().size());
     }
@@ -95,13 +119,11 @@ public class BattleService {
         } else {
             newBattle = sourceBattle;
             newBattle.getPlayers().addAll(targetBattle.getPlayers());
-            targetBattle.getPlayers().forEach(id -> {
-                Player player = lifeCycle.onlinePlayer(id);
+            targetBattle.getPlayers().forEach(player -> {
                 player.setBattle(newBattle);
             });
             newBattle.getMonsters().addAll(targetBattle.getMonsters());
-            targetBattle.getMonsters().forEach(id -> {
-                Monster monster = lifeCycle.onlineMonster(id);
+            targetBattle.getMonsters().forEach(monster -> {
                 monster.setBattle(newBattle);
             });
         }

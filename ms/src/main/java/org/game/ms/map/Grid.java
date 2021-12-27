@@ -5,10 +5,13 @@
  */
 package org.game.ms.map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
+import org.game.ms.monster.Monster;
+import org.game.ms.player.Player;
 
 /**
  *
@@ -19,7 +22,8 @@ import lombok.Data;
 public class Grid {
 
     private String grid;
-
-    private List<Long> monsterIds = new ArrayList<>();
-    private List<Long> playerIds = new ArrayList<>();
+    @JsonIgnore
+    private List<Monster> monsters = new ArrayList<>();
+    @JsonIgnore
+    private List<Player> players = new ArrayList<>();
 }

@@ -36,55 +36,47 @@ public class RootMap {
     public void addPlayerToMap(Player player) {
         player.setMap(this);
         inMapPlayerIdList.add(player.getId());
-        gridService.addRoleToGrid(player);
+        gridService.addPlayerToGrid(player);
     }
 
     public void playerLeaveMap(Player player) {
         inMapPlayerIdList.remove(player.getId());
-        gridService.removeRoleFromGrid(player);
+        gridService.removePlayerFromGrid(player);
         player.setLocation(null);
     }
 
-    protected void addMonsterToMap(Role monster, Location location) {
+    protected void addMonsterToMap(Monster monster, Location location) {
         monster.setMap(this);
         monster.setLocation(location);
-        gridService.addRoleToGrid(monster);
+        gridService.addMonsterToGrid(monster);
     }
 
-    public void removeMonsterFromMap(Role monster) {
-        gridService.removeRoleFromGrid(monster);
+    public void removeMonsterFromMap(Monster monster) {
+        gridService.removeMonsterFromGrid(monster);
         log.debug("removeMonsterFromMap monster {} ", monster.getId());
-    }
-
-    protected void removeMonsters(List<Monster> monsters) {
-        monsters.forEach(monster -> removeMonsterFromMap(monster));
     }
 
     public int findNearByMonsterNumForPlayer(Player player) {
         int n = 0;
         for (String grid : player.getLocation().getNearGrids()) {
-            List<Long> gridMonsters = gridService.monsterIdsInGrid(grid);
-            if (FuncUtils.notEmpty(gridMonsters)) {
-                n += gridMonsters.size();
-            }
+            n += gridService.monstersInGrid(grid).size();
         }
         return n;
     }
 
-    public Long findNearByMonsterIdForPlayer(Player player) {
+    public Monster findNearByMonsterIdForPlayer(Player player) {
         for (String grid : player.getLocation().getNearGrids()) {
-            List<Long> gridMonsterIds = gridService.monsterIdsInGrid(grid);
-            if (FuncUtils.notEmpty(gridMonsterIds)) {
-                int index = FuncUtils.randomZeroToRange(gridMonsterIds.size());
-                Long id = gridMonsterIds.get(index);
-                log.debug("findNearByMonsterForPlayer player {}  monster:{}", player.getId(), id);
-                return id;
+            Monster monster = gridService.monstersInGrid(grid).stream().findAny().orElse(null);
+            if (FuncUtils.notEmpty(monster)) {
+                log.debug("findNearByMonsterForPlayer player {}  monster:{}", player.getId(), monster.getId());
+                return monster;
             }
         }
         return null;
     }
 
-    public void roleMoveToTargetInTick(Role role, Role target) {
+    public void roleMoveToTargetInTick(Role role) {
+        Role target = role.getTarget();
         double xDistance = target.getLocation().getX() - role.getLocation().getX();
         double yDistance = target.getLocation().getY() - role.getLocation().getY();
         double targetDistance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);

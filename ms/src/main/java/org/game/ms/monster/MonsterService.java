@@ -16,7 +16,6 @@ import org.game.ms.skill.resource.Resource;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.role.LivingStatus;
 import org.game.ms.role.MoveStatus;
-import org.game.ms.role.RoleService;
 import org.game.ms.role.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +26,7 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class MonsterService extends RoleService {
+public class MonsterService {
 
     @Autowired
     private IdService idService;

@@ -54,9 +54,9 @@ public class BuildMessageService {
             if (FuncUtils.isEmpty(role)) {
                 break;
             }
-            List<Long> receiveIDs = gridService.playerIdsInGrid(role.getLocation().getGrid());
-            for (Long receiveId : receiveIDs) {
-                if (!messageService.getPlayerSession().containsKey(receiveId)) {
+            List<Player> receivers = gridService.playersInGrid(role.getLocation().getGrid());
+            for (Player revceiver : receivers) {
+                if (!messageService.getPlayerSession().containsKey(revceiver.getId())) {
                     continue;
                 }
                 WsMessage message = new WsMessage();
@@ -65,7 +65,7 @@ public class BuildMessageService {
                 } else if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
                     message.setMessageType(MessageType.PLAYER_LOCATION);
                 }
-                message.setSeesionId(messageService.getPlayerSession().get(receiveId));
+                message.setSeesionId(messageService.getPlayerSession().get(revceiver.getId()));
                 LocationMsg locaionMsg = new LocationMsg();
                 locaionMsg.setId(role.getId());
                 FuncUtils.copyProperties(role.getLocation(), locaionMsg);
@@ -84,12 +84,8 @@ public class BuildMessageService {
             if (!messageService.getPlayerSession().containsKey(reveiver.getId())) {
                 continue;
             }
-            List<Long> gridPlayerIds = gridService.playerIdsInGrid(reveiver.getLocation().getGrid());
-            for (Long playerId : gridPlayerIds) {
-                if (FuncUtils.equals(reveiver.getId(), playerId)) {
-                    continue;
-                }
-                Player player = lifeCycle.onlinePlayer(playerId);
+            List<Player> gridPlayers = gridService.playersInGrid(reveiver.getLocation().getGrid());
+            for (Player player : gridPlayers) {
                 WsMessage message = new WsMessage();
                 message.setMessageType(MessageType.PLAYER_LOCATION);
                 message.setSeesionId(messageService.getPlayerSession().get(reveiver.getId()));
@@ -99,9 +95,8 @@ public class BuildMessageService {
                 message.setLocationMsg(locaionMsg);
                 messageService.getSendQueue().offer(message);
             }
-            List<Long> gridMonsterIds = gridService.monsterIdsInGrid(reveiver.getLocation().getGrid());
-            for (Long monsterId : gridMonsterIds) {
-                Monster monster = lifeCycle.onlineMonster(monsterId);
+            List<Monster> gridMonsters = gridService.monstersInGrid(reveiver.getLocation().getGrid());
+            for (Monster monster : gridMonsters) {
                 WsMessage message = new WsMessage();
                 message.setMessageType(MessageType.MONSTER_LOCATION);
                 message.setSeesionId(messageService.getPlayerSession().get(reveiver.getId()));
@@ -145,9 +140,9 @@ public class BuildMessageService {
             if (FuncUtils.isEmpty(role)) {
                 return;
             }
-            List<Long> receiveIDs = gridService.playerIdsInGrid(role.getLocation().getGrid());
-            for (Long receiveId : receiveIDs) {
-                if (!messageService.getPlayerSession().containsKey(receiveId)) {
+            List<Player> receivers = gridService.playersInGrid(role.getLocation().getGrid());
+            for (Player revceiver : receivers) {
+                if (!messageService.getPlayerSession().containsKey(revceiver.getId())) {
                     continue;
                 }
                 WsMessage message = new WsMessage();
@@ -156,7 +151,7 @@ public class BuildMessageService {
                 } else if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
                     message.setMessageType(MessageType.PLAYER_DIE);
                 }
-                message.setSeesionId(messageService.getPlayerSession().get(receiveId));
+                message.setSeesionId(messageService.getPlayerSession().get(revceiver.getId()));
                 RoleDieMsg roleDieMsg = new RoleDieMsg();
                 roleDieMsg.setId(role.getId());
                 message.setRoleDieMsg(roleDieMsg);
@@ -167,17 +162,16 @@ public class BuildMessageService {
 
     private void buildHeroUpdate() {
         while (buildMessage) {
-            Long playerId = messageService.getHeroUpdate().poll();
-            if (FuncUtils.isEmpty(playerId)) {
+            Player player = messageService.getHeroUpdate().poll();
+            if (FuncUtils.isEmpty(player)) {
                 return;
             }
-            if (!messageService.getPlayerSession().containsKey(playerId)) {
+            if (!messageService.getPlayerSession().containsKey(player.getId())) {
                 return;
             }
             WsMessage message = new WsMessage();
             message.setMessageType(MessageType.HERO_ATTRIBUTE);
-            message.setSeesionId(messageService.getPlayerSession().get(playerId));
-            Player player = lifeCycle.onlinePlayer(playerId);
+            message.setSeesionId(messageService.getPlayerSession().get(player.getId()));
             AttributeMsg attributeMsg = new AttributeMsg();
             FuncUtils.copyProperties(player, attributeMsg);
             message.setAttributeMsg(attributeMsg);
@@ -194,9 +188,9 @@ public class BuildMessageService {
             if (FuncUtils.isEmpty(role)) {
                 break;
             }
-            List<Long> receiveIDs = gridService.playerIdsInGrid(role.getLocation().getGrid());
-            for (Long receiveId : receiveIDs) {
-                if (!messageService.getPlayerSession().containsKey(receiveId)) {
+            List<Player> receivers = gridService.playersInGrid(role.getLocation().getGrid());
+            for (Player revceiver : receivers) {
+                if (!messageService.getPlayerSession().containsKey(revceiver.getId())) {
                     continue;
                 }
                 WsMessage message = new WsMessage();
@@ -205,7 +199,7 @@ public class BuildMessageService {
                 } else if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
                     message.setMessageType(MessageType.PLAYER_FIGHTSTATUS);
                 }
-                message.setSeesionId(messageService.getPlayerSession().get(receiveId));
+                message.setSeesionId(messageService.getPlayerSession().get(revceiver.getId()));
                 FightStatusMsg fightStatusMsg = new FightStatusMsg();
                 FuncUtils.copyProperties(role, fightStatusMsg);
                 fightStatusMsg.setId(role.getId());
@@ -221,9 +215,9 @@ public class BuildMessageService {
             if (FuncUtils.isEmpty(castSkillMsg)) {
                 break;
             }
-            List<Long> receiveIDs = gridService.playerIdsInGrid(castSkillMsg.getGrid());
-            for (Long receiveId : receiveIDs) {
-                if (!messageService.getPlayerSession().containsKey(receiveId)) {
+            List<Player> receivers = gridService.playersInGrid(castSkillMsg.getGrid());
+            for (Player revceiver : receivers) {
+                if (!messageService.getPlayerSession().containsKey(revceiver.getId())) {
                     continue;
                 }
                 WsMessage message = new WsMessage();
@@ -232,7 +226,7 @@ public class BuildMessageService {
                 } else if (FuncUtils.equals(castSkillMsg.getSourceType(), RoleType.PLAYER)) {
                     message.setMessageType(MessageType.PLAYER_CASTSKILL);
                 }
-                message.setSeesionId(messageService.getPlayerSession().get(receiveId));
+                message.setSeesionId(messageService.getPlayerSession().get(revceiver.getId()));
                 message.setCastSkillMsg(castSkillMsg);
                 messageService.getSendQueue().offer(message);
             }

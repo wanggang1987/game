@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.game.ms.client.msg.CastSkillMsg;
 import org.game.ms.client.msg.FightDamageMsg;
 import org.game.ms.func.FuncUtils;
+import org.game.ms.player.Player;
 import org.game.ms.role.Role;
 import org.game.ms.role.RoleType;
 import org.game.ms.skill.Skill;
@@ -42,21 +43,21 @@ public class MessageService {
     private final Queue<Role> flashGrid = new ConcurrentLinkedQueue<>();
     private final Queue<Role> roleDie = new ConcurrentLinkedDeque<>();
     private final Queue<WsMessage> roleAttribute = new ConcurrentLinkedDeque<>();
-    private final Queue<Long> heroUpdate = new ConcurrentLinkedDeque<>();
+    private final Queue<Player> heroUpdate = new ConcurrentLinkedDeque<>();
     private final Queue<FightDamageMsg> fightDamage = new ConcurrentLinkedDeque<>();
     private final Queue<CastSkillMsg> castSkill = new ConcurrentLinkedDeque<>();
     private final Queue<Role> fightStatus = new ConcurrentLinkedDeque<>();
 
-    public void addCastSkill(Role source, Skill skill, Role target) {
+    public void addCastSkill(Role role, Skill skill) {
         CastSkillMsg castSkillMsg = new CastSkillMsg();
-        castSkillMsg.setSourceId(source.getId());
-        castSkillMsg.setSourceType(source.getRoleType());
-        castSkillMsg.setTargetId(target.getId());
-        castSkillMsg.setTargetType(target.getRoleType());
+        castSkillMsg.setSourceId(role.getId());
+        castSkillMsg.setSourceType(role.getRoleType());
+        castSkillMsg.setTargetId(role.getTarget().getId());
+        castSkillMsg.setTargetType(role.getTarget().getRoleType());
         castSkillMsg.setSkillName(skill.getName());
-        castSkillMsg.setGrid(source.getLocation().getGrid());
-        castSkillMsg.setTargetX(target.getLocation().getX());
-        castSkillMsg.setTargetY(target.getLocation().getY());
+        castSkillMsg.setGrid(role.getLocation().getGrid());
+        castSkillMsg.setTargetX(role.getTarget().getLocation().getX());
+        castSkillMsg.setTargetY(role.getTarget().getLocation().getY());
         castSkill.add(castSkillMsg);
     }
 
@@ -71,8 +72,8 @@ public class MessageService {
         fightDamage.add(fightDamageMsg);
     }
 
-    public void heroUpdate(Long playerId) {
-        heroUpdate.add(playerId);
+    public void heroUpdate(Player player) {
+        heroUpdate.add(player);
     }
 
     public void addPlayerSession(Long playerId, String sessionId) {

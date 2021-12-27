@@ -5,9 +5,10 @@
  */
 package org.game.ms.skill.buffer;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.game.ms.role.RoleType;
+import org.game.ms.role.Role;
 import org.game.ms.skill.Skill;
 
 /**
@@ -18,10 +19,10 @@ import org.game.ms.skill.Skill;
 @AllArgsConstructor
 public class Buffer {
 
-    private long sourceId;
-    private RoleType sourceType;
-    private long targetId;
-    private RoleType targetType;
+    @JsonIgnore
+    private Role source;
+    @JsonIgnore
+    private Role target;
     private Skill skill;
     private boolean buffer;
 }

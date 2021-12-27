@@ -14,13 +14,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.game.ms.client.MessageService;
 import org.game.ms.func.JsonUtils;
 import org.game.ms.id.IdService;
-import org.game.ms.map.RootMap;
-import org.game.ms.map.WorldMap;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.reward.Experience;
 import org.game.ms.role.LivingStatus;
 import org.game.ms.role.MoveStatus;
-import org.game.ms.role.RoleService;
 import org.game.ms.role.RoleType;
 import org.game.ms.skill.Skill;
 import org.springframework.beans.BeanUtils;
@@ -33,7 +30,7 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class PlayerService extends RoleService {
+public class PlayerService {
 
     @Autowired
     private IdService idService;
@@ -75,7 +72,7 @@ public class PlayerService extends RoleService {
         player.getMap().playerLeaveMap(player);
         player.getMap().addPlayerToMap(player);
         player.setLivingStatus(LivingStatus.LIVING);
-        messageService.heroUpdate(player.getId());
+        messageService.heroUpdate(player);
         log.debug("playerReborn {} {}", player.getId(), player.getLocation());
     }
 
@@ -103,7 +100,7 @@ public class PlayerService extends RoleService {
         player.setAttackStatus(AttackStatus.NOT_ATTACK);
         player.setMoveStatus(MoveStatus.STANDING);
         player.setLivingStatus(LivingStatus.LIVING);
-        player.setTargetId(null);
+        player.setTarget(null);
         attributeInit(player);
         skillInit(player);
         bufferInit(player);
@@ -138,9 +135,5 @@ public class PlayerService extends RoleService {
                 player.getSkills().add(one);
             });
         });
-    }
-
-    public Long findNearByMonster(Player player) {
-        return player.getMap().findNearByMonsterIdForPlayer(player);
     }
 }

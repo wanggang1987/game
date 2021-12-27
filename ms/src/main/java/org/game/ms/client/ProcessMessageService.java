@@ -65,7 +65,7 @@ public class ProcessMessageService {
         if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.PLAYER_CREATE)) {
             Player player = createPlayer(wsMessage.getCreatePlayerMsg());
             messageService.addPlayerSession(player.getId(), wsMessage.getSeesionId());
-            messageService.heroUpdate(player.getId());
+            messageService.heroUpdate(player);
         } else if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.LOGIN)) {
             messageService.addPlayerSession(wsMessage.getPlayerId(), wsMessage.getSeesionId());
         } else if (FuncUtils.equals(wsMessage.getMessageType(), MessageType.ATTRIBUTE_REQUEST)) {

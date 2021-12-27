@@ -5,6 +5,7 @@
  */
 package org.game.ms.role;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,11 +37,13 @@ public class Role {
     private double attackPower;
     private double magicPower;
 
+    //target
+    @JsonIgnore
+    private Role target;
+
     //status
     private double healthPoint;
     private double healthMax;
-    private RoleType targetType;
-    private Long targetId;
     private LivingStatus livingStatus;
     private MoveStatus moveStatus;
     private AttackStatus attackStatus;

@@ -3,6 +3,10 @@ import { CastSkill, Location } from "../func/BasicObjects";
 export class RoleAction {
 
     public static attackSkill(castskill: CastSkill, roleNode: cc.Node, location: Location) {
+        if (!castskill || !roleNode || !location) {
+            return;
+        }
+
         let xDistance: number = castskill.targetX - location.x;
         let yDistance: number = castskill.targetY - location.y;
         let targetDistance: number = Math.sqrt(xDistance * xDistance + yDistance * yDistance);

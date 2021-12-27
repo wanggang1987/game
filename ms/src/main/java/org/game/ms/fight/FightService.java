@@ -7,10 +7,9 @@ package org.game.ms.fight;
 
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.client.MessageService;
-import org.game.ms.client.msg.FightDamageMsg;
 import org.game.ms.func.FuncUtils;
-import org.game.ms.lifecycle.LifeCycle;
 import org.game.ms.role.AttackStatus;
+import org.game.ms.role.LivingStatus;
 import org.game.ms.role.Role;
 import org.game.ms.skill.DamageBase;
 import org.game.ms.skill.LoopDamage;
@@ -37,8 +36,6 @@ public class FightService {
     @Autowired
     private TaskService taskService;
     @Autowired
-    private LifeCycle lifeCycle;
-    @Autowired
     private NormalAttack normalAttack;
     @Autowired
     private BattleService battleService;
@@ -50,12 +47,11 @@ public class FightService {
     private MessageService messageService;
 
     public void autoFight(Role role) {
-        Role target = lifeCycle.getRole(role.getTargetType(), role.getTargetId());
-        attackRanageCompare(role, target);
-        physicalAttack(role, target);
+        attackRanageCompare(role);
+        physicalAttack(role);
     }
 
-    private void physicalAttack(Role role, Role target) {
+    private void physicalAttack(Role role) {
         if (FuncUtils.equals(role.getAttackStatus(), AttackStatus.OUT_RANGE)) {
             return;
         }
@@ -72,18 +68,18 @@ public class FightService {
                 continue;
             }
             if (FuncUtils.notEmpty(skill.getDirectDamage())) {
-                double damage = skillDamageCaculate(role, skill.getDirectDamage(), target);
-                damageTarget(role, damage, skill, target);
+                double damage = skillDamageCaculate(role, skill.getDirectDamage());
+                damageTarget(role, damage, skill, role.getTarget());
             }
             if (FuncUtils.notEmpty(skill.getLoopDamage())) {
-                Buffer deBuffer = bufferService.createBuffer(role, target, skill, true);
-                if (target.getBuffers().contains(deBuffer)) {
+                Buffer deBuffer = bufferService.createBuffer(role, skill, true);
+                if (role.getTarget().getBuffers().contains(deBuffer)) {
                     continue;
                 }
                 bufferService.addBuffer(deBuffer);
 
                 LoopDamage loopDamage = skill.getLoopDamage();
-                double damage = skillDamageCaculate(role, loopDamage, target);
+                double damage = skillDamageCaculate(role, loopDamage);
                 int n = loopDamage.getLastTime() / loopDamage.getLoopTime();
                 for (int i = 1; i <= n; i++) {
                     taskService.addTask(new LoopDamageTask(deBuffer, damage / n, i * loopDamage.getLoopTime()));
@@ -91,59 +87,62 @@ public class FightService {
                 taskService.addTask(new BufferManagerTask(deBuffer, false, loopDamage.getLastTime()));
             }
             resourceService.skillCoolDownBegin(role.getResource(), skill);
-            log.debug("{} {} cast {} to {} {}", role.getRoleType(), role.getId(), skill.getName(), target.getRoleType(), target.getId());
+            log.debug("{} {} cast skill {} to {} {}",
+                    role.getRoleType(), role.getId(), skill.getName(), role.getTarget().getRoleType(), role.getTarget().getId());
         }
 
-        normalAttack(role, target);
+        normalAttack(role);
     }
 
-    private void normalAttack(Role role, Role target) {
+    private void normalAttack(Role role) {
         if (resourceService.attackCoolDownReady(role.getResource())) {
-            double damage = skillDamageCaculate(role, normalAttack.getDirectDamage(), target);
-            damageTarget(role, damage, normalAttack, target);
+            double damage = skillDamageCaculate(role, normalAttack.getDirectDamage());
+            damageTarget(role, damage, normalAttack, role.getTarget());
             resourceService.attackCoolDownBegin(role.getResource());
             resourceService.gainAngerByHit(role.getResource());
-            messageService.addCastSkill(role, normalAttack, target);
+            messageService.addCastSkill(role, normalAttack);
         }
     }
 
-    private static double targetDistance(Role source, Role target) {
-        double xDistance = target.getLocation().getX() - source.getLocation().getX();
-        double yDistance = target.getLocation().getY() - source.getLocation().getY();
+    private static double targetDistance(Role role) {
+        double xDistance = role.getTarget().getLocation().getX() - role.getLocation().getX();
+        double yDistance = role.getTarget().getLocation().getY() - role.getLocation().getY();
         return Math.sqrt(xDistance * xDistance + yDistance * yDistance);
     }
 
-    private static void attackRanageCompare(Role source, Role target) {
-        if (targetDistance(source, target) > source.getAttackRange()) {
-            source.setAttackStatus(AttackStatus.OUT_RANGE);
+    private static void attackRanageCompare(Role role) {
+        if (targetDistance(role) > role.getAttackRange()) {
+            role.setAttackStatus(AttackStatus.OUT_RANGE);
         } else {
-            source.setAttackStatus(AttackStatus.AUTO_ATTACK);
+            role.setAttackStatus(AttackStatus.AUTO_ATTACK);
         }
     }
 
-    private double skillDamageCaculate(Role role, DamageBase damageBase, Role target) {
-        double damage = role.getAttackPower() * damageBase.getAttackPowerRate() + role.getAttack() - target.getDefense();
+    private double skillDamageCaculate(Role role, DamageBase damageBase) {
+        double damage = role.getAttackPower() * damageBase.getAttackPowerRate() + role.getAttack() - role.getTarget().getDefense();
         if (damage < 1) {
             damage = 1;
         }
         return FuncUtils.randomInPersentRange(damage, 30);
     }
 
-    private void damageTarget(Role source, double damage, Skill skill, Role target) {
+    private void damageTarget(Role role, double damage, Skill skill, Role target) {
         target.setHealthPoint(target.getHealthPoint() - damage);
-        log.debug("{} {} {} {} {} damage {} health {}/{}", source.getRoleType(), source.getId(), skill.getName(),
+        log.debug("{} {} {} {} {} damage {} health {}/{}", role.getRoleType(), role.getId(), skill.getName(),
                 target.getRoleType(), target.getId(), damage,
                 target.getHealthPoint(), target.getHealthMax());
-        battleService.addFightStatus(source, target);
-        messageService.addFightDamage(source, damage, skill, target);
+        battleService.addFightStatus(role, target);
+        messageService.addFightDamage(role, damage, skill, target);
         messageService.getFightStatus().add(target);
     }
 
     public void loopDamage(LoopDamageTask task) {
         Buffer buffer = task.getBuffer();
-        Role source = lifeCycle.getRole(buffer.getSourceType(), buffer.getSourceId());
-        Role target = lifeCycle.getRole(buffer.getTargetType(), buffer.getTargetId());
-        if (FuncUtils.notEmpty(target) && target.getBuffers().contains(buffer)) {
+        Role source = buffer.getSource();
+        Role target = buffer.getTarget();
+        if (FuncUtils.notEmpty(target)
+                && FuncUtils.equals(target.getLivingStatus(), LivingStatus.LIVING)
+                && target.getBuffers().contains(buffer)) {
             damageTarget(source, task.getDamage(), buffer.getSkill(), target);
         }
     }

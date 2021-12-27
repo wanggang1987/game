@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.game.ms.client.MessageService;
 import org.game.ms.fight.BattleService;
 import org.game.ms.func.FuncUtils;
-import org.game.ms.map.RootMap;
 import org.game.ms.monster.Monster;
 import org.game.ms.monster.MonsterService;
 import org.game.ms.player.Player;
@@ -44,7 +43,6 @@ public class LifeCycle {
     @Autowired
     private MessageService messageService;
 
-    private final Map<Long, RootMap> maps = new ConcurrentHashMap<>();
     private final Map<Long, Player> onlinePlayers = new ConcurrentHashMap<>();
     private final Map<Long, Monster> onlineMonsters = new ConcurrentHashMap<>();
 
@@ -100,7 +98,7 @@ public class LifeCycle {
             monsterService.removeFromMap(monster);
             onlineMonsters.remove(monster.getId());
             monsterReward(monster);
-            battleService.removeRoleFromBattle(monster);
+            battleService.removeMonsterFromBattle(monster);
             messageService.addRoleDieMsg(monster);
             log.debug("monster {} die", monster.getId());
         });
@@ -109,8 +107,7 @@ public class LifeCycle {
     private void monsterReward(Monster monster) {
         int exp = Experience.MonsterExp(monster.getLevel());
         int coin = Gold.MonsterCoin(monster.getLevel());
-        monster.getBattle().getPlayers().forEach(id -> {
-            Player player = onlinePlayer(id);
+        monster.getBattle().getPlayers().forEach(player -> {
             playerService.playerGetExp(player, exp);
             playerService.playerGetCoin(player, coin);
         });
@@ -128,7 +125,7 @@ public class LifeCycle {
                 .collect(Collectors.toList());
         deadList.forEach(player -> {
             player.setLivingStatus(LivingStatus.DEAD);
-            battleService.removeRoleFromBattle(player);
+            battleService.removePlayerFromBattle(player);
             messageService.addRoleDieMsg(player);
             log.debug("player {} die", player.getId());
         });

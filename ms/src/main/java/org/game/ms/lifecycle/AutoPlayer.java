@@ -10,13 +10,12 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.fight.FightService;
 import org.game.ms.func.FuncUtils;
+import org.game.ms.map.RootMap;
 import org.game.ms.player.Player;
 import org.game.ms.player.PlayerService;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.role.LivingStatus;
 import org.game.ms.role.MoveStatus;
-import org.game.ms.role.Role;
-import org.game.ms.role.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,11 +28,11 @@ import org.springframework.stereotype.Service;
 public class AutoPlayer {
 
     @Autowired
-    private LifeCycle lifeCycle;
-    @Autowired
     private FightService fightService;
     @Autowired
     private PlayerService playerService;
+    @Autowired
+    private RootMap rootMap;
 
     private final List<Player> autoPlayers = new ArrayList<>();
 
@@ -52,20 +51,16 @@ public class AutoPlayer {
             playerService.playerReborn(player);
             return;
         }
-        if (player.getTargetId() == null) {
+        if (FuncUtils.isEmpty(player.getTarget())) {
             player.setAttackStatus(AttackStatus.NOT_ATTACK);
-            player.setTargetId(playerService.findNearByMonster(player));
-            player.setTargetType(RoleType.MONSTER);
+            player.setTarget(rootMap.findNearByMonsterIdForPlayer(player));
             return;
         }
-        Role target = lifeCycle.getRole(player.getTargetType(), player.getTargetId());
-        if (target == null) {
-            player.setTargetType(null);
-            player.setTargetId(null);
+        if (FuncUtils.isEmpty(player.getTarget())) {
             return;
         }
-        if (FuncUtils.equals(target.getLivingStatus(), LivingStatus.DEAD)) {
-            player.setTargetId(null);
+        if (FuncUtils.equals(player.getTarget().getLivingStatus(), LivingStatus.DEAD)) {
+            player.setTarget(null);
             return;
         }
 
@@ -84,13 +79,14 @@ public class AutoPlayer {
     private void autoMove(Player player) {
         if (FuncUtils.equals(player.getAttackStatus(), AttackStatus.OUT_RANGE)
                 && FuncUtils.equals(player.getMoveStatus(), MoveStatus.STANDING)) {
-            log.debug("player {} start move {} to {} {}", player.getId(), player.getLocation(), player.getTargetType(), player.getTargetId());
+            log.debug("player {} start move {} to {} {}", player.getId(), player.getLocation(),
+                    player.getTarget().getRoleType(), player.getTarget().getId());
             player.setMoveStatus(MoveStatus.MOVEING);
         } else if (FuncUtils.notEquals(player.getAttackStatus(), AttackStatus.OUT_RANGE)) {
             player.setMoveStatus(MoveStatus.STANDING);
         }
         if (FuncUtils.equals(player.getMoveStatus(), MoveStatus.MOVEING)) {
-            playerService.moveToTargetInTick(player);
+            rootMap.roleMoveToTargetInTick(player);
         }
     }
 }

@@ -5,9 +5,12 @@
  */
 package org.game.ms.fight;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
+import org.game.ms.monster.Monster;
+import org.game.ms.player.Player;
 
 /**
  *
@@ -17,6 +20,8 @@ import lombok.Data;
 public class Battle {
 
     private long id;
-    private List<Long> players = new ArrayList<>();
-    private List<Long> monsters = new ArrayList<>();
+    @JsonIgnore
+    private List<Player> players = new ArrayList<>();
+    @JsonIgnore
+    private List<Monster> monsters = new ArrayList<>();
 }
