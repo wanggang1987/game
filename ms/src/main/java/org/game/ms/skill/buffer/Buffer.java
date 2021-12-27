@@ -24,5 +24,4 @@ public class Buffer {
     @JsonIgnore
     private Role target;
     private Skill skill;
-    private boolean buffer;
 }

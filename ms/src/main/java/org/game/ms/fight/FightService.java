@@ -10,12 +10,14 @@ import org.game.ms.client.MessageService;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.role.LivingStatus;
+import org.game.ms.role.MoveStatus;
 import org.game.ms.role.Role;
 import org.game.ms.skill.DamageBase;
 import org.game.ms.skill.LoopDamage;
 import org.game.ms.skill.NormalAttack;
 import org.game.ms.skill.RangeType;
 import org.game.ms.skill.Skill;
+import org.game.ms.skill.SkillType;
 import org.game.ms.skill.buffer.Buffer;
 import org.game.ms.skill.buffer.BufferService;
 import org.game.ms.skill.resource.ResourceService;
@@ -47,20 +49,48 @@ public class FightService {
     private MessageService messageService;
 
     public void autoFight(Role role) {
-        attackRanageCompare(role);
-        physicalAttack(role);
+        ranageCompare(role);
+        meleeDamage(role);
+        normalAttack(role);
+        moveSkill(role);
     }
 
-    private void physicalAttack(Role role) {
-        if (FuncUtils.equals(role.getAttackStatus(), AttackStatus.OUT_RANGE)) {
-            return;
-        }
-
+    private void moveSkill(Role role) {
         for (Skill skill : role.getSkills()) {
             if (!resourceService.generalSkillCoolDownReady(role.getResource())) {
                 break;
             }
-            if (FuncUtils.notEquals(skill.getRangeType(), RangeType.MELEE)
+            if (FuncUtils.notEquals(skill.getSkillType(), SkillType.MOVE_SKILL)
+                    || !resourceService.skillCoolDownReady(skill)) {
+                continue;
+            }
+            if (!resourceService.skillCostResource(role.getResource(), skill)) {
+                continue;
+            }
+            if (FuncUtils.equals(skill.getRangeType(), RangeType.REMOTE)
+                    && skill.getRangeMax() > role.getTargetDistance()
+                    && skill.getRangeMin() < role.getTargetDistance()) {
+                Buffer buffer = bufferService.createBuffer(role, role, skill);
+                bufferService.addDeBuffer(buffer);
+                role.setMoveStatus(MoveStatus.CHARGING);
+                resourceService.skillCoolDownBegin(role.getResource(), skill);
+                log.debug("{} {} cast skill {} to {} {}",
+                        role.getRoleType(), role.getId(), skill.getName(), role.getTarget().getRoleType(), role.getTarget().getId());
+            }
+
+        }
+    }
+
+    private void meleeDamage(Role role) {
+        if (FuncUtils.equals(role.getAttackStatus(), AttackStatus.OUT_RANGE)) {
+            return;
+        }
+        for (Skill skill : role.getSkills()) {
+            if (!resourceService.generalSkillCoolDownReady(role.getResource())) {
+                break;
+            }
+            if (FuncUtils.notEquals(skill.getSkillType(), SkillType.DAMAGE_SKILL)
+                    || FuncUtils.notEquals(skill.getRangeType(), RangeType.MELEE)
                     || !resourceService.skillCoolDownReady(skill)) {
                 continue;
             }
@@ -72,11 +102,11 @@ public class FightService {
                 damageTarget(role, damage, skill, role.getTarget());
             }
             if (FuncUtils.notEmpty(skill.getLoopDamage())) {
-                Buffer deBuffer = bufferService.createBuffer(role, skill, true);
-                if (role.getTarget().getBuffers().contains(deBuffer)) {
+                Buffer deBuffer = bufferService.createBuffer(role, role.getTarget(), skill);
+                if (role.getTarget().getDeBuffers().contains(deBuffer)) {
                     continue;
                 }
-                bufferService.addBuffer(deBuffer);
+                bufferService.addDeBuffer(deBuffer);
 
                 LoopDamage loopDamage = skill.getLoopDamage();
                 double damage = skillDamageCaculate(role, loopDamage);
@@ -91,27 +121,26 @@ public class FightService {
                     role.getRoleType(), role.getId(), skill.getName(), role.getTarget().getRoleType(), role.getTarget().getId());
         }
 
-        normalAttack(role);
     }
 
     private void normalAttack(Role role) {
+        if (FuncUtils.equals(role.getAttackStatus(), AttackStatus.OUT_RANGE)) {
+            return;
+        }
         if (resourceService.attackCoolDownReady(role.getResource())) {
             double damage = skillDamageCaculate(role, normalAttack.getDirectDamage());
             damageTarget(role, damage, normalAttack, role.getTarget());
             resourceService.attackCoolDownBegin(role.getResource());
-            resourceService.gainAngerByHit(role.getResource());
+            resourceService.gainResourceByHit(role.getResource());
             messageService.addCastSkill(role, normalAttack);
         }
     }
 
-    private static double targetDistance(Role role) {
-        double xDistance = role.getTarget().getLocation().getX() - role.getLocation().getX();
-        double yDistance = role.getTarget().getLocation().getY() - role.getLocation().getY();
-        return Math.sqrt(xDistance * xDistance + yDistance * yDistance);
-    }
-
-    private static void attackRanageCompare(Role role) {
-        if (targetDistance(role) > role.getAttackRange()) {
+    private static void ranageCompare(Role role) {
+        double xDistance = role.getLocation().getX() - role.getTarget().getLocation().getX();
+        double yDistance = role.getLocation().getY() - role.getTarget().getLocation().getY();
+        role.setTargetDistance(Math.sqrt(xDistance * xDistance + yDistance * yDistance));
+        if (role.getTargetDistance() > role.getAttackRange()) {
             role.setAttackStatus(AttackStatus.OUT_RANGE);
         } else {
             role.setAttackStatus(AttackStatus.AUTO_ATTACK);

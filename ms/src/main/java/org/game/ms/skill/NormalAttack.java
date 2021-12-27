@@ -17,5 +17,5 @@ import org.springframework.stereotype.Component;
 public class NormalAttack extends Skill {
 
     private String name = "普通攻击";
-    private DirectDamage directDamage = new DirectDamage(DamageType.PHYSICAL, 1, 0);
+    private DirectDamage directDamage = new DirectDamage(DamageType.PHYSICAL, 1, 1);
 }

@@ -26,8 +26,8 @@ import org.game.ms.skill.buffer.Buffer;
 public class Role {
 
     //attribut
-    private RoleType roleType;
     private long id;
+    private RoleType roleType;
     private String name;
     private int level;
     private double speed;
@@ -40,6 +40,7 @@ public class Role {
     //target
     @JsonIgnore
     private Role target;
+    private double targetDistance;
 
     //status
     private double healthPoint;
@@ -50,6 +51,7 @@ public class Role {
     private Battle battle;
     private Resource resource = new Resource();
     private List<Buffer> buffers = new ArrayList<>();
+    private List<Buffer> deBuffers = new ArrayList<>();
 
     private List<Skill> skills = new ArrayList<>();
     private RootMap map;

@@ -8,6 +8,7 @@ package org.game.ms.lifecycle;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.fight.AnomalyService;
 import org.game.ms.fight.FightService;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.map.RootMap;
@@ -33,6 +34,8 @@ public class AutoPlayer {
     private PlayerService playerService;
     @Autowired
     private RootMap rootMap;
+    @Autowired
+    private AnomalyService anomalyService;
 
     private final List<Player> autoPlayers = new ArrayList<>();
 
@@ -61,6 +64,9 @@ public class AutoPlayer {
         }
         if (FuncUtils.equals(player.getTarget().getLivingStatus(), LivingStatus.DEAD)) {
             player.setTarget(null);
+            return;
+        }
+        if (anomalyService.anomalyPass(player)) {
             return;
         }
 

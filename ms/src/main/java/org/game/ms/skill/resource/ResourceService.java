@@ -52,7 +52,7 @@ public class ResourceService {
         skill.setCoolDown(skill.getCoolDownMax());
     }
 
-    public void gainAngerByHit(Resource resource) {
+    public void gainResourceByHit(Resource resource) {
         resource.setAngerPoint(resource.getAngerPoint() + angerGainPerHit);
         if (resource.getAngerPoint() > resource.getAngerMax()) {
             resource.setAngerPoint(resource.getAngerMax());
@@ -63,7 +63,8 @@ public class ResourceService {
         if (FuncUtils.equals(skill.getResourceType(), ResourceType.MAGIC)) {
         } else if (FuncUtils.equals(skill.getResourceType(), ResourceType.ANGER)
                 && resource.getAngerPoint() > skill.getCost()) {
-            resource.setAngerPoint(resource.getAngerPoint() - skill.getCost());
+            double anger = resource.getAngerPoint() - skill.getCost();
+            resource.setAngerPoint(anger > resource.getAngerMax() ? resource.getAngerMax() : anger);
             return true;
         }
         return false;

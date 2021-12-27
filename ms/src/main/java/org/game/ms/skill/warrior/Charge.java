@@ -6,8 +6,7 @@
 package org.game.ms.skill.warrior;
 
 import lombok.Data;
-import org.game.ms.skill.DamageType;
-import org.game.ms.skill.LoopDamage;
+import org.game.ms.role.MoveStatus;
 import org.game.ms.skill.RangeType;
 import org.game.ms.skill.Skill;
 import org.game.ms.skill.SkillType;
@@ -20,12 +19,15 @@ import org.springframework.stereotype.Component;
  */
 @Data
 @Component
-public class Rend extends Skill {
+public class Charge extends Skill {
 
-    private String name = "撕裂";
-    private SkillType skillType = SkillType.DAMAGE_SKILL;
+    private String name = "冲锋";
+    private SkillType skillType = SkillType.MOVE_SKILL;
     private ResourceType resourceType = ResourceType.ANGER;
-    private int cost = 40;
-    private RangeType rangeType = RangeType.MELEE;
-    private LoopDamage loopDamage = new LoopDamage(9000, 3000, DamageType.PHYSICAL, 1, 0);
+    private int cost = -25;
+    private double coolDownMax = 30;
+    private int rangeMin = 5;
+    private int rangeMax = 25;
+    private RangeType rangeType = RangeType.REMOTE;
+    private MoveStatus moveStatus = MoveStatus.CHARGING;
 }

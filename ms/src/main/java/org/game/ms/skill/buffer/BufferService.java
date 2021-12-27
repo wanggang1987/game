@@ -5,6 +5,7 @@
  */
 package org.game.ms.skill.buffer;
 
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.id.IdService;
@@ -35,12 +36,21 @@ public class BufferService {
     public void removeBuffer(Buffer buffer) {
         if (FuncUtils.notEmpty(buffer.getTarget())) {
             buffer.getTarget().getBuffers().remove(buffer);
+            buffer.getTarget().getDeBuffers().remove(buffer);
             log.debug("removeBuffer {}", buffer);
         }
     }
 
-    public Buffer createBuffer(Role role, Skill skill, boolean isBuffer) {
-        return new Buffer(role, role.getTarget(), skill, isBuffer);
+    public void addDeBuffer(Buffer buffer) {
+        if (buffer.getTarget().getDeBuffers().contains(buffer)) {
+            return;
+        }
+        buffer.getTarget().getDeBuffers().add(buffer);
+        log.debug("addDeBuffer {}", buffer);
+    }
+
+    public Buffer createBuffer(Role source, Role target, Skill skill) {
+        return new Buffer(source, target, skill);
     }
 
 }

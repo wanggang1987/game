@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.TimeZone;
+import org.game.ms.map.Location;
 import org.springframework.beans.BeanUtils;
 
 /**
@@ -25,7 +26,7 @@ import org.springframework.beans.BeanUtils;
 public class FuncUtils {
 
     private static final Random randomSeed = new Random(currentTime().getTime());
-
+    
     public static int randomZeroToRange(int range) {
         return randomSeed.nextInt(range);
     }

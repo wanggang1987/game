@@ -92,6 +92,25 @@ public class RootMap {
         }
     }
 
+    public void roleChargeToTargetInTick(Role role) {
+        Role target = role.getTarget();
+        double xDistance = target.getLocation().getX() - role.getLocation().getX();
+        double yDistance = target.getLocation().getY() - role.getLocation().getY();
+        double targetDistance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
+        double moveDistance = role.getSpeed() * wheelConfig.getTickDuration() * 5;
+        if (moveDistance > targetDistance - 1) {
+            if (targetDistance < moveDistance) {
+                moveDistance = targetDistance - 1;
+            }
+            role.setMoveStatus(MoveStatus.STANDING);
+        } else {
+            role.setMoveStatus(MoveStatus.CHARGING);
+        }
+        double x = role.getLocation().getX() + (moveDistance / targetDistance) * xDistance;
+        double y = role.getLocation().getY() + (moveDistance / targetDistance) * yDistance;
+        moveRoleToLocation(role, x, y, 0);
+    }
+
     private void moveRoleToLocation(Role role, double x, double y, double z) {
         if (FuncUtils.equals(role.getLocation().getGrid(), gridService.gridStr(x, y, z))) {
             role.getLocation().setX(x);
@@ -108,4 +127,5 @@ public class RootMap {
             gridService.addRoleToGrid(role);
         }
     }
+
 }
