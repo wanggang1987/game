@@ -99,16 +99,16 @@ public class RootMap {
         double targetDistance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
         double moveDistance = role.getSpeed() * wheelConfig.getTickDuration() * 5;
         if (moveDistance > targetDistance - 1) {
-            if (targetDistance < moveDistance) {
-                moveDistance = targetDistance - 1;
-            }
             role.setMoveStatus(MoveStatus.STANDING);
+            double x = target.getLocation().getX() - (1 / targetDistance) * xDistance;
+            double y = target.getLocation().getY() - (1 / targetDistance) * yDistance;
+            moveRoleToLocation(role, x, y, 0);
         } else {
             role.setMoveStatus(MoveStatus.CHARGING);
+            double x = role.getLocation().getX() + (moveDistance / targetDistance) * xDistance;
+            double y = role.getLocation().getY() + (moveDistance / targetDistance) * yDistance;
+            moveRoleToLocation(role, x, y, 0);
         }
-        double x = role.getLocation().getX() + (moveDistance / targetDistance) * xDistance;
-        double y = role.getLocation().getY() + (moveDistance / targetDistance) * yDistance;
-        moveRoleToLocation(role, x, y, 0);
     }
 
     private void moveRoleToLocation(Role role, double x, double y, double z) {
