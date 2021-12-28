@@ -53,7 +53,7 @@ export default class WsConnection extends cc.Component {
             // 发送成功连接之前所发送失败的消息
             this.errorStack.forEach(message => {
                 this.send(message);
-            })
+            });
             this.errorStack = [];
             this.isConnecting = true;
         }

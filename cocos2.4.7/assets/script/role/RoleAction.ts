@@ -25,7 +25,7 @@ export class RoleAction {
         let lable: cc.Label = lableNode.getComponent(cc.Label);
         lable.string = damageMsg.damage.toFixed(0).toString();
         cc.tween(lableNode)
-            .by(2, { position: cc.v3(0, 30), opacity: -100 }, { easing: 'CubicOut' })
+            .by(2, { position: cc.v3(0, 30), opacity: -100 }, { easing: 'cubicOut' })
             .call(() => { lableNode.destroy() })
             .start();
     }

@@ -12,15 +12,15 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class UICollection extends cc.Component {
 
-    private damageMsgs: string[] = new Array();
+    public damageMsgUpdate: boolean = false;
+    public damageMsgs: FightDamageMsg[] = new Array();
 
     public addDamageMsg(fightDamageMsg: FightDamageMsg) {
-        let info = fightDamageMsg.sourceType + ":" + fightDamageMsg.sourceId
-            + " " + fightDamageMsg.skillName + " "
-            + fightDamageMsg.targetType + ":" + fightDamageMsg.targetId;
-        this.damageMsgs.push(info);
+        this.damageMsgs.push(fightDamageMsg);
         if (this.damageMsgs.length > 20) {
             this.damageMsgs.shift();
         }
+        this.damageMsgUpdate = true;
     }
+
 }
