@@ -17,7 +17,7 @@ export class RoleAction {
         cc.tween(bodyNode)
             .by(0.1, { position: cc.v3(x, y) }, { easing: 'backOut' })
             .by(0.15, { position: cc.v3(-x, -y) }, { easing: 'backOut' })
-            .start()
+            .start();
     }
 
 }

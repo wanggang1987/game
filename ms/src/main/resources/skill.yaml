@@ -43,7 +43,7 @@ template:
         }
         - { name: Charge,
             profession: WARRIOR,
-            skillType: MOVE_SKILL,
+            skillType: SOURCE_MOVE_SKILL,
             resourceType: ANGER,
             cost: -25,
             coolDownMax: 30,

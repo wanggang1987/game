@@ -4,7 +4,7 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
 // Learn life-cycle callbacks:
 
-import { CastSkill, Role } from "../func/BasicObjects";
+import { CastSkill, FightDamageMsg, Role } from "../func/BasicObjects";
 import { RoleAction } from "./RoleAction";
 
 const { ccclass, property } = cc._decorator;
@@ -15,6 +15,8 @@ export default class Monsters extends cc.Component {
     private default = 0;
     @property({ type: cc.Prefab })
     private monsterPrefab: cc.Prefab = null;
+    @property({ type: cc.Prefab })
+    private damageNumber: cc.Prefab = null;
     private monsters: Map<number, Role> = new Map();
     private deadMonster: number[] = new Array();
 
@@ -72,7 +74,21 @@ export default class Monsters extends cc.Component {
         return monsterNode;
     }
 
-    public castSkill(castskill: CastSkill, player: Role) {
-        RoleAction.attackSkill(castskill, this.monsterNode(player.id), player.location);
+    public castSkill(castskill: CastSkill, monster: Role) {
+        RoleAction.attackSkill(castskill, this.monsterNode(monster.id), monster.location);
+    }
+
+    public showDamage(damageMsg: FightDamageMsg, monster: Role) {
+        let monsterNode: cc.Node = this.monsterNode(monster.id);
+        let lableNode = cc.instantiate(this.damageNumber);
+        monsterNode.addChild(lableNode);
+        let lable = lableNode.getComponent(cc.Label);
+        lable.string = damageMsg.damage.toFixed(0).toString();
+
+        cc.tween(lableNode)
+            .by(2, { position: cc.v3(0, 30), opacity: -100 }, { easing: 'CubicOut' })
+            .call(() => { lableNode.destroy() })
+            .start();
+
     }
 }

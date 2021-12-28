@@ -87,10 +87,10 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 37
+        "__id__": 39
       },
       {
-        "__id__": 38
+        "__id__": 40
       }
     ],
     "_prefab": null,
@@ -879,6 +879,9 @@
     "monsterPrefab": {
       "__uuid__": "7da9d22e-7997-43da-a53d-6ede70386b29"
     },
+    "damageNumber": {
+      "__uuid__": "445aa403-b1f0-4ded-9c4b-6e28aeb6b1cd"
+    },
     "_id": "dcyT+3z7VFJq4Z8kmXd5Ge"
   },
   {
@@ -1358,6 +1361,9 @@
     "roleCollection": {
       "__id__": 36
     },
+    "uiCollection": {
+      "__id__": 38
+    },
     "_id": "36Q9GDyN5Lc69e91CvYtnO"
   },
   {
@@ -1438,6 +1444,9 @@
       },
       {
         "__id__": 31
+      },
+      {
+        "__id__": 37
       }
     ],
     "_active": true,
@@ -1642,6 +1651,78 @@
       "__id__": 17
     },
     "_id": "81AIPzAKFJIqx/oN+Y1eeS"
+  },
+  {
+    "__type__": "cc.Node",
+    "_name": "UICollection",
+    "_objFlags": 0,
+    "_parent": {
+      "__id__": 32
+    },
+    "_children": [],
+    "_active": true,
+    "_components": [
+      {
+        "__id__": 38
+      }
+    ],
+    "_prefab": null,
+    "_opacity": 255,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 0,
+      "height": 0
+    },
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_trs": {
+      "__type__": "TypedArray",
+      "ctor": "Float64Array",
+      "array": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "_eulerAngles": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_skewX": 0,
+    "_skewY": 0,
+    "_is3DNode": false,
+    "_groupIndex": 0,
+    "groupIndex": 0,
+    "_id": "f1s7W9s0VNz7tixchzuVHV"
+  },
+  {
+    "__type__": "9908fqqfKFMqbkK6HRpuHRn",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 37
+    },
+    "_enabled": true,
+    "_id": "1c+TR4yYhBVq9gN0WeGY3p"
   },
   {
     "__type__": "cc.Canvas",

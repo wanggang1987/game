@@ -5,10 +5,22 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
-const {ccclass, property} = cc._decorator;
+import { FightDamageMsg } from "../func/BasicObjects";
+
+const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class UICollection extends cc.Component {
 
-    private deadMonster: string[] = new Array();
+    private damageMsgs: string[] = new Array();
+
+    public addDamageMsg(fightDamageMsg: FightDamageMsg) {
+        let info = fightDamageMsg.sourceType + ":" + fightDamageMsg.sourceId
+            + " " + fightDamageMsg.skillName + " "
+            + fightDamageMsg.targetType + ":" + fightDamageMsg.targetId;
+        this.damageMsgs.push(info);
+        if (this.damageMsgs.length > 20) {
+            this.damageMsgs.shift();
+        }
+    }
 }

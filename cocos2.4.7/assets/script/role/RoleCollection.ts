@@ -5,7 +5,7 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import { Attribute, Role, Location, CastSkill, FightStatus, RoleDie } from "../func/BasicObjects";
+import { Attribute, Role, Location, CastSkill, FightStatus, RoleDie, FightDamageMsg, RoleType } from "../func/BasicObjects";
 import Hero from "./Hero";
 import Monsters from "./Monsters";
 import Players from "./Players";
@@ -64,6 +64,15 @@ export default class RoleCollection extends cc.Component {
 
     public heroCastSkill(castskill: CastSkill) {
         this.heroService.castSkill(castskill);
+    }
+
+    public heroDamage(damageMsg: FightDamageMsg) {
+        if (damageMsg.targetType == RoleType.MONSTER) {
+            let monstser: Role = this.monsterRole(damageMsg.targetId);
+            this.monstersService.showDamage(damageMsg, monstser);
+        } else if (damageMsg.targetType == RoleType.PLAYER) {
+            
+        }
     }
 
     private playerRole(id: number): Role {

@@ -242,7 +242,7 @@ public class BuildMessageService {
             if (FuncUtils.equals(fightDamageMsg.getSourceType(), RoleType.PLAYER)
                     && messageService.getPlayerSession().containsKey(fightDamageMsg.getSourceId())) {
                 WsMessage message = new WsMessage();
-                message.setMessageType(MessageType.FIGHTDAMAGE);
+                message.setMessageType(MessageType.HERO_DAMAGE);
                 message.setSeesionId(messageService.getPlayerSession().get(fightDamageMsg.getSourceId()));
                 message.setFightDamageMsg(fightDamageMsg);
                 messageService.getSendQueue().offer(message);
@@ -250,7 +250,7 @@ public class BuildMessageService {
             if (FuncUtils.equals(fightDamageMsg.getTargetType(), RoleType.PLAYER)
                     && messageService.getPlayerSession().containsKey(fightDamageMsg.getTargetId())) {
                 WsMessage message = new WsMessage();
-                message.setMessageType(MessageType.FIGHTDAMAGE);
+                message.setMessageType(MessageType.HERO_BE_DAMAGED);
                 message.setSeesionId(messageService.getPlayerSession().get(fightDamageMsg.getTargetId()));
                 message.setFightDamageMsg(fightDamageMsg);
                 messageService.getSendQueue().offer(message);

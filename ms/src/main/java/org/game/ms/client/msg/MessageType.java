@@ -13,6 +13,8 @@ public enum MessageType {
     //send
     HERO_ATTRIBUTE,
     HERO_LOCATION,
+    HERO_DAMAGE,
+    HERO_BE_DAMAGED,
     PLAYER_ATTRIBUTE,
     PLAYER_LOCATION,
     PLAYER_DIE,
@@ -23,7 +25,6 @@ public enum MessageType {
     MONSTER_DIE,
     MONSTER_FIGHTSTATUS,
     MONSTER_CASTSKILL,
-    FIGHTDAMAGE,
     //reveive
     PLAYER_CREATE,
     LOGIN,

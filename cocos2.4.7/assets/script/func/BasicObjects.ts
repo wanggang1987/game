@@ -19,7 +19,8 @@ export enum MessageType {
     MONSTER_DIE = 'MONSTER_DIE',
     MONSTER_FIGHTSTATUS = 'MONSTER_FIGHTSTATUS',
     MONSTER_CASTSKILL = 'MONSTER_CASTSKILL',
-    FIGHTDAMAGE = 'FIGHTDAMAGE',
+    HERO_DAMAGE ='HERO_DAMAGE',
+    HERO_BE_DAMAGED = 'HERO_BE_DAMAGED',
     //send
     LOGIN = 'LOGIN',
     PLAYER_CREATE = 'PLAYER_CREATE',
@@ -44,6 +45,7 @@ export interface WsMessage {
     locationMsg: Location;
     roleDieMsg: RoleDie;
     castSkillMsg: CastSkill;
+    fightDamageMsg: FightDamageMsg;
     //send
     playerId: number;
     createPlayerMsg: CreatePlayerMsg;
@@ -60,12 +62,13 @@ export interface CastSkill {
     targetY: number;
 }
 
-export interface FightDamage {
+export interface FightDamageMsg {
     sourceId: number;
     sourceType: RoleType;
     targetId: number;
     targetType: RoleType;
     skillName: string;
+    damage: number;
 }
 
 export interface RoleDie {
