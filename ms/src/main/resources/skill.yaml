@@ -1,3 +1,24 @@
+#       name: Rend,                     技能名称最好英文，便于做多国语言翻译
+#       profession: WARRIOR,            职业(BASIC, WARRIOR) 目前只开发了这两个
+#       skillType: DAMAGE_SKILL,        技能类型:DAMAGE_SKILL伤害技能,MOVE_SKILL位移技能
+#       resourceType: ANGER,            技能消耗资源:ANGER怒气
+#       cost: 40,                       技能消耗资源值，负数表示增加
+#       rangeType: MELEE,               技能范围：MELEE近战，REMOTE远程
+#
+#       directDamage: {                 直接伤害配置
+#           damageType: PHYSICAL,       伤害属性，PHYSICAL物理
+#           attackPowerRate: 1,         物理攻击强度系数
+#       }
+#
+#       loopDamage: {                   周期性伤害配置
+#           lastTime: 9000,             总持续时间，按毫秒计
+#           loopTime: 3000,             每次循环扣血时间，按毫秒计
+#           damageType: PHYSICAL,       伤害属性，PHYSICAL物理
+#           attackPowerRate: 1,         物理攻击强度系数
+#           magicPowerRate: 1,          魔法攻击强度系数
+#       }
+#
+#       anomalyStatus: CHARGING,        异常状态：CHARGING冲锋状态
 template:
     skills:
         - { name: PhysicalAttack,

@@ -1,6 +1,8 @@
 timewheel:
     ticksPerWheel: 10
     tickDuration: 100
+map:
+    gridSize: 20
 player:
     speed: 2
     attackRange: 1.5
@@ -12,7 +14,3 @@ player:
     spiritGrow: 20
     warrior:
         name: 战士
-map:
-    gridSize: 20
-    world:
-        name: "艾泽拉斯"

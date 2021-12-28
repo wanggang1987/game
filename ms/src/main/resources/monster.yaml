@@ -1,3 +1,10 @@
+#       name: 熊,                   怪物名称
+#       level: 1,                   等级
+#       speed: 1,                   移动速度
+#       attackRange: 1,             攻击范围
+#       attackCooldown: 2,          攻击频率
+#       health: 200,                生命值
+#       attackPower: 20,            物理攻击强度
 template:
     monsters:
         - { name: 熊,
