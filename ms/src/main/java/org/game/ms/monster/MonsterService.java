@@ -16,6 +16,7 @@ import org.game.ms.skill.resource.Resource;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.role.LivingStatus;
 import org.game.ms.role.MoveStatus;
+import org.game.ms.role.RoleAttribute;
 import org.game.ms.role.RoleType;
 import org.game.ms.skill.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,10 +60,12 @@ public class MonsterService {
         monster.setLevel(template.getLevel());
         monster.setSpeed(template.getSpeed() / 1000);
         monster.setAttackRange(template.getAttackRange());
+
+        RoleAttribute roleAttribute = monster.getRoleAttribute();
         monster.setHealthMax(template.getHealth());
         monster.setHealthPoint(monster.getHealthMax());
-        monster.setAttack(template.getAttack());
-        monster.setDefense(template.getDeffence());
+        roleAttribute.setAttackPower(template.getAttackPower());
+
         monster.setAttackStatus(AttackStatus.NOT_ATTACK);
         monster.setMoveStatus(MoveStatus.STANDING);
         monster.setLivingStatus(LivingStatus.LIVING);

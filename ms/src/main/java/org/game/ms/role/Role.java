@@ -32,10 +32,7 @@ public class Role {
     private int level;
     private double speed;
     private double attackRange;
-    private double attack;
-    private double defense;
-    private double attackPower;
-    private double magicPower;
+    private RoleAttribute roleAttribute = new RoleAttribute();
 
     //target
     @JsonIgnore

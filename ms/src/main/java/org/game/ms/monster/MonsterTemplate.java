@@ -11,7 +11,7 @@ import lombok.Data;
  * @author gangwang
  */
 @Data
-public class MonsterTemplate  {
+public class MonsterTemplate {
 
     private String name;
     private int level;
@@ -19,8 +19,6 @@ public class MonsterTemplate  {
     private double attackRange;
     private double attackCooldown;
     private double health;
-    private double resource;
-    private double attack;
-    private double deffence;
-
+    private double attackPower;
+    private double magicPower;
 }

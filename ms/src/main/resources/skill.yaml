@@ -18,7 +18,6 @@ template:
                 loopTime: 3000,
                 damageType: PHYSICAL,
                 attackPowerRate: 1,
-                magicPowerRate: 0,
             }
         }
         - { name: Charge,

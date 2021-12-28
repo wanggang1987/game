@@ -20,6 +20,7 @@ import org.game.ms.role.AttackStatus;
 import org.game.ms.reward.Experience;
 import org.game.ms.role.LivingStatus;
 import org.game.ms.role.MoveStatus;
+import org.game.ms.role.RoleAttribute;
 import org.game.ms.role.RoleType;
 import org.game.ms.skill.Skill;
 import org.game.ms.skill.SkillService;
@@ -34,7 +35,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class PlayerService {
-    
+
     @Autowired
     private IdService idService;
     @Autowired
@@ -47,14 +48,14 @@ public class PlayerService {
     private MessageService messageService;
     @Autowired
     private SkillService skillService;
-    
+
     private final Map<Profession, PlayerTemplate> professionMap = new HashMap<>();
-    
+
     @PostConstruct
     private void init() {
         professionMap.put(Profession.WARRIOR, warriorTample);
     }
-    
+
     public Player createPlayer(String name) {
         //init role
         Player player = new Player();
@@ -68,11 +69,11 @@ public class PlayerService {
         PlayerPO ppo = new PlayerPO();
         ppo.setStr(JsonUtils.bean2json(player));
         playerMapper.insert(ppo);
-        
+
         log.debug("init player {} ", player.getId());
         return player;
     }
-    
+
     public void playerReborn(Player player) {
         initPlayer(player);
         player.getMap().playerLeaveMap(player);
@@ -81,7 +82,7 @@ public class PlayerService {
         messageService.heroUpdate(player);
         log.debug("playerReborn {} {}", player.getId(), player.getLocation());
     }
-    
+
     public void playerGetExp(Player player, int exp) {
         int now = player.getExperience() + exp;
         int need = Experience.UpgradeNead(player.getLevel());
@@ -94,13 +95,13 @@ public class PlayerService {
         }
         player.setExperience(now);
     }
-    
+
     public void playerGetCoin(Player player, int coin) {
         int now = player.getCoin() + coin;
         player.setCoin(now);
         log.info("player {} coin {}", player.getId(), now);
     }
-    
+
     private void initPlayer(Player player) {
         player.setRoleType(RoleType.PLAYER);
         player.setAttackStatus(AttackStatus.NOT_ATTACK);
@@ -111,26 +112,33 @@ public class PlayerService {
         skillInit(player);
         bufferInit(player);
     }
-    
+
     private void bufferInit(Player player) {
         player.getBuffers().clear();
     }
-    
+
     private void attributeInit(Player player) {
         player.setSpeed(playerTemplate.getSpeed() / 1000);
         player.setAttackRange(playerTemplate.getAttackRange());
-        player.setHealthMax(playerTemplate.getHealth());
+
+        RoleAttribute roleAttribute = player.getRoleAttribute();
+        roleAttribute.setStamina(playerTemplate.getStaminaGrow() * player.getLevel());
+        roleAttribute.setStrengt(playerTemplate.getStrengtGrow() * player.getLevel());
+        roleAttribute.setAgility(playerTemplate.getAgilityGrow() * player.getLevel());
+        roleAttribute.setIntellect(playerTemplate.getIntellectGrow() * player.getLevel());
+        roleAttribute.setSpirit(playerTemplate.getSpiritGrow() * player.getLevel());
+
+        player.setHealthMax(roleAttribute.getStamina() * 10);
         player.setHealthPoint(player.getHealthMax());
-        player.setAttack(playerTemplate.getAttack());
-        player.setDefense(playerTemplate.getDeffence());
-        
+        roleAttribute.setAttackPower(roleAttribute.getStrengt() * 1 + roleAttribute.getAgility() * 1);
+
         Resource resource = player.getResource();
         resource.setAttackCooldownMax(playerTemplate.getAttackCooldown() * 1000);
         resource.setSkillCooldownMax(1.5 * 1000);
         resource.setAngerMax(100);
         resource.setAngerPoint(resource.getAngerMax());
     }
-    
+
     private void skillInit(Player player) {
         player.getSkills().clear();
         player.setNormalAttack(skillService.physicalAttack());

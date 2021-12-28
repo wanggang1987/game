@@ -28,10 +28,11 @@ public class PlayerTemplate {
     private double speed;
     private double attackRange;
     private double attackCooldown;
-    private double health;
-    private double resource;
-    private double attack;
-    private double deffence;
+    private int staminaGrow;
+    private int strengtGrow;
+    private int agilityGrow;
+    private int intellectGrow;
+    private int spiritGrow;
 
     protected List<Skill> skills = new ArrayList<>();
 

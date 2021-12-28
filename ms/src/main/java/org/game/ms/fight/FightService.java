@@ -12,6 +12,7 @@ import org.game.ms.role.AttackStatus;
 import org.game.ms.role.LivingStatus;
 import org.game.ms.role.MoveStatus;
 import org.game.ms.role.Role;
+import org.game.ms.role.RoleAttribute;
 import org.game.ms.skill.DamageBase;
 import org.game.ms.skill.LoopDamage;
 import org.game.ms.skill.RangeType;
@@ -145,7 +146,8 @@ public class FightService {
     }
 
     private double skillDamageCaculate(Role role, DamageBase damageBase) {
-        double damage = role.getAttackPower() * damageBase.getAttackPowerRate() + role.getAttack() - role.getTarget().getDefense();
+        RoleAttribute roleAttribute = role.getRoleAttribute();
+        double damage = roleAttribute.getAttackPower() * damageBase.getAttackPowerRate();
         if (damage < 1) {
             damage = 1;
         }

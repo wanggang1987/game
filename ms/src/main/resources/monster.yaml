@@ -5,10 +5,8 @@ template:
             speed: 1,
             attackRange: 1,
             attackCooldown: 2,
-            health: 100,
-            resource: 0,
-            attack: 10,
-            deffence: 10,
+            health: 200,
+            attackPower: 20,
         }
         - { name: 狼,
             level: 1,
@@ -16,7 +14,5 @@ template:
             attackRange: 1,
             attackCooldown: 2,
             health: 100,
-            resource: 0,
-            attack: 15,
-            deffence: 5,
+            attackPower: 30,
         }

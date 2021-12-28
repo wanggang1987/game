@@ -1,18 +1,17 @@
 timewheel:
     ticksPerWheel: 10
     tickDuration: 100
-
 player:
     speed: 2
     attackRange: 1.5
     attackCooldown: 1.5
-    health: 100
-    resource: 0
-    attack: 20
-    deffence: 5
+    staminaGrow: 20
+    strengtGrow: 20
+    agilityGrow: 20
+    intellectGrow: 20
+    spiritGrow: 20
     warrior:
         name: 战士
-        
 map:
     gridSize: 20
     world:
