@@ -1,4 +1,4 @@
-import { CastSkill, Location } from "../func/BasicObjects";
+import { CastSkill, FightDamageMsg, Location } from "../func/BasicObjects";
 
 export class RoleAction {
 
@@ -20,4 +20,13 @@ export class RoleAction {
             .start();
     }
 
+    public static showDamage(damageMsg: FightDamageMsg, roleNode: cc.Node, lableNode: cc.Node) {
+        roleNode.addChild(lableNode);
+        let lable: cc.Label = lableNode.getComponent(cc.Label);
+        lable.string = damageMsg.damage.toFixed(0).toString();
+        cc.tween(lableNode)
+            .by(2, { position: cc.v3(0, 30), opacity: -100 }, { easing: 'CubicOut' })
+            .call(() => { lableNode.destroy() })
+            .start();
+    }
 }

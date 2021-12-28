@@ -213,7 +213,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 40,
+      "width": 20,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -267,7 +267,7 @@
     "_dstBlendFactor": 771,
     "_string": "怪物",
     "_N$string": "怪物",
-    "_fontSize": 20,
+    "_fontSize": 10,
     "_lineHeight": 40,
     "_enableWrapText": true,
     "_N$file": null,

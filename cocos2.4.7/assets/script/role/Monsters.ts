@@ -31,13 +31,11 @@ export default class Monsters extends cc.Component {
     protected update(dt: number): void {
         for (let monsterId of this.deadMonster) {
             let monsterNode: cc.Node = this.node.getChildByName(monsterId.toString());
-            if (monsterNode) {
-                monsterNode.destroy();
-                this.monsters.delete(monsterId);
+            if (monsterNode && monsterNode.active) {
+                monsterNode.active = false;
                 console.log("destory monsterNode " + monsterNode.name);
             }
         }
-        this.deadMonster.length = 0;
 
         this.monsters.forEach((monster, monsterId) => {
             let monsterNode: cc.Node = this.monsterNode(monsterId);
@@ -80,15 +78,7 @@ export default class Monsters extends cc.Component {
 
     public showDamage(damageMsg: FightDamageMsg, monster: Role) {
         let monsterNode: cc.Node = this.monsterNode(monster.id);
-        let lableNode = cc.instantiate(this.damageNumber);
-        monsterNode.addChild(lableNode);
-        let lable = lableNode.getComponent(cc.Label);
-        lable.string = damageMsg.damage.toFixed(0).toString();
-
-        cc.tween(lableNode)
-            .by(2, { position: cc.v3(0, 30), opacity: -100 }, { easing: 'CubicOut' })
-            .call(() => { lableNode.destroy() })
-            .start();
-
+        let lableNode: cc.Node = cc.instantiate(this.damageNumber);
+        RoleAction.showDamage(damageMsg, monsterNode, lableNode);
     }
 }

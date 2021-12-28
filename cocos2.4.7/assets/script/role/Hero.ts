@@ -4,7 +4,7 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
 // Learn life-cycle callbacks:
 
-import { CastSkill, Role } from "../func/BasicObjects";
+import { CastSkill, FightDamageMsg, Role } from "../func/BasicObjects";
 import { RoleAction } from "./RoleAction";
 
 const { ccclass, property } = cc._decorator;
@@ -18,6 +18,8 @@ export default class Hero extends cc.Component {
     private Name: cc.Label = null;
     @property({ type: cc.ProgressBar })
     private Hp: cc.ProgressBar = null;
+    @property({ type: cc.Prefab })
+    private damageNumber: cc.Prefab = null;
 
     public getHero(): Role {
         return this.hero;
@@ -44,4 +46,8 @@ export default class Hero extends cc.Component {
         RoleAction.attackSkill(castskill, this.node, this.hero.location);
     }
 
+    public showDamage(damageMsg: FightDamageMsg) {
+        let lableNode: cc.Node = cc.instantiate(this.damageNumber);
+        RoleAction.showDamage(damageMsg, this.node, lableNode);
+    }
 }

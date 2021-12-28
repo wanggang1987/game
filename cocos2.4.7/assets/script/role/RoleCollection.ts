@@ -71,8 +71,11 @@ export default class RoleCollection extends cc.Component {
             let monstser: Role = this.monsterRole(damageMsg.targetId);
             this.monstersService.showDamage(damageMsg, monstser);
         } else if (damageMsg.targetType == RoleType.PLAYER) {
-            
         }
+    }
+
+    public heroBeDamage(damageMsg: FightDamageMsg) {
+        this.heroService.showDamage(damageMsg);
     }
 
     private playerRole(id: number): Role {

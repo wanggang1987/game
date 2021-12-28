@@ -62,6 +62,7 @@ export default class ClientService extends cc.Component {
 
             } else if (message.messageType == MessageType.HERO_BE_DAMAGED) {
                 console.log(message, message.messageType);
+                this.roleCollection.heroBeDamage(message.fightDamageMsg);
                 this.uiCollection.addDamageMsg(message.fightDamageMsg);
 
             }
@@ -96,7 +97,7 @@ export default class ClientService extends cc.Component {
 
             } else if (message.messageType == MessageType.MONSTER_FIGHTSTATUS) {
                 this.roleCollection.updateMonsterFightStatus(message.fightStatusMsg);
-                
+
             } else if (message.messageType == MessageType.MONSTER_CASTSKILL) {
                 console.log(message, message.messageType);
                 this.roleCollection.monsterCastSkill(message.castSkillMsg);

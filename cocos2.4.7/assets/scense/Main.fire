@@ -433,7 +433,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 40,
+      "width": 20,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -487,7 +487,7 @@
     "_dstBlendFactor": 771,
     "_string": "玩家",
     "_N$string": "玩家",
-    "_fontSize": 20,
+    "_fontSize": 10,
     "_lineHeight": 40,
     "_enableWrapText": true,
     "_N$file": null,
@@ -729,6 +729,9 @@
     "Hp": {
       "__id__": 14
     },
+    "damageNumber": {
+      "__uuid__": "05a9497c-e113-42fc-beff-9c26b578ef5c"
+    },
     "_id": "01t6qVboJEEJJrEDufYdMn"
   },
   {
@@ -803,6 +806,9 @@
     "_enabled": true,
     "playerPrefab": {
       "__uuid__": "76f779fa-7094-4bc2-bc03-eaf7327aae99"
+    },
+    "damageNumber": {
+      "__uuid__": "445aa403-b1f0-4ded-9c4b-6e28aeb6b1cd"
     },
     "_id": "99qXhb7F1GlJyteIR2/IF1"
   },
