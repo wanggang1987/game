@@ -4,8 +4,7 @@ spring:
     application:
         name: ms
     datasource:
-        type: com.alibaba.druid.pool.DruidDataSource
-        driver-class-name: com.mysql.cj.jdbc.Driver
+        driver-class-name: com.mysql.jdbc.Driver
         url: jdbc:mysql://127.0.0.1:3306/ms?useUnicode=true&characterEncoding=utf-8&createDatabaseIfNotExist=true&serverTimezone=GMT%2B8
         username: root
         password: 

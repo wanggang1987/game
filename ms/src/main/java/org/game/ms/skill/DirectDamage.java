@@ -6,7 +6,6 @@
 package org.game.ms.skill;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -14,7 +13,6 @@ import lombok.Data;
  * @author wanggang
  */
 @Data
-@AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DirectDamage extends DamageBase {
 

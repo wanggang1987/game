@@ -5,12 +5,8 @@
  */
 package org.game.ms.player.template;
 
-import javax.annotation.PostConstruct;
 import org.game.ms.config.YamlPropertySourceFactory;
 import lombok.Data;
-import org.game.ms.skill.warrior.Charge;
-import org.game.ms.skill.warrior.Rend;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -25,14 +21,4 @@ import org.springframework.context.annotation.PropertySource;
 @ConfigurationProperties(prefix = "player.warrior")
 public class WarriorTample extends PlayerTemplate {
 
-    @Autowired
-    private Rend rend;
-    @Autowired
-    private Charge charge;
-
-    @PostConstruct
-    private void init() {
-        skills.add(rend);
-        skills.add(charge);
-    }
 }

@@ -1,0 +1,34 @@
+template:
+    skills:
+        - { name: PhysicalAttack,
+            profession: BASIC,
+            directDamage: {
+                damageType: PHYSICAL,
+                attackPowerRate: 1,
+            }
+        }
+        - { name: Rend,
+            profession: WARRIOR,
+            skillType: DAMAGE_SKILL,
+            resourceType: ANGER,
+            cost: 40,
+            rangeType: MELEE,
+            loopDamage: {
+                lastTime: 9000,
+                loopTime: 3000,
+                damageType: PHYSICAL,
+                attackPowerRate: 1,
+                magicPowerRate: 0,
+            }
+        }
+        - { name: Charge,
+            profession: WARRIOR,
+            skillType: MOVE_SKILL,
+            resourceType: ANGER,
+            cost: -25,
+            coolDownMax: 30,
+            rangeMin: 5,
+            rangeMax: 25,
+            rangeType: REMOTE,
+            anomalyStatus: CHARGING,
+        }

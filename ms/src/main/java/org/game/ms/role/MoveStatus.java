@@ -12,5 +12,4 @@ package org.game.ms.role;
 public enum MoveStatus {
     STANDING,
     MOVEING,
-    CHARGING,
 }

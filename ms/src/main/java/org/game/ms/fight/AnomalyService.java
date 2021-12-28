@@ -11,9 +11,9 @@ import org.game.ms.func.FuncUtils;
 import org.game.ms.map.RootMap;
 import org.game.ms.role.MoveStatus;
 import org.game.ms.role.Role;
+import org.game.ms.skill.AnomalyStatus;
 import org.game.ms.skill.buffer.Buffer;
 import org.game.ms.skill.buffer.BufferService;
-import org.game.ms.skill.warrior.Charge;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +25,6 @@ import org.springframework.stereotype.Service;
 public class AnomalyService {
 
     @Autowired
-    private Charge charge;
-    @Autowired
     private RootMap rootMap;
     @Autowired
     private BufferService bufferService;
@@ -35,10 +33,10 @@ public class AnomalyService {
         List<Buffer> removeDebuffers = new ArrayList<>();
 
         for (Buffer debuffer : role.getDeBuffers()) {
-            if (FuncUtils.equals(debuffer.getSkill().getName(), charge.getName())) {
+            if (FuncUtils.equals(debuffer.getSkill().getAnomalyStatus(), AnomalyStatus.CHARGING)) {
                 if (FuncUtils.equals(role.getMoveStatus(), MoveStatus.STANDING)) {
                     removeDebuffers.add(debuffer);
-                } else if (FuncUtils.equals(role.getMoveStatus(), MoveStatus.CHARGING)) {
+                } else if (FuncUtils.equals(role.getMoveStatus(), MoveStatus.MOVEING)) {
                     rootMap.roleChargeToTargetInTick(role);
                     return true;
                 }

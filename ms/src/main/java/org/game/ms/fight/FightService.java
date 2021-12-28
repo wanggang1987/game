@@ -14,7 +14,6 @@ import org.game.ms.role.MoveStatus;
 import org.game.ms.role.Role;
 import org.game.ms.skill.DamageBase;
 import org.game.ms.skill.LoopDamage;
-import org.game.ms.skill.NormalAttack;
 import org.game.ms.skill.RangeType;
 import org.game.ms.skill.Skill;
 import org.game.ms.skill.SkillType;
@@ -37,8 +36,6 @@ public class FightService {
 
     @Autowired
     private TaskService taskService;
-    @Autowired
-    private NormalAttack normalAttack;
     @Autowired
     private BattleService battleService;
     @Autowired
@@ -72,7 +69,7 @@ public class FightService {
                     && skill.getRangeMin() < role.getTargetDistance()) {
                 Buffer buffer = bufferService.createBuffer(role, role, skill);
                 bufferService.addDeBuffer(buffer);
-                role.setMoveStatus(MoveStatus.CHARGING);
+                role.setMoveStatus(MoveStatus.MOVEING);
                 resourceService.skillCoolDownBegin(role.getResource(), skill);
                 log.debug("{} {} cast skill {} to {} {}",
                         role.getRoleType(), role.getId(), skill.getName(), role.getTarget().getRoleType(), role.getTarget().getId());
@@ -128,11 +125,11 @@ public class FightService {
             return;
         }
         if (resourceService.attackCoolDownReady(role.getResource())) {
-            double damage = skillDamageCaculate(role, normalAttack.getDirectDamage());
-            damageTarget(role, damage, normalAttack, role.getTarget());
+            double damage = skillDamageCaculate(role, role.getNormalAttack().getDirectDamage());
+            damageTarget(role, damage, role.getNormalAttack(), role.getTarget());
             resourceService.attackCoolDownBegin(role.getResource());
             resourceService.gainResourceByHit(role.getResource());
-            messageService.addCastSkill(role, normalAttack);
+            messageService.addCastSkill(role, role.getNormalAttack());
         }
     }
 

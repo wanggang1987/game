@@ -3,12 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.game.ms.monster;
+package org.game.ms.skill;
 
 import java.util.List;
 import java.util.Map;
 import lombok.Data;
 import org.game.ms.config.YamlPropertySourceFactory;
+import org.game.ms.player.Profession;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -19,10 +20,10 @@ import org.springframework.context.annotation.PropertySource;
  */
 @Data
 @Configuration
-@PropertySource(factory = YamlPropertySourceFactory.class, value = "classpath:monster.yaml")
+@PropertySource(factory = YamlPropertySourceFactory.class, value = "classpath:skill.yaml")
 @ConfigurationProperties(prefix = "template")
-public class MonsterTemplateCollection {
+public class SkillTemplateCollection {
 
-    private List<MonsterTemplate> monsters;
-    private Map<Integer, List<MonsterTemplate>> worldLevel;
+    private List<Skill> skills;
+    private Map<Profession, List<Skill>> professionSkill;
 }

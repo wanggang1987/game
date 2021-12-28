@@ -50,7 +50,7 @@ public class BufferService {
     }
 
     public Buffer createBuffer(Role source, Role target, Skill skill) {
-        return new Buffer(source, target, skill);
+        return new Buffer(idService.newId(), source, target, skill);
     }
 
 }

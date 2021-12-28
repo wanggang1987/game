@@ -14,7 +14,6 @@ import lombok.Data;
  * @author wanggang
  */
 @Data
-@AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LoopDamage extends DamageBase {
 

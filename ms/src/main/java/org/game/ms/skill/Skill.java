@@ -7,7 +7,7 @@ package org.game.ms.skill;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-import org.game.ms.role.MoveStatus;
+import org.game.ms.player.Profession;
 import org.game.ms.skill.resource.ResourceType;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 public class Skill {
 
     private String name;
+    private Profession profession;
     private SkillType skillType;
     private ResourceType resourceType;
     private int cost;
@@ -31,5 +32,5 @@ public class Skill {
     private RangeType rangeType;
     private DirectDamage directDamage;
     private LoopDamage loopDamage;
-    private MoveStatus moveStatus;
+    private AnomalyStatus anomalyStatus;
 }

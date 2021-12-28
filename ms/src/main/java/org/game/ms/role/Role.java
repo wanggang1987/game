@@ -53,6 +53,8 @@ public class Role {
     private List<Buffer> buffers = new ArrayList<>();
     private List<Buffer> deBuffers = new ArrayList<>();
 
+    //skill
+    private Skill normalAttack;
     private List<Skill> skills = new ArrayList<>();
     private RootMap map;
     private Location location;

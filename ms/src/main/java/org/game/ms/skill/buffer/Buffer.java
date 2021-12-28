@@ -19,6 +19,7 @@ import org.game.ms.skill.Skill;
 @AllArgsConstructor
 public class Buffer {
 
+    private long id;
     @JsonIgnore
     private Role source;
     @JsonIgnore

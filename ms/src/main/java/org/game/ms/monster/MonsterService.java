@@ -17,6 +17,7 @@ import org.game.ms.role.AttackStatus;
 import org.game.ms.role.LivingStatus;
 import org.game.ms.role.MoveStatus;
 import org.game.ms.role.RoleType;
+import org.game.ms.skill.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,11 +33,13 @@ public class MonsterService {
     private IdService idService;
     @Autowired
     private MonsterTemplateCollection monsterTemplateList;
+    @Autowired
+    private SkillService skillService;
 
     @PostConstruct
     private void initMonsterTemplate() {
         monsterTemplateList.setWorldLevel(new HashMap<>());
-        monsterTemplateList.getWorldAll().forEach(template -> {
+        monsterTemplateList.getMonsters().forEach(template -> {
             List<MonsterTemplate> levelTemples = monsterTemplateList.getWorldLevel().get(template.getLevel());
             if (levelTemples == null) {
                 levelTemples = new ArrayList<>();
@@ -63,6 +66,7 @@ public class MonsterService {
         monster.setAttackStatus(AttackStatus.NOT_ATTACK);
         monster.setMoveStatus(MoveStatus.STANDING);
         monster.setLivingStatus(LivingStatus.LIVING);
+        monster.setNormalAttack(skillService.physicalAttack());
         Resource resource = monster.getResource();
         resource.setAttackCooldownMax(template.getAttackCooldown() * 1000);
         resource.setSkillCooldownMax(1.5 * 1000);
