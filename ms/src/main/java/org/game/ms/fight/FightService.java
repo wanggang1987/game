@@ -58,7 +58,7 @@ public class FightService {
             if (!resourceService.generalSkillCoolDownReady(role.getResource())) {
                 break;
             }
-            if (FuncUtils.notEquals(skill.getSkillType(), SkillType.MOVE_SKILL)
+            if (FuncUtils.notEquals(skill.getSkillType(), SkillType.SOURCE_MOVE_SKILL)
                     || !resourceService.skillCoolDownReady(skill)) {
                 continue;
             }

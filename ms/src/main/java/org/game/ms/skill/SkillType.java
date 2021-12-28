@@ -11,5 +11,5 @@ package org.game.ms.skill;
  */
 public enum SkillType {
     DAMAGE_SKILL,
-    MOVE_SKILL,
+    SOURCE_MOVE_SKILL,
 }
