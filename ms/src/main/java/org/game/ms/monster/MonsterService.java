@@ -16,7 +16,7 @@ import org.game.ms.skill.resource.Resource;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.role.LivingStatus;
 import org.game.ms.role.MoveStatus;
-import org.game.ms.role.RoleAttribute;
+import org.game.ms.role.Attribute;
 import org.game.ms.role.RoleType;
 import org.game.ms.skill.SkillService;
 import org.game.ms.skill.buffer.BufferService;
@@ -64,7 +64,7 @@ public class MonsterService {
         monster.setSpeed(template.getSpeed() / 1000);
         monster.setAttackRange(template.getAttackRange());
         
-        RoleAttribute roleAttribute = monster.getRoleAttribute();
+        Attribute roleAttribute = monster.getAttribute();
         monster.setHealthMax(template.getHealth());
         monster.setHealthPoint(monster.getHealthMax());
         roleAttribute.setAttackPower(template.getAttackPower());

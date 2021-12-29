@@ -16,7 +16,7 @@ import lombok.Data;
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RoleBuffers {
+public class Buffers {
 
     private List<Buffer> buffers = new ArrayList<>();
     private List<Buffer> deBuffers = new ArrayList<>();

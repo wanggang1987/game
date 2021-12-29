@@ -8,24 +8,20 @@ import org.game.ms.skill.resource.Resource;
 import org.game.ms.player.template.PlayerTemplate;
 import org.game.ms.player.template.WarriorTample;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.client.MessageService;
-import org.game.ms.func.FuncUtils;
 import org.game.ms.func.JsonUtils;
 import org.game.ms.id.IdService;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.reward.Experience;
 import org.game.ms.role.LivingStatus;
 import org.game.ms.role.MoveStatus;
-import org.game.ms.role.RoleAttribute;
+import org.game.ms.role.Attribute;
 import org.game.ms.role.RoleType;
-import org.game.ms.skill.Skill;
 import org.game.ms.skill.SkillService;
 import org.game.ms.skill.buffer.BufferService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -124,19 +120,19 @@ public class PlayerService {
         player.setSpeed(playerTemplate.getSpeed() / 1000);
         player.setAttackRange(playerTemplate.getAttackRange());
 
-        RoleAttribute roleAttribute = player.getRoleAttribute();
-        roleAttribute.setStamina(10 + playerTemplate.getStaminaGrow() * player.getLevel());
-        roleAttribute.setStrengt(10 + playerTemplate.getStrengtGrow() * player.getLevel());
-        roleAttribute.setAgility(10 + playerTemplate.getAgilityGrow() * player.getLevel());
-        roleAttribute.setIntellect(10 + playerTemplate.getIntellectGrow() * player.getLevel());
-        roleAttribute.setSpirit(10 + playerTemplate.getSpiritGrow() * player.getLevel());
+        Attribute attribute = player.getAttribute();
+        attribute.setStamina(10 + playerTemplate.getStaminaGrow() * player.getLevel());
+        attribute.setStrengt(10 + playerTemplate.getStrengtGrow() * player.getLevel());
+        attribute.setAgility(10 + playerTemplate.getAgilityGrow() * player.getLevel());
+        attribute.setIntellect(10 + playerTemplate.getIntellectGrow() * player.getLevel());
+        attribute.setSpirit(10 + playerTemplate.getSpiritGrow() * player.getLevel());
 
-        player.setHealthMax(roleAttribute.getStamina() * 10);
+        player.setHealthMax(attribute.getStamina() * 10);
         player.setHealthPoint(player.getHealthMax());
-        roleAttribute.setAttackPower(roleAttribute.getStrengt() * 1 + roleAttribute.getAgility() * 1);
-        roleAttribute.setDodge(roleAttribute.getAgility() * playerTemplate.getDodgeRate());
-        roleAttribute.setParry(roleAttribute.getStrengt() * playerTemplate.getParryRate());
-        roleAttribute.setCitical(roleAttribute.getCitical() * playerTemplate.getCiticalRate());
+        attribute.setAttackPower(attribute.getStrengt() * 1 + attribute.getAgility() * 1);
+        attribute.setDodge(attribute.getAgility() * playerTemplate.getDodgeRate());
+        attribute.setParry(attribute.getStrengt() * playerTemplate.getParryRate());
+        attribute.setCritical(attribute.getAgility() * playerTemplate.getCiticalRate());
 
         Resource resource = player.getResource();
         resource.setAttackCooldownMax(playerTemplate.getAttackCooldown() * 1000);

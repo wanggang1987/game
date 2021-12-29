@@ -15,7 +15,7 @@ public class Gold {
 
     static public int MonsterCoin(int level) {
         int base = 20 * level;
-        return FuncUtils.randomInPersentRange(base, 30);
+        return FuncUtils.randomInRangeByPersentage(base, 30);
     }
 
 }

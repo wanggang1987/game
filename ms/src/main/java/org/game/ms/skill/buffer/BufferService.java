@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 public class BufferService {
 
     public void addBuffer(Buffer buffer) {
-        RoleBuffers buffers = buffer.getTarget().getBuffers();
+        Buffers buffers = buffer.getTarget().getBuffers();
         if (FuncUtils.equals(buffer.getType(), BufferType.BUFFER)) {
             if (buffers.getBuffers().contains(buffer)) {
                 return;
@@ -43,7 +43,7 @@ public class BufferService {
     }
 
     public void removeBuffer(Buffer buffer) {
-        RoleBuffers buffers = buffer.getTarget().getBuffers();
+        Buffers buffers = buffer.getTarget().getBuffers();
         if (FuncUtils.equals(buffer.getType(), BufferType.BUFFER)) {
             buffers.getBuffers().remove(buffer);
             log.debug("removeBuffer {} ", buffer);
@@ -61,7 +61,7 @@ public class BufferService {
     }
 
     public boolean containsBuffer(Buffer buffer) {
-        RoleBuffers buffers = buffer.getTarget().getBuffers();
+        Buffers buffers = buffer.getTarget().getBuffers();
         if (FuncUtils.equals(buffer.getType(), BufferType.BUFFER)) {
             return buffers.getBuffers().contains(buffer);
         } else if (FuncUtils.equals(buffer.getType(), BufferType.DE_BUFFER)) {
@@ -72,7 +72,7 @@ public class BufferService {
         return false;
     }
 
-    public void clear(RoleBuffers buffers) {
+    public void clear(Buffers buffers) {
         buffers.getBuffers().clear();
         buffers.getDeBuffers().clear();
         buffers.getAnomalies().clear();

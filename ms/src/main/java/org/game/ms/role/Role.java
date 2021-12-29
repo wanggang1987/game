@@ -15,7 +15,7 @@ import org.game.ms.map.Location;
 import org.game.ms.map.RootMap;
 import org.game.ms.skill.resource.Resource;
 import org.game.ms.skill.Skill;
-import org.game.ms.skill.buffer.RoleBuffers;
+import org.game.ms.skill.buffer.Buffers;
 
 /**
  *
@@ -32,7 +32,7 @@ public class Role {
     private int level;
     private double speed;
     private double attackRange;
-    private RoleAttribute roleAttribute = new RoleAttribute();
+    private Attribute attribute = new Attribute();
 
     //target
     @JsonIgnore
@@ -47,7 +47,7 @@ public class Role {
     private AttackStatus attackStatus;
     private Battle battle;
     private Resource resource = new Resource();
-    private RoleBuffers buffers = new RoleBuffers();
+    private Buffers buffers = new Buffers();
 
     //skill
     private Skill normalAttack;

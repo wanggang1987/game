@@ -14,7 +14,7 @@ import lombok.Data;
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RoleAttribute {
+public class Attribute {
 
     private double attackPower;
     private double magicPower;
@@ -29,7 +29,7 @@ public class RoleAttribute {
     //招架
     private double parry;
     //暴击
-    private double citical;
+    private double critical;
     //急速
     private double haste;
     //精通
