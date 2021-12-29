@@ -16,6 +16,7 @@ import org.game.ms.func.SpringContextUtils;
 import org.game.ms.lifecycle.AutoMonster;
 import org.game.ms.lifecycle.AutoPlayer;
 import org.game.ms.lifecycle.LifeCycle;
+import org.game.ms.skill.buffer.Buffer;
 import org.game.ms.skill.buffer.BufferService;
 import org.game.ms.skill.resource.ResourceService;
 
@@ -65,10 +66,11 @@ public class WheelBucket {
             fightService.loopDamage(tickTask.getLoopDamageTask());
         }
         if (FuncUtils.notEmpty(tickTask.getBufferManagerTask())) {
+            Buffer buffer = tickTask.getBufferManagerTask().getBuffer();
             if (tickTask.getBufferManagerTask().isAdd()) {
 
             } else {
-                bufferService.removeBuffer(tickTask.getBufferManagerTask().getBuffer());
+                bufferService.removeBuffer(buffer);
             }
         }
     }

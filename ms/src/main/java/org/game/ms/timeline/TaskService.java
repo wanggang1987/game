@@ -19,11 +19,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class TaskService {
-
+    
     @Autowired
     private WheelConfig wheelConfig;
     private final List<TickTask> queue = new ArrayList<>();
-
+    
     public void addTask(LoopDamageTask loopDamageTask) {
         TickTask tickTask = new TickTask();
         tickTask.setLoopDamageTask(loopDamageTask);
@@ -31,7 +31,7 @@ public class TaskService {
         tickTask.setTick(ticks);
         queue.add(tickTask);
     }
-
+    
     public void addTask(BufferManagerTask bufferManagerTask) {
         TickTask tickTask = new TickTask();
         tickTask.setBufferManagerTask(bufferManagerTask);
@@ -39,7 +39,7 @@ public class TaskService {
         tickTask.setTick(ticks + 1);
         queue.add(tickTask);
     }
-
+    
     public Collection<TickTask> tasks() {
         return queue;
     }

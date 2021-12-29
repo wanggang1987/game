@@ -8,6 +8,7 @@ package org.game.ms.skill;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -28,25 +29,28 @@ public class SkillService {
     private SkillTemplateCollection skillTemplateCollection;
     private Skill physicalAttack;
 
+    private Map<Profession, List<Skill>> professionSkill = new HashMap<>();
+    private Map<Long, Skill> idSkillMap = new HashMap<>();
+
     @PostConstruct
     private void initSkillTemplate() {
-        skillTemplateCollection.setProfessionSkill(new HashMap<>());
         skillTemplateCollection.getSkills().forEach(temmplate -> {
-            List<Skill> professionSkills = skillTemplateCollection.getProfessionSkill().get(temmplate.getProfession());
+            List<Skill> professionSkills = professionSkill.get(temmplate.getProfession());
             if (professionSkills == null) {
                 professionSkills = new ArrayList<>();
-                skillTemplateCollection.getProfessionSkill().put(temmplate.getProfession(), professionSkills);
+                professionSkill.put(temmplate.getProfession(), professionSkills);
             }
             professionSkills.add(temmplate);
+            idSkillMap.put(temmplate.getId(), temmplate);
         });
 
-        skillTemplateCollection.getProfessionSkill().get(Profession.BASIC).forEach(skill -> {
-            if (FuncUtils.equals(skill.getId(), 1110000001000000L)) {
+        professionSkill.get(Profession.BASIC).forEach(skill -> {
+            if (FuncUtils.equals(skill.getId(), 1110010401000000L)) {
                 physicalAttack = skill;
             }
         });
 
-        skillTemplateCollection.getProfessionSkill().forEach((profession, skillList) -> {
+        professionSkill.forEach((profession, skillList) -> {
             String str = skillList.stream().map(skill -> skill.getName()).collect(Collectors.joining(","));
             log.info("initSkillTemplate {}: {}", profession, str);
             skillList.forEach(skill -> log.info("{}", skill));
@@ -54,11 +58,16 @@ public class SkillService {
     }
 
     public List<Skill> professionSkill(Profession profession) {
-        return skillTemplateCollection.getProfessionSkill().get(profession);
+        return professionSkill.get(profession);
     }
 
     public Skill physicalAttack() {
         return physicalAttack;
     }
 
+    public Skill getSkillById(long id) {
+        Skill skill = new Skill();
+        FuncUtils.copyProperties(idSkillMap.get(id), skill);
+        return skill;
+    }
 }

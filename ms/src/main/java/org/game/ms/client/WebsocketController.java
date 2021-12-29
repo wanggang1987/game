@@ -54,7 +54,7 @@ public class WebsocketController {
 
     @OnMessage
     public void onMessage(String message, Session session) {
-        log.debug("get client msg. ID:{} msg:{}", session.getId(), message);
+//        log.debug("get client msg. ID:{} msg:{}", session.getId(), message);
         WsMessage wsMessage = JsonUtils.json2bean(message, WsMessage.class);
         wsMessage.setSeesionId(session.getId());
         messsageService.getReceiveQueue().offer(wsMessage);
@@ -74,7 +74,7 @@ public class WebsocketController {
             message.setTime(FuncUtils.currentTime().getTime());
             String msg = JsonUtils.bean2json(message);
             session.getBasicRemote().sendText(msg);
-            log.debug("sendMessage {}", msg);
+ //           log.debug("sendMessage {}", msg);
         } catch (IOException e) {
             log.error(e.getMessage());
             e.printStackTrace();

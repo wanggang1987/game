@@ -1,0 +1,14 @@
+player:
+    speed: 2
+    attackRange: 1.5
+    attackCooldown: 1.5
+    staminaGrow: 1
+    strengtGrow: 1
+    agilityGrow: 1
+    intellectGrow: 1
+    spiritGrow: 1
+    dodgeRate: 0.01
+    parryRate: 0.01
+    citicalRate: 0.01
+    warrior:
+        name: 战士

@@ -20,7 +20,7 @@ import org.springframework.context.annotation.PropertySource;
  */
 @Data
 @Configuration
-@PropertySource(factory = YamlPropertySourceFactory.class, value = "classpath:initdata.yaml")
+@PropertySource(factory = YamlPropertySourceFactory.class, value = "classpath:player.yaml")
 @ConfigurationProperties(prefix = "player")
 public class PlayerTemplate {
 
@@ -33,6 +33,10 @@ public class PlayerTemplate {
     private int agilityGrow;
     private int intellectGrow;
     private int spiritGrow;
+
+    private double dodgeRate;
+    private double parryRate;
+    private double citicalRate;
 
     protected List<Skill> skills = new ArrayList<>();
 

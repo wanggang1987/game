@@ -6,10 +6,8 @@
 package org.game.ms.skill;
 
 import java.util.List;
-import java.util.Map;
 import lombok.Data;
 import org.game.ms.config.YamlPropertySourceFactory;
-import org.game.ms.player.Profession;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -25,5 +23,4 @@ import org.springframework.context.annotation.PropertySource;
 public class SkillTemplateCollection {
 
     private List<Skill> skills;
-    private Map<Profession, List<Skill>> professionSkill;
 }

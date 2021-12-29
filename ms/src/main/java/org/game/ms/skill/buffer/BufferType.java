@@ -3,15 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.game.ms.skill;
+package org.game.ms.skill.buffer;
 
 /**
  *
  * @author wanggang
  */
-public enum SkillType {
-    DAMAGE_SKILL,
-    SOURCE_MOVE_SKILL,
-    BUFFER_SKILL,
-    CONTROL_SKILL,
+public enum BufferType {
+    BUFFER,
+    DE_BUFFER,
+    ANOMALY
 }

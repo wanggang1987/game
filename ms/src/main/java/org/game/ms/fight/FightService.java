@@ -20,6 +20,7 @@ import org.game.ms.skill.Skill;
 import org.game.ms.skill.SkillType;
 import org.game.ms.skill.buffer.Buffer;
 import org.game.ms.skill.buffer.BufferService;
+import org.game.ms.skill.buffer.BufferType;
 import org.game.ms.skill.resource.ResourceService;
 import org.game.ms.timeline.BufferManagerTask;
 import org.game.ms.timeline.LoopDamageTask;
@@ -62,20 +63,19 @@ public class FightService {
                     || !resourceService.skillCoolDownReady(skill)) {
                 continue;
             }
-            if (!resourceService.skillCostResource(role.getResource(), skill)) {
+            if (!resourceService.skillCostResourceEnough(role.getResource(), skill)) {
                 continue;
             }
             if (FuncUtils.equals(skill.getRangeType(), RangeType.REMOTE)
                     && skill.getRangeMax() > role.getTargetDistance()
                     && skill.getRangeMin() < role.getTargetDistance()) {
-                Buffer buffer = bufferService.createBuffer(role, role, skill);
-                bufferService.addDeBuffer(buffer);
+                Buffer buffer = bufferService.createBuffer(role, role, skill, BufferType.ANOMALY);
+                bufferService.addBuffer(buffer);
                 role.setMoveStatus(MoveStatus.MOVEING);
-                resourceService.skillCoolDownBegin(role.getResource(), skill);
+                resourceService.castSkill(role.getResource(), skill);
                 log.debug("{} {} cast skill {} to {} {}",
                         role.getRoleType(), role.getId(), skill.getName(), role.getTarget().getRoleType(), role.getTarget().getId());
             }
-
         }
     }
 
@@ -92,19 +92,15 @@ public class FightService {
                     || !resourceService.skillCoolDownReady(skill)) {
                 continue;
             }
-            if (!resourceService.skillCostResource(role.getResource(), skill)) {
+            if (!resourceService.skillCostResourceEnough(role.getResource(), skill)) {
                 continue;
             }
-            if (FuncUtils.notEmpty(skill.getDirectDamage())) {
-                double damage = skillDamageCaculate(role, skill.getDirectDamage());
-                damageTarget(role, damage, skill, role.getTarget());
-            }
             if (FuncUtils.notEmpty(skill.getLoopDamage())) {
-                Buffer deBuffer = bufferService.createBuffer(role, role.getTarget(), skill);
-                if (role.getTarget().getDeBuffers().contains(deBuffer)) {
+                Buffer deBuffer = bufferService.createBuffer(role, role.getTarget(), skill, BufferType.DE_BUFFER);
+                if (bufferService.containsBuffer(deBuffer)) {
                     continue;
                 }
-                bufferService.addDeBuffer(deBuffer);
+                bufferService.addBuffer(deBuffer);
 
                 LoopDamage loopDamage = skill.getLoopDamage();
                 double damage = skillDamageCaculate(role, loopDamage);
@@ -114,11 +110,14 @@ public class FightService {
                 }
                 taskService.addTask(new BufferManagerTask(deBuffer, false, loopDamage.getLastTime()));
             }
-            resourceService.skillCoolDownBegin(role.getResource(), skill);
+            if (FuncUtils.notEmpty(skill.getDirectDamage())) {
+                double damage = skillDamageCaculate(role, skill.getDirectDamage());
+                damageTarget(role, damage, skill, role.getTarget());
+            }
+            resourceService.castSkill(role.getResource(), skill);
             log.debug("{} {} cast skill {} to {} {}",
                     role.getRoleType(), role.getId(), skill.getName(), role.getTarget().getRoleType(), role.getTarget().getId());
         }
-
     }
 
     private void normalAttack(Role role) {
@@ -170,7 +169,7 @@ public class FightService {
         Role target = buffer.getTarget();
         if (FuncUtils.notEmpty(target)
                 && FuncUtils.equals(target.getLivingStatus(), LivingStatus.LIVING)
-                && target.getBuffers().contains(buffer)) {
+                && bufferService.containsBuffer(buffer)) {
             damageTarget(source, task.getDamage(), buffer.getSkill(), target);
         }
     }

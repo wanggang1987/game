@@ -19,6 +19,7 @@ import org.game.ms.role.MoveStatus;
 import org.game.ms.role.RoleAttribute;
 import org.game.ms.role.RoleType;
 import org.game.ms.skill.SkillService;
+import org.game.ms.skill.buffer.BufferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,14 +30,16 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class MonsterService {
-
+    
     @Autowired
     private IdService idService;
     @Autowired
     private MonsterTemplateCollection monsterTemplateList;
     @Autowired
     private SkillService skillService;
-
+    @Autowired
+    private BufferService bufferService;
+    
     @PostConstruct
     private void initMonsterTemplate() {
         monsterTemplateList.setWorldLevel(new HashMap<>());
@@ -49,7 +52,7 @@ public class MonsterService {
             levelTemples.add(template);
         });
     }
-
+    
     public Monster initMonsterByLevel(int level) {
         MonsterTemplate template = findTemplateByLevel(level);
         Monster monster = new Monster();
@@ -60,12 +63,12 @@ public class MonsterService {
         monster.setLevel(template.getLevel());
         monster.setSpeed(template.getSpeed() / 1000);
         monster.setAttackRange(template.getAttackRange());
-
+        
         RoleAttribute roleAttribute = monster.getRoleAttribute();
         monster.setHealthMax(template.getHealth());
         monster.setHealthPoint(monster.getHealthMax());
         roleAttribute.setAttackPower(template.getAttackPower());
-
+        
         monster.setAttackStatus(AttackStatus.NOT_ATTACK);
         monster.setMoveStatus(MoveStatus.STANDING);
         monster.setLivingStatus(LivingStatus.LIVING);
@@ -77,11 +80,11 @@ public class MonsterService {
         resource.setAngerPoint(resource.getAngerMax());
         return monster;
     }
-
+    
     public void initMonster(Monster monster) {
-        monster.getBuffers().clear();
+        bufferService.clear(monster.getBuffers());
     }
-
+    
     private MonsterTemplate findTemplateByLevel(int level) {
         List<MonsterTemplate> levelTemples = monsterTemplateList.getWorldLevel().get(level);
         if (levelTemples == null) {
@@ -90,7 +93,7 @@ public class MonsterService {
         int index = FuncUtils.randomZeroToRange(levelTemples.size());
         return levelTemples.get(index);
     }
-
+    
     public void removeFromMap(Monster monster) {
         monster.getMap().removeMonsterFromMap(monster);
     }

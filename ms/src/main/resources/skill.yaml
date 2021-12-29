@@ -4,7 +4,7 @@
 #       resourceType: ANGER,            技能消耗资源:ANGER怒气
 #       cost: 40,                       技能消耗资源值，负数表示增加
 #       rangeType: MELEE,               技能范围：MELEE近战，REMOTE远程
-#
+#       coolDownMax: 3000,              技能冷却时间 毫秒
 #       directDamage: {                 直接伤害配置
 #           damageType: PHYSICAL,       伤害属性，PHYSICAL物理
 #           attackPowerRate: 1,         物理攻击强度系数
@@ -24,14 +24,15 @@
 #第一位1表示系统内置，1以上保留给mod
 #第二位1表示服务端生成，2表示web客户端生成
 #第三位1表示技能 
-#第四、五、六位职业（000:BSIC 001:WARRIOR）
-#第七、八位技能类型（00：DAMAGE_SKILL 01：SOURCE_MOVE_SKILL）
+#第四、五、六位职业（001:BSIC 002:WARRIOR）
+#第七、八位技能类型（01：SOURCE_MOVE_SKILL 02 BUFFER_SKILL 03 CONTROL_SKILL 04：DAMAGE_SKILL ） 
 #第九、十位技能排序编码
 #第十一-十六位保留
 
 template:
     skills:
-        - { id: 1110000001000000,
+#        物理攻击
+        - { id: 1110010401000000,
             name: PhysicalAttack,
             skillType: DAMAGE_SKILL,
             profession: BASIC,
@@ -40,7 +41,8 @@ template:
                 attackPowerRate: 1,
             }
         }
-        - { id: 1110010001000000,
+#        撕裂
+        - { id: 1110020401000000,
             name: Rend,
             profession: WARRIOR,
             skillType: DAMAGE_SKILL,
@@ -54,15 +56,46 @@ template:
                 attackPowerRate: 1,
             }
         }
-        - { id: 1110010101000000,
+#        冲锋晕迷1秒还未实现
+        - { id: 1110020101000000,
             name: Charge,
             profession: WARRIOR,
             skillType: SOURCE_MOVE_SKILL,
             resourceType: ANGER,
-            cost: -25,
+            cost: -9,
             coolDownMax: 30,
-            rangeMin: 5,
+            rangeMin: 8,
             rangeMax: 25,
             rangeType: REMOTE,
             anomalyStatus: CHARGING,
+        }
+#        暴怒
+        - { id: 1110020201000000,
+            name: Rampage,
+            profession: WARRIOR,
+            skillType: BUFFER_SKILL,
+        }
+#        嘲讽
+        - { id: 1110010301000000,
+            name: Taunt,
+            profession: WARRIOR,
+            skillType: CONTROL_SKILL,
+        }
+#        刺耳怒吼
+        - { id: 1110020302000000,
+            name: Piercing Howl,
+            profession: WARRIOR,
+            skillType: CONTROL_SKILL,
+        }
+#        乘胜追击，杀死能获得经验值的目标后效果还未实现,先设置冷却时间30秒
+        - { id: 1110020402000000,
+            name: Victory Rush,
+            profession: WARRIOR,
+            skillType: DAMAGE_SKILL,
+            rangeType: MELEE,
+            coolDownMax: 30000,
+            directDamage: {
+                damageType: PHYSICAL,
+                attackPowerRate: 1,
+            }
         }

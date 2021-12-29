@@ -47,7 +47,20 @@ public class ResourceService {
         return FuncUtils.numberCompare(skill.getCoolDown(), 0) == 0;
     }
 
-    public void skillCoolDownBegin(Resource resource, Skill skill) {
+    public void castSkill(Resource resource, Skill skill) {
+        skillCostResource(resource, skill);
+        skillCoolDownBegin(resource, skill);
+    }
+
+    private void skillCostResource(Resource resource, Skill skill) {
+        if (FuncUtils.equals(skill.getResourceType(), ResourceType.ANGER)
+                && resource.getAngerPoint() > skill.getCost()) {
+            double anger = resource.getAngerPoint() - skill.getCost();
+            resource.setAngerPoint(anger > resource.getAngerMax() ? resource.getAngerMax() : anger);
+        }
+    }
+
+    private void skillCoolDownBegin(Resource resource, Skill skill) {
         resource.setSkillCooldown(resource.getSkillCooldownMax());
         skill.setCoolDown(skill.getCoolDownMax());
     }
@@ -59,12 +72,11 @@ public class ResourceService {
         }
     }
 
-    public boolean skillCostResource(Resource resource, Skill skill) {
-        if (FuncUtils.equals(skill.getResourceType(), ResourceType.MAGIC)) {
+    public boolean skillCostResourceEnough(Resource resource, Skill skill) {
+        if (FuncUtils.isEmpty(skill.getResourceType())) {
+            return true;
         } else if (FuncUtils.equals(skill.getResourceType(), ResourceType.ANGER)
                 && resource.getAngerPoint() > skill.getCost()) {
-            double anger = resource.getAngerPoint() - skill.getCost();
-            resource.setAngerPoint(anger > resource.getAngerMax() ? resource.getAngerMax() : anger);
             return true;
         }
         return false;

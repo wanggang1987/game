@@ -15,7 +15,7 @@ import org.game.ms.map.Location;
 import org.game.ms.map.RootMap;
 import org.game.ms.skill.resource.Resource;
 import org.game.ms.skill.Skill;
-import org.game.ms.skill.buffer.Buffer;
+import org.game.ms.skill.buffer.RoleBuffers;
 
 /**
  *
@@ -47,8 +47,7 @@ public class Role {
     private AttackStatus attackStatus;
     private Battle battle;
     private Resource resource = new Resource();
-    private List<Buffer> buffers = new ArrayList<>();
-    private List<Buffer> deBuffers = new ArrayList<>();
+    private RoleBuffers buffers = new RoleBuffers();
 
     //skill
     private Skill normalAttack;

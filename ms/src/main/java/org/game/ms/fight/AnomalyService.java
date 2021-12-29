@@ -5,15 +5,15 @@
  */
 package org.game.ms.fight;
 
-import java.util.ArrayList;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.map.RootMap;
 import org.game.ms.role.MoveStatus;
 import org.game.ms.role.Role;
 import org.game.ms.skill.AnomalyStatus;
 import org.game.ms.skill.buffer.Buffer;
-import org.game.ms.skill.buffer.BufferService;
+import org.game.ms.timeline.BufferManagerTask;
+import org.game.ms.timeline.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,21 +21,20 @@ import org.springframework.stereotype.Service;
  *
  * @author wanggang
  */
+@Slf4j
 @Service
 public class AnomalyService {
 
     @Autowired
     private RootMap rootMap;
     @Autowired
-    private BufferService bufferService;
+    private TaskService taskService;
 
     public boolean anomalyPass(Role role) {
-        List<Buffer> removeDebuffers = new ArrayList<>();
-
-        for (Buffer debuffer : role.getDeBuffers()) {
+        for (Buffer debuffer : role.getBuffers().getAnomalies()) {
             if (FuncUtils.equals(debuffer.getSkill().getAnomalyStatus(), AnomalyStatus.CHARGING)) {
                 if (FuncUtils.equals(role.getMoveStatus(), MoveStatus.STANDING)) {
-                    removeDebuffers.add(debuffer);
+                    taskService.addTask(new BufferManagerTask(debuffer, false, 0));
                 } else if (FuncUtils.equals(role.getMoveStatus(), MoveStatus.MOVEING)) {
                     rootMap.roleChargeToTargetInTick(role);
                     return true;
@@ -43,7 +42,6 @@ public class AnomalyService {
             }
         }
 
-        removeDebuffers.forEach(debuffer -> bufferService.removeBuffer(debuffer));
         return false;
     }
 

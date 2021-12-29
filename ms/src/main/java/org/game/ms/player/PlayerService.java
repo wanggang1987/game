@@ -24,6 +24,7 @@ import org.game.ms.role.RoleAttribute;
 import org.game.ms.role.RoleType;
 import org.game.ms.skill.Skill;
 import org.game.ms.skill.SkillService;
+import org.game.ms.skill.buffer.BufferService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,8 @@ public class PlayerService {
     private MessageService messageService;
     @Autowired
     private SkillService skillService;
+    @Autowired
+    private BufferService bufferService;
 
     private final Map<Profession, PlayerTemplate> professionMap = new HashMap<>();
 
@@ -114,7 +117,7 @@ public class PlayerService {
     }
 
     private void bufferInit(Player player) {
-        player.getBuffers().clear();
+        bufferService.clear(player.getBuffers());
     }
 
     private void attributeInit(Player player) {
@@ -122,15 +125,18 @@ public class PlayerService {
         player.setAttackRange(playerTemplate.getAttackRange());
 
         RoleAttribute roleAttribute = player.getRoleAttribute();
-        roleAttribute.setStamina(20 + playerTemplate.getStaminaGrow() * player.getLevel());
-        roleAttribute.setStrengt(20 + playerTemplate.getStrengtGrow() * player.getLevel());
-        roleAttribute.setAgility(20 + playerTemplate.getAgilityGrow() * player.getLevel());
-        roleAttribute.setIntellect(20 + playerTemplate.getIntellectGrow() * player.getLevel());
-        roleAttribute.setSpirit(20 + playerTemplate.getSpiritGrow() * player.getLevel());
+        roleAttribute.setStamina(10 + playerTemplate.getStaminaGrow() * player.getLevel());
+        roleAttribute.setStrengt(10 + playerTemplate.getStrengtGrow() * player.getLevel());
+        roleAttribute.setAgility(10 + playerTemplate.getAgilityGrow() * player.getLevel());
+        roleAttribute.setIntellect(10 + playerTemplate.getIntellectGrow() * player.getLevel());
+        roleAttribute.setSpirit(10 + playerTemplate.getSpiritGrow() * player.getLevel());
 
         player.setHealthMax(roleAttribute.getStamina() * 10);
         player.setHealthPoint(player.getHealthMax());
         roleAttribute.setAttackPower(roleAttribute.getStrengt() * 1 + roleAttribute.getAgility() * 1);
+        roleAttribute.setDodge(roleAttribute.getAgility() * playerTemplate.getDodgeRate());
+        roleAttribute.setParry(roleAttribute.getStrengt() * playerTemplate.getParryRate());
+        roleAttribute.setCitical(roleAttribute.getCitical() * playerTemplate.getCiticalRate());
 
         Resource resource = player.getResource();
         resource.setAttackCooldownMax(playerTemplate.getAttackCooldown() * 1000);
@@ -142,15 +148,8 @@ public class PlayerService {
     private void skillInit(Player player) {
         player.getSkills().clear();
         player.setNormalAttack(skillService.physicalAttack());
-        player.getProfession().forEach(profession -> {
-            List<Skill> templateSkills = skillService.professionSkill(profession);
-            if (FuncUtils.notEmpty(templateSkills)) {
-                templateSkills.forEach(skill -> {
-                    Skill one = new Skill();
-                    BeanUtils.copyProperties(skill, one);
-                    player.getSkills().add(one);
-                });
-            }
-        });
+        player.getSkills().add(skillService.getSkillById(1110020401000000L));
+        player.getSkills().add(skillService.getSkillById(1110020101000000L));
+        player.getSkills().add(skillService.getSkillById(1110020402000000L));
     }
 }
