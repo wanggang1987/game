@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import org.game.ms.role.RoleType;
+import org.game.ms.skill.SkillType;
 
 /**
  *
@@ -22,6 +23,7 @@ public class CastSkillMsg {
     private long targetId;
     private RoleType targetType;
     private long skillId;
+    private SkillType skillType;
     private String skillName;
     private double targetX;
     private double targetY;

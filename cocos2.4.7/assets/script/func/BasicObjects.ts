@@ -19,7 +19,7 @@ export enum MessageType {
     MONSTER_DIE = 'MONSTER_DIE',
     MONSTER_FIGHTSTATUS = 'MONSTER_FIGHTSTATUS',
     MONSTER_CASTSKILL = 'MONSTER_CASTSKILL',
-    HERO_DAMAGE ='HERO_DAMAGE',
+    HERO_DAMAGE = 'HERO_DAMAGE',
     HERO_BE_DAMAGED = 'HERO_BE_DAMAGED',
     //send
     LOGIN = 'LOGIN',
@@ -30,6 +30,13 @@ export enum MessageType {
 export enum RoleType {
     MONSTER = 'MONSTER',
     PLAYER = 'PLAYER',
+}
+
+export enum SkillType {
+    DAMAGE_SKILL = 'DAMAGE_SKILL',
+    SOURCE_MOVE_SKILL = 'SOURCE_MOVE_SKILL',
+    BUFFER_SKILL = 'BUFFER_SKILL',
+    CONTROL_SKILL = 'CONTROL_SKILL',
 }
 
 export interface CreatePlayerMsg {
@@ -57,6 +64,8 @@ export interface CastSkill {
     sourceType: RoleType;
     targetId: number;
     targetType: RoleType;
+    skillId: number;
+    skillType: SkillType;
     skillName: string;
     targetX: number;
     targetY: number;
@@ -104,6 +113,7 @@ export interface FightStatus {
 
 export class Role {
     public id: number;
+    public isAttackAction = false;
     public attribute: Attribute;
     public location: Location;
     public fightStatus: FightStatus;

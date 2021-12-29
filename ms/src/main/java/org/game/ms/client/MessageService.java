@@ -55,6 +55,7 @@ public class MessageService {
         castSkillMsg.setTargetId(role.getTarget().getId());
         castSkillMsg.setTargetType(role.getTarget().getRoleType());
         castSkillMsg.setSkillId(skill.getId());
+        castSkillMsg.setSkillType(skill.getSkillType());
         castSkillMsg.setSkillName(skill.getName());
         castSkillMsg.setGrid(role.getLocation().getGrid());
         castSkillMsg.setTargetX(role.getTarget().getLocation().getX());

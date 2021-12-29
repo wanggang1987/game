@@ -97,7 +97,7 @@ public class RootMap {
         double xDistance = target.getLocation().getX() - role.getLocation().getX();
         double yDistance = target.getLocation().getY() - role.getLocation().getY();
         double targetDistance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
-        double moveDistance = role.getSpeed() * wheelConfig.getTickDuration() * 5;
+        double moveDistance = role.getSpeed() * wheelConfig.getTickDuration() * 10;
         if (moveDistance > targetDistance - 1) {
             role.setMoveStatus(MoveStatus.STANDING);
             double x = target.getLocation().getX() - (1 / targetDistance) * xDistance;

@@ -76,7 +76,7 @@ export default class Players extends cc.Component {
     }
 
     public castSkill(castskill: CastSkill, player: Role) {
-        RoleAction.attackSkill(castskill, this.playerNode(player.id), player.location);
+        RoleAction.attackSkill(castskill, this.playerNode(player.id), player);
     }
 
     public showDamage(damageMsg: FightDamageMsg, monster: Role) {

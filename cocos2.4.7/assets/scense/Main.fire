@@ -723,12 +723,6 @@
       "__id__": 3
     },
     "_enabled": true,
-    "Name": {
-      "__id__": 9
-    },
-    "Hp": {
-      "__id__": 14
-    },
     "damageNumber": {
       "__uuid__": "05a9497c-e113-42fc-beff-9c26b578ef5c"
     },

@@ -1,14 +1,17 @@
-import { CastSkill, FightDamageMsg, Location } from "../func/BasicObjects";
+import { CastSkill, FightDamageMsg, Location, Role, SkillType } from "../func/BasicObjects";
 
 export class RoleAction {
 
-    public static attackSkill(castskill: CastSkill, roleNode: cc.Node, location: Location) {
-        if (!castskill || !roleNode || !location) {
+    public static attackSkill(castskill: CastSkill, roleNode: cc.Node, target: Role) {
+        if (!castskill || !roleNode || !target || !target.location || target.isAttackAction) {
+            return;
+        }
+        if (castskill.skillType != SkillType.DAMAGE_SKILL) {
             return;
         }
 
-        let xDistance: number = castskill.targetX - location.x;
-        let yDistance: number = castskill.targetY - location.y;
+        let xDistance: number = castskill.targetX - target.location.x;
+        let yDistance: number = castskill.targetY - target.location.y;
         let targetDistance: number = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
         let moveDistance: number = 30;
         let x: number = moveDistance / targetDistance * xDistance;
@@ -17,7 +20,9 @@ export class RoleAction {
         cc.tween(bodyNode)
             .by(0.1, { position: cc.v3(x, y) }, { easing: 'backOut' })
             .by(0.15, { position: cc.v3(-x, -y) }, { easing: 'backOut' })
+            .call(() => { target.isAttackAction = false })
             .start();
+        target.isAttackAction = true;
     }
 
     public static showDamage(damageMsg: FightDamageMsg, roleNode: cc.Node, lableNode: cc.Node) {

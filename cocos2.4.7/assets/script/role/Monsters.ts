@@ -73,7 +73,7 @@ export default class Monsters extends cc.Component {
     }
 
     public castSkill(castskill: CastSkill, monster: Role) {
-        RoleAction.attackSkill(castskill, this.monsterNode(monster.id), monster.location);
+        RoleAction.attackSkill(castskill, this.monsterNode(monster.id), monster);
     }
 
     public showDamage(damageMsg: FightDamageMsg, monster: Role) {

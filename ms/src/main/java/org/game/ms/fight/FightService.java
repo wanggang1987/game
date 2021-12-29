@@ -5,7 +5,6 @@
  */
 package org.game.ms.fight;
 
-import liquibase.pro.packaged.q;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.client.MessageService;
 import org.game.ms.func.FuncUtils;
@@ -75,6 +74,7 @@ public class FightService {
                 bufferService.addBuffer(buffer);
                 role.setMoveStatus(MoveStatus.MOVEING);
                 resourceService.castSkill(role.getResource(), skill);
+                messageService.addCastSkill(role, skill);
                 log.debug("{} {} cast skill {} to {} {}",
                         role.getRoleType(), role.getId(), skill.getName(), role.getTarget().getRoleType(), role.getTarget().getId());
             }
@@ -119,6 +119,7 @@ public class FightService {
                 damageTarget(role, damage, skill, role.getTarget());
             }
             resourceService.castSkill(role.getResource(), skill);
+            messageService.addCastSkill(role, skill);
             log.debug("{} {} cast skill {} to {} {}",
                     role.getRoleType(), role.getId(), skill.getName(), role.getTarget().getRoleType(), role.getTarget().getId());
         }
