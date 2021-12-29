@@ -20,6 +20,7 @@ public class FightDamageMsg {
     private RoleType sourceType;
     private long targetId;
     private RoleType targetType;
+    private long skillId;
     private String skillName;
     private double damage;
 }

@@ -19,7 +19,8 @@ import org.springframework.stereotype.Component;
 @Component
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Skill {
-
+    
+    private long id;
     private String name;
     private Profession profession;
     private SkillType skillType;

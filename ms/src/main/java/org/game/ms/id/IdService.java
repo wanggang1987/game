@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class IdService {
-
+    
     @Autowired
     private GidMapper gidMapper;
 

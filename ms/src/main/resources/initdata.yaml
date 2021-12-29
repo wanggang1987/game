@@ -7,10 +7,10 @@ player:
     speed: 2
     attackRange: 1.5
     attackCooldown: 1.5
-    staminaGrow: 20
-    strengtGrow: 20
-    agilityGrow: 20
-    intellectGrow: 20
-    spiritGrow: 20
+    staminaGrow: 1
+    strengtGrow: 1
+    agilityGrow: 1
+    intellectGrow: 1
+    spiritGrow: 1
     warrior:
         name: 战士

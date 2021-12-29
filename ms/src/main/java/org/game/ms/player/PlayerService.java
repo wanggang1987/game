@@ -122,11 +122,11 @@ public class PlayerService {
         player.setAttackRange(playerTemplate.getAttackRange());
 
         RoleAttribute roleAttribute = player.getRoleAttribute();
-        roleAttribute.setStamina(playerTemplate.getStaminaGrow() * player.getLevel());
-        roleAttribute.setStrengt(playerTemplate.getStrengtGrow() * player.getLevel());
-        roleAttribute.setAgility(playerTemplate.getAgilityGrow() * player.getLevel());
-        roleAttribute.setIntellect(playerTemplate.getIntellectGrow() * player.getLevel());
-        roleAttribute.setSpirit(playerTemplate.getSpiritGrow() * player.getLevel());
+        roleAttribute.setStamina(20 + playerTemplate.getStaminaGrow() * player.getLevel());
+        roleAttribute.setStrengt(20 + playerTemplate.getStrengtGrow() * player.getLevel());
+        roleAttribute.setAgility(20 + playerTemplate.getAgilityGrow() * player.getLevel());
+        roleAttribute.setIntellect(20 + playerTemplate.getIntellectGrow() * player.getLevel());
+        roleAttribute.setSpirit(20 + playerTemplate.getSpiritGrow() * player.getLevel());
 
         player.setHealthMax(roleAttribute.getStamina() * 10);
         player.setHealthPoint(player.getHealthMax());

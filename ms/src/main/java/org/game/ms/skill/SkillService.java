@@ -41,7 +41,7 @@ public class SkillService {
         });
 
         skillTemplateCollection.getProfessionSkill().get(Profession.BASIC).forEach(skill -> {
-            if (FuncUtils.equals(skill.getName(), "PhysicalAttack")) {
+            if (FuncUtils.equals(skill.getId(), 1110000001000000L)) {
                 physicalAttack = skill;
             }
         });

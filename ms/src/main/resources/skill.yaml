@@ -19,16 +19,29 @@
 #       }
 #
 #       anomalyStatus: CHARGING,        异常状态：CHARGING冲锋状态
+
+#16位ID逻辑
+#第一位1表示系统内置，1以上保留给mod
+#第二位1表示服务端生成，2表示web客户端生成
+#第三位1表示技能 
+#第四、五、六位职业（000:BSIC 001:WARRIOR）
+#第七、八位技能类型（00：DAMAGE_SKILL 01：SOURCE_MOVE_SKILL）
+#第九、十位技能排序编码
+#第十一-十六位保留
+
 template:
     skills:
-        - { name: PhysicalAttack,
+        - { id: 1110000001000000,
+            name: PhysicalAttack,
+            skillType: DAMAGE_SKILL,
             profession: BASIC,
             directDamage: {
                 damageType: PHYSICAL,
                 attackPowerRate: 1,
             }
         }
-        - { name: Rend,
+        - { id: 1110010001000000,
+            name: Rend,
             profession: WARRIOR,
             skillType: DAMAGE_SKILL,
             resourceType: ANGER,
@@ -41,7 +54,8 @@ template:
                 attackPowerRate: 1,
             }
         }
-        - { name: Charge,
+        - { id: 1110010101000000,
+            name: Charge,
             profession: WARRIOR,
             skillType: SOURCE_MOVE_SKILL,
             resourceType: ANGER,
