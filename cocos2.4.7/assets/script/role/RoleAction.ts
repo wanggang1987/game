@@ -26,19 +26,19 @@ export class RoleAction {
     }
 
     public static showDamage(damageMsg: FightDamageMsg, roleNode: cc.Node, lableNode: cc.Node) {
-        let str: string = damageMsg.damage.toFixed(0).toString();
-        this.showFightInfo(str, roleNode, lableNode);
+        roleNode.addChild(lableNode);
+        let lable: cc.Label = lableNode.getComponent(cc.Label);
+        lable.string = damageMsg.damage.toFixed(0).toString();
+        cc.tween(lableNode)
+            .by(2, { position: cc.v3(0, 30), opacity: -100 }, { easing: 'cubicOut' })
+            .call(() => { lableNode.destroy() })
+            .start();
     }
 
     public static showSkill(castskill: CastSkill, roleNode: cc.Node, lableNode: cc.Node) {
-        let str: string = castskill.skillName;
-        this.showFightInfo(str, roleNode, lableNode);
-    }
-
-    private static showFightInfo(str: string, roleNode: cc.Node, lableNode: cc.Node) {
         roleNode.addChild(lableNode);
         let lable: cc.Label = lableNode.getComponent(cc.Label);
-        lable.string = str;
+        lable.string = castskill.skillName;
         cc.tween(lableNode)
             .by(2, { position: cc.v3(0, 30), opacity: -100 }, { easing: 'cubicOut' })
             .call(() => { lableNode.destroy() })

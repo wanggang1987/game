@@ -19,6 +19,7 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LocationMsg {
 
+    private long updateTime;
     private long id;
     private RoleType roleType;
     private double x;

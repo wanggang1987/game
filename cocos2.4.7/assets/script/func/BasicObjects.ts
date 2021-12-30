@@ -37,7 +37,6 @@ export interface CreatePlayerMsg {
 }
 
 export interface WsMessage {
-    time: number;
     //receive
     messageType: MessageType;
     attributeMsg: Attribute;
@@ -80,6 +79,7 @@ export interface RoleDie {
 
 export interface Location {
     isUpdate: boolean;
+    updateTime: number;
     id: number;
     roleType: RoleType;
     x: number;
@@ -94,6 +94,7 @@ export interface AttributeRequest {
 
 export interface Attribute {
     isUpdate: boolean;
+    updateTime: number;
     id: number;
     roleType: RoleType;
     name: string;
@@ -103,6 +104,7 @@ export interface Attribute {
 
 export interface FightStatus {
     isUpdate: boolean;
+    updateTime: number;
     id: number;
     roleType: RoleType;
     healthPoint: number;

@@ -18,6 +18,7 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FightStatusMsg {
 
+    private long updateTime;
     private long id;
     private RoleType roleType;
     private double healthPoint;

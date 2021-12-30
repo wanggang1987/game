@@ -31,7 +31,7 @@
 
 template:
     skills:
-#        物理攻击
+    #    物理攻击
         - { id: 1110010401000000,
             name: PhysicalAttack,
             skillType: DAMAGE_SKILL,
@@ -41,7 +41,7 @@ template:
                 attackPowerRate: 1,
             }
         }
-#        撕裂
+    #    撕裂
         - { id: 1110020401000000,
             name: Rend,
             profession: WARRIOR,
@@ -56,38 +56,41 @@ template:
                 attackPowerRate: 1,
             }
         }
-#        冲锋晕迷1秒还未实现
+    #    冲锋晕迷1秒还未实现
         - { id: 1110020101000000,
             name: Charge,
             profession: WARRIOR,
             skillType: SOURCE_MOVE_SKILL,
             resourceType: ANGER,
             cost: -9,
-            coolDownMax: 30,
+            coolDownMax: 30000,
             rangeMin: 8,
             rangeMax: 25,
             rangeType: REMOTE,
             anomalyStatus: CHARGING,
         }
-#        暴怒
+    #    暴怒
         - { id: 1110020201000000,
             name: Rampage,
             profession: WARRIOR,
             skillType: BUFFER_SKILL,
         }
-#        嘲讽
+    #    嘲讽
         - { id: 1110010301000000,
             name: Taunt,
             profession: WARRIOR,
             skillType: CONTROL_SKILL,
         }
-#        刺耳怒吼
+    #    刺耳怒吼
         - { id: 1110020302000000,
             name: Piercing Howl,
             profession: WARRIOR,
             skillType: CONTROL_SKILL,
+            resourceType: ANGER,
+            cost: 10,
+            coolDownMax: 30000,
         }
-#        乘胜追击，杀死能获得经验值的目标后效果还未实现,先设置冷却时间30秒
+    #    乘胜追击，杀死能获得经验值的目标后效果还未实现,先设置冷却时间30秒
         - { id: 1110020402000000,
             name: Victory Rush,
             profession: WARRIOR,

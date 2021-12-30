@@ -17,7 +17,6 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WsMessage {
 
-    private long time;
     @JsonIgnore
     private String seesionId;
     //send

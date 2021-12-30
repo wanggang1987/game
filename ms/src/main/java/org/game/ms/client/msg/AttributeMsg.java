@@ -19,6 +19,7 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AttributeMsg {
 
+    private long updateTime;
     private long id;
     private RoleType roleType;
     private String name;

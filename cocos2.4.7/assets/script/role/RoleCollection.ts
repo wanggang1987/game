@@ -83,21 +83,36 @@ export default class RoleCollection extends cc.Component {
         }
     }
 
-    public updateLocation(location: Location) {
-        let role: Role = this.selectRole(location.id, location.roleType);
-        role.location = location;
-        role.location.isUpdate = true;
-    }
-
     public updateHeroAttribute(attribute: Attribute) {
         this.hero.id = attribute.id;
         this.updateAttribute(attribute);
     }
 
+    public updateLocation(location: Location) {
+        let role: Role = this.selectRole(location.id, location.roleType);
+        if (role.location && role.location.updateTime > location.updateTime) {
+            return;
+        }
+        role.location = location;
+        role.location.isUpdate = true;
+    }
+
     public updateAttribute(attribute: Attribute) {
         let role: Role = this.selectRole(attribute.id, attribute.roleType);
+        if (role.attribute && role.attribute.updateTime > attribute.updateTime) {
+            return;
+        }
         role.attribute = attribute;
         role.attribute.isUpdate = true;
+    }
+
+    public updateFightStatus(fightStatus: FightStatus) {
+        let role: Role = this.selectRole(fightStatus.id, fightStatus.roleType);
+        if (role.fightStatus && role.fightStatus.updateTime > fightStatus.updateTime) {
+            return;
+        }
+        role.fightStatus = fightStatus;
+        role.fightStatus.isUpdate = true;
     }
 
     public roleDie(roleDie: RoleDie) {
@@ -106,12 +121,6 @@ export default class RoleCollection extends cc.Component {
         } else if (roleDie.roleType == RoleType.MONSTER) {
             this.deadMonsters.push(roleDie.id);
         }
-    }
-
-    public updateFightStatus(fightStatus: FightStatus) {
-        let role: Role = this.selectRole(fightStatus.id, fightStatus.roleType);
-        role.fightStatus = fightStatus;
-        role.fightStatus.isUpdate = true;
     }
 
     public roleCastSkill(castskill: CastSkill) {

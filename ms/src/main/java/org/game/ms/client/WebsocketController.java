@@ -74,7 +74,6 @@ public class WebsocketController {
             return;
         }
         try {
-            message.setTime(FuncUtils.currentTime().getTime());
             String msg = JsonUtils.bean2json(message);
             session.getBasicRemote().sendText(msg);
  //           log.debug("sendMessage {}", msg);

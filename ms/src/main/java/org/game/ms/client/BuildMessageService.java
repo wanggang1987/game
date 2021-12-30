@@ -69,6 +69,7 @@ public class BuildMessageService {
                 LocationMsg locaionMsg = new LocationMsg();
                 FuncUtils.copyProperties(role, locaionMsg);
                 FuncUtils.copyProperties(role.getLocation(), locaionMsg);
+                locaionMsg.setUpdateTime(FuncUtils.currentTime().getTime());
                 message.setLocationMsg(locaionMsg);
                 messageService.getSendQueue().offer(message);
             }
@@ -92,6 +93,7 @@ public class BuildMessageService {
                 LocationMsg locaionMsg = new LocationMsg();
                 FuncUtils.copyProperties(player, locaionMsg);
                 FuncUtils.copyProperties(player.getLocation(), locaionMsg);
+                locaionMsg.setUpdateTime(FuncUtils.currentTime().getTime());
                 message.setLocationMsg(locaionMsg);
                 messageService.getSendQueue().offer(message);
             }
@@ -103,6 +105,7 @@ public class BuildMessageService {
                 LocationMsg locaionMsg = new LocationMsg();
                 FuncUtils.copyProperties(monster, locaionMsg);
                 FuncUtils.copyProperties(monster.getLocation(), locaionMsg);
+                locaionMsg.setUpdateTime(FuncUtils.currentTime().getTime());
                 message.setLocationMsg(locaionMsg);
                 messageService.getSendQueue().offer(message);
             }
@@ -128,6 +131,7 @@ public class BuildMessageService {
             message.setMessageType(MessageType.ATTRIBUTE);
             AttributeMsg attributeMsg = new AttributeMsg();
             FuncUtils.copyProperties(role, attributeMsg);
+            attributeMsg.setUpdateTime(FuncUtils.currentTime().getTime());
             message.setAttributeMsg(attributeMsg);
             messageService.getSendQueue().offer(message);
         }
@@ -169,12 +173,16 @@ public class BuildMessageService {
             message.setSeesionId(messageService.getPlayerSession().get(player.getId()));
             AttributeMsg attributeMsg = new AttributeMsg();
             FuncUtils.copyProperties(player, attributeMsg);
+            attributeMsg.setUpdateTime(FuncUtils.currentTime().getTime());
             message.setAttributeMsg(attributeMsg);
             FightStatusMsg fightStatusMsg = new FightStatusMsg();
             FuncUtils.copyProperties(player, fightStatusMsg);
+            fightStatusMsg.setUpdateTime(FuncUtils.currentTime().getTime());
             message.setFightStatusMsg(fightStatusMsg);
             LocationMsg locaionMsg = new LocationMsg();
             FuncUtils.copyProperties(player, locaionMsg);
+            FuncUtils.copyProperties(player.getLocation(), locaionMsg);
+            locaionMsg.setUpdateTime(FuncUtils.currentTime().getTime());
             message.setLocationMsg(locaionMsg);
             messageService.getSendQueue().offer(message);
         }
@@ -196,6 +204,7 @@ public class BuildMessageService {
                 message.setSeesionId(messageService.getPlayerSession().get(revceiver.getId()));
                 FightStatusMsg fightStatusMsg = new FightStatusMsg();
                 FuncUtils.copyProperties(role, fightStatusMsg);
+                fightStatusMsg.setUpdateTime(FuncUtils.currentTime().getTime());
                 message.setFightStatusMsg(fightStatusMsg);
                 messageService.getSendQueue().offer(message);
             }

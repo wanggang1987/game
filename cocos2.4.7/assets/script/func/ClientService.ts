@@ -51,6 +51,7 @@ export default class ClientService extends cc.Component {
                 console.log(message, message.messageType);
                 this.roleCollection.updateHeroAttribute(message.attributeMsg);
                 this.roleCollection.updateFightStatus(message.fightStatusMsg);
+                this.roleCollection.updateLocation(message.locationMsg);
             }
             else if (message.messageType == MessageType.LOCATION) {
                 this.roleCollection.updateLocation(message.locationMsg);
@@ -59,12 +60,12 @@ export default class ClientService extends cc.Component {
                 console.log(message, message.messageType);
                 this.roleCollection.updateAttribute(message.attributeMsg);
             }
+            else if (message.messageType == MessageType.FIGHTSTATUS) {
+                this.roleCollection.updateFightStatus(message.fightStatusMsg);
+            }
             else if (message.messageType == MessageType.ROLE_DIE) {
                 console.log(message, message.messageType);
                 this.roleCollection.roleDie(message.roleDieMsg);
-            }
-            else if (message.messageType == MessageType.FIGHTSTATUS) {
-                this.roleCollection.updateFightStatus(message.fightStatusMsg);
             }
             else if (message.messageType == MessageType.CASTSKILL) {
                 console.log(message, message.messageType);
