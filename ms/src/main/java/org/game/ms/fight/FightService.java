@@ -74,9 +74,10 @@ public class FightService {
                 bufferService.addBuffer(buffer);
                 role.setMoveStatus(MoveStatus.MOVEING);
                 resourceService.castSkill(role.getResource(), skill);
-                messageService.addCastSkill(role, skill);
+                messageService.addCastSkill(role, skill, role.getTarget());
                 log.debug("{} {} cast skill {} to {} {}",
-                        role.getRoleType(), role.getId(), skill.getName(), role.getTarget().getRoleType(), role.getTarget().getId());
+                        role.getRoleType(), role.getId(), skill.getName(), role.getTarget().getRoleType(),
+                        role.getTarget().getId());
             }
         }
     }
@@ -119,7 +120,7 @@ public class FightService {
                 damageTarget(role, damage, skill, role.getTarget());
             }
             resourceService.castSkill(role.getResource(), skill);
-            messageService.addCastSkill(role, skill);
+            messageService.addCastSkill(role, skill,role.getTarget());
             log.debug("{} {} cast skill {} to {} {}",
                     role.getRoleType(), role.getId(), skill.getName(), role.getTarget().getRoleType(), role.getTarget().getId());
         }
@@ -134,7 +135,7 @@ public class FightService {
             damageTarget(role, damage, role.getNormalAttack(), role.getTarget());
             resourceService.attackCoolDownBegin(role.getResource());
             resourceService.gainResourceByHit(role.getResource());
-            messageService.addCastSkill(role, role.getNormalAttack());
+            messageService.addCastSkill(role, role.getNormalAttack(), role.getTarget());
         }
     }
 

@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.game.ms.client.msg.AttributeMsg;
 import org.game.ms.client.msg.AttributeRequest;
 import org.game.ms.client.msg.CastSkillMsg;
+import org.game.ms.client.msg.CastSkillRequest;
 import org.game.ms.client.msg.FightDamageMsg;
 import org.game.ms.client.msg.LocationMsg;
 import org.game.ms.client.msg.MessageType;
@@ -54,7 +55,7 @@ public class BuildMessageService {
             if (FuncUtils.isEmpty(role)) {
                 break;
             }
-            List<Player> receivers = gridService.playersInGrid(role.getLocation().getGrid());
+            List<Player> receivers = gridService.playersInNearGrids(role.getLocation());
             for (Player revceiver : receivers) {
                 if (!messageService.getPlayerSession().containsKey(revceiver.getId())) {
                     continue;
@@ -84,7 +85,7 @@ public class BuildMessageService {
             if (!messageService.getPlayerSession().containsKey(reveiver.getId())) {
                 continue;
             }
-            List<Player> gridPlayers = gridService.playersInGrid(reveiver.getLocation().getGrid());
+            List<Player> gridPlayers = gridService.playersInNearGrids(reveiver.getLocation());
             for (Player player : gridPlayers) {
                 WsMessage message = new WsMessage();
                 message.setMessageType(MessageType.PLAYER_LOCATION);
@@ -95,7 +96,7 @@ public class BuildMessageService {
                 message.setLocationMsg(locaionMsg);
                 messageService.getSendQueue().offer(message);
             }
-            List<Monster> gridMonsters = gridService.monstersInGrid(reveiver.getLocation().getGrid());
+            List<Monster> gridMonsters = gridService.monstersInNearGrid(reveiver.getLocation());
             for (Monster monster : gridMonsters) {
                 WsMessage message = new WsMessage();
                 message.setMessageType(MessageType.MONSTER_LOCATION);
@@ -140,7 +141,7 @@ public class BuildMessageService {
             if (FuncUtils.isEmpty(role)) {
                 return;
             }
-            List<Player> receivers = gridService.playersInGrid(role.getLocation().getGrid());
+            List<Player> receivers = gridService.playersInNearGrids(role.getLocation());
             for (Player revceiver : receivers) {
                 if (!messageService.getPlayerSession().containsKey(revceiver.getId())) {
                     continue;
@@ -188,7 +189,7 @@ public class BuildMessageService {
             if (FuncUtils.isEmpty(role)) {
                 break;
             }
-            List<Player> receivers = gridService.playersInGrid(role.getLocation().getGrid());
+            List<Player> receivers = gridService.playersInNearGrids(role.getLocation());
             for (Player revceiver : receivers) {
                 if (!messageService.getPlayerSession().containsKey(revceiver.getId())) {
                     continue;
@@ -211,15 +212,27 @@ public class BuildMessageService {
 
     private void buildCastSkill() {
         while (buildMessage) {
-            CastSkillMsg castSkillMsg = messageService.getCastSkill().poll();
-            if (FuncUtils.isEmpty(castSkillMsg)) {
+            CastSkillRequest request = messageService.getCastSkill().poll();
+            if (FuncUtils.isEmpty(request)) {
                 break;
             }
-            List<Player> receivers = gridService.playersInGrid(castSkillMsg.getGrid());
+            CastSkillMsg castSkillMsg = new CastSkillMsg();
+            castSkillMsg.setSourceId(request.getSource().getId());
+            castSkillMsg.setSourceType(request.getSource().getRoleType());
+            castSkillMsg.setTargetId(request.getTarget().getId());
+            castSkillMsg.setTargetType(request.getTarget().getRoleType());
+            castSkillMsg.setSkillId(request.getSkill().getId());
+            castSkillMsg.setSkillType(request.getSkill().getSkillType());
+            castSkillMsg.setSkillName(request.getSkill().getName());
+            castSkillMsg.setTargetX(request.getTarget().getLocation().getX());
+            castSkillMsg.setTargetY(request.getTarget().getLocation().getY());
+
+            List<Player> receivers = gridService.playersInNearGrids(request.getSource().getLocation());
             for (Player revceiver : receivers) {
                 if (!messageService.getPlayerSession().containsKey(revceiver.getId())) {
                     continue;
                 }
+
                 WsMessage message = new WsMessage();
                 if (FuncUtils.equals(castSkillMsg.getSourceType(), RoleType.MONSTER)) {
                     message.setMessageType(MessageType.MONSTER_CASTSKILL);

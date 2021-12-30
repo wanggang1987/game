@@ -15,6 +15,7 @@ import lombok.Data;
 import org.game.ms.client.msg.WsMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.client.msg.CastSkillMsg;
+import org.game.ms.client.msg.CastSkillRequest;
 import org.game.ms.client.msg.FightDamageMsg;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.player.Player;
@@ -45,22 +46,15 @@ public class MessageService {
     private final Queue<WsMessage> roleAttribute = new ConcurrentLinkedDeque<>();
     private final Queue<Player> heroUpdate = new ConcurrentLinkedDeque<>();
     private final Queue<FightDamageMsg> fightDamage = new ConcurrentLinkedDeque<>();
-    private final Queue<CastSkillMsg> castSkill = new ConcurrentLinkedDeque<>();
+    private final Queue<CastSkillRequest> castSkill = new ConcurrentLinkedDeque<>();
     private final Queue<Role> fightStatus = new ConcurrentLinkedDeque<>();
 
-    public void addCastSkill(Role role, Skill skill) {
-        CastSkillMsg castSkillMsg = new CastSkillMsg();
-        castSkillMsg.setSourceId(role.getId());
-        castSkillMsg.setSourceType(role.getRoleType());
-        castSkillMsg.setTargetId(role.getTarget().getId());
-        castSkillMsg.setTargetType(role.getTarget().getRoleType());
-        castSkillMsg.setSkillId(skill.getId());
-        castSkillMsg.setSkillType(skill.getSkillType());
-        castSkillMsg.setSkillName(skill.getName());
-        castSkillMsg.setGrid(role.getLocation().getGrid());
-        castSkillMsg.setTargetX(role.getTarget().getLocation().getX());
-        castSkillMsg.setTargetY(role.getTarget().getLocation().getY());
-        castSkill.add(castSkillMsg);
+    public void addCastSkill(Role source, Skill skill, Role target) {
+        CastSkillRequest request = new CastSkillRequest();
+        request.setSource(source);
+        request.setSkill(skill);
+        request.setTarget(target);
+        castSkill.add(request);
     }
 
     public void addFightDamage(Role source, double damage, Skill skill, Role target) {

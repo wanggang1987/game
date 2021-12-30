@@ -114,7 +114,23 @@ public class GridService {
         return getGrid(grid).getMonsters();
     }
 
+    public List<Monster> monstersInNearGrid(Location location){
+        List<Monster> monsters = new ArrayList<>();
+        location.getNearGrids().forEach(grid -> {
+            monsters.addAll(getGrid(grid).getMonsters());
+        });
+        return monsters;
+    }
+
     public List<Player> playersInGrid(String grid) {
         return getGrid(grid).getPlayers();
+    }
+
+    public List<Player> playersInNearGrids(Location location){
+        List<Player> players = new ArrayList<>();
+        location.getNearGrids().forEach(grid -> {
+           players.addAll(getGrid(grid).getPlayers()); 
+        });
+        return players;
     }
 }

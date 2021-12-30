@@ -27,6 +27,4 @@ public class CastSkillMsg {
     private String skillName;
     private double targetX;
     private double targetY;
-    @JsonIgnore
-    private String grid;
 }
