@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import lombok.extern.slf4j.Slf4j;
+
 import org.game.ms.client.MessageService;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.lifecycle.LifeCycle;
@@ -19,6 +19,8 @@ import org.game.ms.role.Role;
 import org.game.ms.role.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -91,8 +93,8 @@ public class GridService {
         monstersInGrid(monster.getLocation().getGrid()).add(monster);
         messageService.addRoleToGridMsg(monster);
     }
-    
-    public void removeRoleFromGrid(Role role){
+
+    public void removeRoleFromGrid(Role role) {
         if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
             Player player = lifeCycle.onlinePlayer(role.getId());
             addPlayerToGrid(player);
@@ -114,7 +116,7 @@ public class GridService {
         return getGrid(grid).getMonsters();
     }
 
-    public List<Monster> monstersInNearGrid(Location location){
+    public List<Monster> monstersInNearGrid(Location location) {
         List<Monster> monsters = new ArrayList<>();
         location.getNearGrids().forEach(grid -> {
             monsters.addAll(getGrid(grid).getMonsters());
@@ -126,10 +128,10 @@ public class GridService {
         return getGrid(grid).getPlayers();
     }
 
-    public List<Player> playersInNearGrids(Location location){
+    public List<Player> playersInNearGrids(Location location) {
         List<Player> players = new ArrayList<>();
         location.getNearGrids().forEach(grid -> {
-           players.addAll(getGrid(grid).getPlayers()); 
+            players.addAll(getGrid(grid).getPlayers());
         });
         return players;
     }

@@ -13,13 +13,9 @@ const { ccclass, property } = cc._decorator;
 export default class Hero extends cc.Component {
 
     private default = 0;
-    private hero: Role = new Role();
+    public hero: Role = new Role();
     @property({ type: cc.Prefab })
     private damageNumber: cc.Prefab = null;
-
-    public getHero(): Role {
-        return this.hero;
-    }
 
     protected update(dt: number): void {
         RoleAction.updateLocation(this.node, this.hero.location);

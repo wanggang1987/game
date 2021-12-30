@@ -5,6 +5,8 @@
  */
 package org.game.ms.client.msg;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import org.game.ms.role.RoleType;
@@ -24,4 +26,5 @@ public class LocationMsg {
     private RoleType roleType;
     private double x;
     private double y;
+    private String grid;
 }

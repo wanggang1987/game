@@ -112,6 +112,7 @@ export interface FightStatus {
 }
 
 export class Role {
+    public updateTime;
     public id: number;
     public isAttackAction = false;
     public attribute: Attribute;

@@ -18,33 +18,77 @@ export default class RoleCollection extends cc.Component {
     private default = 0;
     @property({ type: Hero })
     private heroService: Hero = null;
-    private hero: Role = null;
+    public hero: Role = null;
     @property({ type: Monsters })
     private monstersService: Monsters = null;
-    private monsters: Map<number, Role> = null;
+    public monsters: Map<number, Role> = null;
     private deadMonsters: number[] = null;
+    public clearMonster: number[] = null;
     @property({ type: Players })
     private playersService: Players = null;
-    private players: Map<number, Role> = null;
+    public players: Map<number, Role> = null;
     private deadPlayers: number[] = null;
-
-    public getHero(): Role {
-        return this.hero;
-    }
-
-    public getPlayers() {
-        return this.players;
-    }
-    public getMonsters() {
-        return this.monsters;
-    }
+    public clearPlayers: number[] = null;
 
     protected onLoad(): void {
-        this.hero = this.heroService.getHero();
-        this.monsters = this.monstersService.getMonsters();
-        this.deadMonsters = this.monstersService.getDeadMonsters();
-        this.players = this.playersService.getPlayers();
-        this.deadPlayers = this.playersService.getDeadPlayers();
+        this.hero = this.heroService.hero;
+        this.monsters = this.monstersService.monsters;
+        this.deadMonsters = this.monstersService.deadMonsters;
+        this.clearMonster = this.monstersService.clearMonster;
+        this.players = this.playersService.players;
+        this.deadPlayers = this.playersService.deadPlayers;
+        this.clearPlayers = this.playersService.clearPlayers;
+    }
+
+    private gridStr(x: number, y: number): string {
+        let nx = Number((x / 20).toFixed(0));
+        x = nx > 0 ? x + 1 : x - 1;
+        let ny = Number((y / 20).toFixed(0));
+        return "x:" + nx + "y:" + ny + "z:0";
+    }
+    private nearGrids(location: Location): string[] {
+        let x = location.x; let y = location.y;
+        let grids: string[] = new Array();
+        grids.push(this.gridStr(x, y));
+        grids.push(this.gridStr(x + 20, y));
+        grids.push(this.gridStr(x, y - 20));
+        grids.push(this.gridStr(x - 20, y));
+        grids.push(this.gridStr(x, y + 20));
+        grids.push(this.gridStr(x + 20, y - 20));
+        grids.push(this.gridStr(x - 20, y - 20));
+        grids.push(this.gridStr(x - 20, y + 20));
+        grids.push(this.gridStr(x + 20, y + 20));
+        return grids;
+    }
+
+    public resourceClear() {
+        if (this.hero.location) {
+            let nearGrids: string[] = this.nearGrids(this.hero.location);
+
+            this.players.forEach((player, playerId) => {
+                if (player.location && !nearGrids.includes(player.location.grid)) {
+
+                console.log(player.location, '1111111111111')
+                console.log(this.hero.location, '22222222222')
+
+
+                    this.clearPlayers.push(playerId);
+                }
+            });
+            this.monsters.forEach((monster, monsterId) => {
+                if (monster.location && !nearGrids.includes(monster.location.grid)) {
+
+
+                console.log(monster.location, '1111111111111')
+                console.log(this.hero.location, '22222222222')
+
+
+                    this.clearPlayers.push(monsterId);
+                }
+            });
+
+        }
+
     }
 
     private playerRole(id: number): Role {
@@ -95,6 +139,7 @@ export default class RoleCollection extends cc.Component {
         }
         role.location = location;
         role.location.isUpdate = true;
+        role.updateTime = location.updateTime;
     }
 
     public updateAttribute(attribute: Attribute) {
@@ -104,6 +149,7 @@ export default class RoleCollection extends cc.Component {
         }
         role.attribute = attribute;
         role.attribute.isUpdate = true;
+        role.updateTime = attribute.updateTime;
     }
 
     public updateFightStatus(fightStatus: FightStatus) {
@@ -113,6 +159,7 @@ export default class RoleCollection extends cc.Component {
         }
         role.fightStatus = fightStatus;
         role.fightStatus.isUpdate = true;
+        role.updateTime = fightStatus.updateTime;
     }
 
     public roleDie(roleDie: RoleDie) {

@@ -48,31 +48,32 @@ export default class ClientService extends cc.Component {
         messageStack.forEach(wsMessage => {
             let message: WsMessage = wsMessage;
             if (message.messageType == MessageType.HERO_UPDATE) {
-                console.log(message, message.messageType);
+                // console.log(message, message.messageType);
                 this.roleCollection.updateHeroAttribute(message.attributeMsg);
                 this.roleCollection.updateFightStatus(message.fightStatusMsg);
-                this.roleCollection.updateLocation(message.locationMsg);
             }
             else if (message.messageType == MessageType.LOCATION) {
+                // console.log(message, message.messageType);
                 this.roleCollection.updateLocation(message.locationMsg);
             }
             else if (message.messageType == MessageType.ATTRIBUTE) {
-                console.log(message, message.messageType);
+                // console.log(message, message.messageType);
                 this.roleCollection.updateAttribute(message.attributeMsg);
             }
             else if (message.messageType == MessageType.FIGHTSTATUS) {
+                // console.log(message, message.messageType);
                 this.roleCollection.updateFightStatus(message.fightStatusMsg);
             }
             else if (message.messageType == MessageType.ROLE_DIE) {
-                console.log(message, message.messageType);
+                // console.log(message, message.messageType);
                 this.roleCollection.roleDie(message.roleDieMsg);
             }
             else if (message.messageType == MessageType.CASTSKILL) {
-                console.log(message, message.messageType);
+                // console.log(message, message.messageType);
                 this.roleCollection.roleCastSkill(message.castSkillMsg);
             }
             else if (message.messageType == MessageType.FIGHTDAMAGE) {
-                console.log(message, message.messageType);
+                // console.log(message, message.messageType);
                 this.roleCollection.fightDamage(message.fightDamageMsg);
                 this.uiCollection.addDamageMsg(message.fightDamageMsg);
             }
@@ -83,6 +84,7 @@ export default class ClientService extends cc.Component {
     private roleCheck() {
         this.heartBeat();
         this.attributeCheck();
+        this.roleCollection.resourceClear();
     }
 
     private heartBeat() {
@@ -104,9 +106,9 @@ export default class ClientService extends cc.Component {
     }
 
     protected start() {
-        this.hero = this.roleCollection.getHero();
-        this.monsters = this.roleCollection.getMonsters();
-        this.players = this.roleCollection.getPlayers();
+        this.hero = this.roleCollection.hero;
+        this.monsters = this.roleCollection.monsters;
+        this.players = this.roleCollection.players;
         this.schedule(this.roleCheck, 1);
     }
 

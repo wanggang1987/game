@@ -179,11 +179,6 @@ public class BuildMessageService {
             FuncUtils.copyProperties(player, fightStatusMsg);
             fightStatusMsg.setUpdateTime(FuncUtils.currentTime().getTime());
             message.setFightStatusMsg(fightStatusMsg);
-            LocationMsg locaionMsg = new LocationMsg();
-            FuncUtils.copyProperties(player, locaionMsg);
-            FuncUtils.copyProperties(player.getLocation(), locaionMsg);
-            locaionMsg.setUpdateTime(FuncUtils.currentTime().getTime());
-            message.setLocationMsg(locaionMsg);
             messageService.getSendQueue().offer(message);
         }
     }

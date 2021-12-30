@@ -17,25 +17,27 @@ export default class Monsters extends cc.Component {
     private monsterPrefab: cc.Prefab = null;
     @property({ type: cc.Prefab })
     private damageNumber: cc.Prefab = null;
-    private monsters: Map<number, Role> = new Map();
-    private deadMonster: number[] = new Array();
-
-    public getDeadMonsters(): number[] {
-        return this.deadMonster;
-    }
-
-    public getMonsters(): Map<number, Role> {
-        return this.monsters;
-    }
+    public monsters: Map<number, Role> = new Map();
+    public deadMonsters: number[] = new Array();
+    public clearMonster: number[] = new Array();
 
     protected update(dt: number): void {
-        for (let monsterId of this.deadMonster) {
+        for (let monsterId of this.deadMonsters) {
             let monsterNode: cc.Node = this.node.getChildByName(monsterId.toString());
             if (monsterNode && monsterNode.active) {
                 monsterNode.active = false;
+            }
+        }
+        this.deadMonsters.length = 0;
+
+        for (let monsterId of this.clearMonster) {
+            let monsterNode: cc.Node = this.node.getChildByName(monsterId.toString());
+            if (monsterNode) {
+                monsterNode.destroy();
                 console.log("destory monsterNode " + monsterNode.name);
             }
         }
+        this.clearMonster.length = 0;
 
         this.monsters.forEach((monster, monsterId) => {
             let monsterNode: cc.Node = this.monsterNode(monsterId);
