@@ -5,6 +5,9 @@
 package org.game.ms.client.msg;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import org.game.ms.role.RoleType;
+
 import lombok.Data;
 
 /**
@@ -16,6 +19,7 @@ import lombok.Data;
 public class FightStatusMsg {
 
     private long id;
+    private RoleType roleType;
     private double healthPoint;
     private double healthMax;
 }

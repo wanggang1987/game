@@ -7,20 +7,13 @@
 
 export enum MessageType {
     //receive
-    HERO_ATTRIBUTE = 'HERO_ATTRIBUTE',
-    HERO_LOCATION = 'HERO_LOCATION',
-    PLAYER_ATTRIBUTE = 'PLAYER_ATTRIBUTE',
-    PLAYER_LOCATION = 'PLAYER_LOCATION',
-    PLAYER_DIE = 'PLAYER_DIE',
-    PLAYER_FIGHTSTATUS = 'PLAYER_FIGHTSTATUS',
-    PLAYER_CASTSKILL = 'PLAYER_CASTSKILL',
-    MONSTER_ATTRIBUTE = 'MONSTER_ATTRIBUTE',
-    MONSTER_LOCATION = 'MONSTER_LOCATION',
-    MONSTER_DIE = 'MONSTER_DIE',
-    MONSTER_FIGHTSTATUS = 'MONSTER_FIGHTSTATUS',
-    MONSTER_CASTSKILL = 'MONSTER_CASTSKILL',
-    HERO_DAMAGE = 'HERO_DAMAGE',
-    HERO_BE_DAMAGED = 'HERO_BE_DAMAGED',
+    HERO_UPDATE = 'HERO_UPDATE',
+    ATTRIBUTE = 'ATTRIBUTE',
+    LOCATION = 'LOCATION',
+    ROLE_DIE = 'ROLE_DIE',
+    FIGHTSTATUS = 'FIGHTSTATUS',
+    CASTSKILL = 'CASTSKILL',
+    FIGHTDAMAGE = 'FIGHTDAMAGE',
     //send
     LOGIN = 'LOGIN',
     PLAYER_CREATE = 'PLAYER_CREATE',
@@ -82,13 +75,16 @@ export interface FightDamageMsg {
 
 export interface RoleDie {
     id: number;
+    roleType: RoleType;
 }
 
 export interface Location {
     isUpdate: boolean;
     id: number;
+    roleType: RoleType;
     x: number;
     y: number;
+    grid: string;
 }
 
 export interface AttributeRequest {
@@ -99,6 +95,7 @@ export interface AttributeRequest {
 export interface Attribute {
     isUpdate: boolean;
     id: number;
+    roleType: RoleType;
     name: string;
     level: number;
     speed: number;
@@ -107,6 +104,7 @@ export interface Attribute {
 export interface FightStatus {
     isUpdate: boolean;
     id: number;
+    roleType: RoleType;
     healthPoint: number;
     healthMax: number;
 }

@@ -40,24 +40,9 @@ export default class Monsters extends cc.Component {
         this.monsters.forEach((monster, monsterId) => {
             let monsterNode: cc.Node = this.monsterNode(monsterId);
 
-            if (monster.location && monster.location.isUpdate) {
-                monsterNode.setPosition(monster.location.x * 50, monster.location.y * 50);
-                monster.location.isUpdate = false;
-            }
-
-            if (monster.attribute && monster.attribute.isUpdate) {
-                let nameNode: cc.Node = monsterNode.getChildByName("Name");
-                let name = nameNode.getComponent(cc.Label);
-                name.string = monster.attribute.name + ":" + monster.attribute.id;
-                monster.attribute.isUpdate = false;
-            }
-
-            if (monster.fightStatus && monster.fightStatus.isUpdate) {
-                let hpNode: cc.Node = monsterNode.getChildByName("Hp");
-                let hp: cc.ProgressBar = hpNode.getComponent(cc.ProgressBar);
-                hp.progress = monster.fightStatus.healthPoint / monster.fightStatus.healthMax;
-                monster.fightStatus.isUpdate = false;
-            }
+            RoleAction.updateLocation(monsterNode, monster.location);
+            RoleAction.updateAttribute(monsterNode, monster.attribute);
+            RoleAction.updateFightStatus(monsterNode, monster.fightStatus);
         });
     }
 
@@ -73,7 +58,10 @@ export default class Monsters extends cc.Component {
     }
 
     public castSkill(castskill: CastSkill, monster: Role) {
-        RoleAction.attackSkill(castskill, this.monsterNode(monster.id), monster);
+        let monsterNode: cc.Node = this.monsterNode(monster.id);
+        let lableNode: cc.Node = cc.instantiate(this.damageNumber);
+        RoleAction.attackSkill(castskill, monsterNode, monster);
+        RoleAction.showSkill(castskill, monsterNode, lableNode);
     }
 
     public showDamage(damageMsg: FightDamageMsg, monster: Role) {

@@ -43,24 +43,9 @@ export default class Players extends cc.Component {
         this.players.forEach((player, playerId) => {
             let playerNode: cc.Node = this.playerNode(playerId);
 
-            if (player.location && player.location.isUpdate) {
-                playerNode.setPosition(player.location.x * 50, player.location.y * 50);
-                player.location.isUpdate = false;
-            }
-
-            if (player.attribute && player.attribute.isUpdate) {
-                let nameNode: cc.Node = playerNode.getChildByName("Name");
-                let name = nameNode.getComponent(cc.Label);
-                name.string = player.attribute.name + ":" + player.attribute.id + "(lv" + player.attribute.level + ")";
-                player.attribute.isUpdate = false;
-            }
-
-            if (player.fightStatus && player.fightStatus.isUpdate) {
-                let hpNode: cc.Node = playerNode.getChildByName("Hp");
-                let hp: cc.ProgressBar = hpNode.getComponent(cc.ProgressBar);
-                hp.progress = player.fightStatus.healthPoint / player.fightStatus.healthMax;
-                player.fightStatus.isUpdate = false;
-            }
+            RoleAction.updateLocation(playerNode, player.location);
+            RoleAction.updateAttribute(playerNode, player.attribute);
+            RoleAction.updateFightStatus(playerNode, player.fightStatus);
         });
     }
 
@@ -76,11 +61,14 @@ export default class Players extends cc.Component {
     }
 
     public castSkill(castskill: CastSkill, player: Role) {
-        RoleAction.attackSkill(castskill, this.playerNode(player.id), player);
+        let playerNode: cc.Node = this.playerNode(player.id);
+        let lableNode: cc.Node = cc.instantiate(this.damageNumber);
+        RoleAction.attackSkill(castskill, playerNode, player);
+        RoleAction.showSkill(castskill, playerNode, lableNode);
     }
 
-    public showDamage(damageMsg: FightDamageMsg, monster: Role) {
-        let playerNode: cc.Node = this.playerNode(monster.id);
+    public showDamage(damageMsg: FightDamageMsg, player: Role) {
+        let playerNode: cc.Node = this.playerNode(player.id);
         let lableNode: cc.Node = cc.instantiate(this.damageNumber);
         RoleAction.showDamage(damageMsg, playerNode, lableNode);
     }

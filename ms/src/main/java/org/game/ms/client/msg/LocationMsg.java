@@ -6,6 +6,9 @@
 package org.game.ms.client.msg;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import org.game.ms.role.RoleType;
+
 import lombok.Data;
 
 /**
@@ -17,6 +20,7 @@ import lombok.Data;
 public class LocationMsg {
 
     private long id;
+    private RoleType roleType;
     private double x;
     private double y;
 }

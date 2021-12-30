@@ -5,8 +5,9 @@
 package org.game.ms.client;
 
 import java.util.concurrent.ForkJoinPool;
+
 import javax.annotation.PostConstruct;
-import lombok.extern.slf4j.Slf4j;
+
 import org.game.ms.client.msg.CreatePlayerMsg;
 import org.game.ms.client.msg.MessageType;
 import org.game.ms.client.msg.WsMessage;
@@ -19,6 +20,8 @@ import org.game.ms.player.Player;
 import org.game.ms.player.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *

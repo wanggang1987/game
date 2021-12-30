@@ -47,37 +47,6 @@ export default class RoleCollection extends cc.Component {
         this.deadPlayers = this.playersService.getDeadPlayers();
     }
 
-    public updateHeroLocation(location: Location) {
-        this.hero.location = location;
-        this.hero.location.isUpdate = true;
-    }
-    public updateHeroAttribute(attribute: Attribute) {
-        this.hero.id = attribute.id;
-        this.hero.attribute = attribute;
-        this.hero.attribute.isUpdate = true;
-    }
-
-    public updateHeroFightstatus(fightStatus: FightStatus) {
-        this.hero.fightStatus = fightStatus;
-        this.hero.fightStatus.isUpdate = true;
-    }
-
-    public heroCastSkill(castskill: CastSkill) {
-        this.heroService.castSkill(castskill);
-    }
-
-    public heroDamage(damageMsg: FightDamageMsg) {
-        if (damageMsg.targetType == RoleType.MONSTER) {
-            let monstser: Role = this.monsterRole(damageMsg.targetId);
-            this.monstersService.showDamage(damageMsg, monstser);
-        } else if (damageMsg.targetType == RoleType.PLAYER) {
-        }
-    }
-
-    public heroBeDamage(damageMsg: FightDamageMsg) {
-        this.heroService.showDamage(damageMsg);
-    }
-
     private playerRole(id: number): Role {
         let player: Role = null;
         if (this.players.has(id)) {
@@ -88,49 +57,6 @@ export default class RoleCollection extends cc.Component {
             this.players.set(id, player);
         }
         return player;
-    }
-
-    public updatePlayerLocation(location: Location) {
-        if (location.id === this.hero.id) {
-            this.updateHeroLocation(location);
-            return;
-        }
-        let player: Role = this.playerRole(location.id);
-        player.location = location;
-        player.location.isUpdate = true;
-    }
-
-    public updatePlayerAttribute(attribute: Attribute) {
-        if (attribute.id === this.hero.id) {
-            this.updateHeroAttribute(attribute);
-            return;
-        }
-        let player: Role = this.playerRole(attribute.id);
-        player.attribute = attribute;
-        player.attribute.isUpdate = true;
-    }
-
-    public playerDie(roleDie: RoleDie) {
-        this.deadPlayers.push(roleDie.id);
-    }
-
-    public updatePlayerFightStatus(fightStatus: FightStatus) {
-        if (fightStatus.id === this.hero.id) {
-            this.updateHeroFightstatus(fightStatus);
-            return;
-        }
-        let player: Role = this.playerRole(fightStatus.id);
-        player.fightStatus = fightStatus;
-        player.fightStatus.isUpdate = true;
-    }
-
-    public playerCastSkill(castskill: CastSkill) {
-        if (castskill.sourceId === this.hero.id) {
-            this.heroCastSkill(castskill);
-            return;
-        }
-        let player: Role = this.playerRole(castskill.sourceId);
-        this.playersService.castSkill(castskill, player);
     }
 
     private monsterRole(id: number): Role {
@@ -145,31 +71,70 @@ export default class RoleCollection extends cc.Component {
         return monster;
     }
 
-    public updateMonsterAttribute(attribute: Attribute) {
-        let monster: Role = this.monsterRole(attribute.id);
-        monster.attribute = attribute;
-        monster.attribute.isUpdate = true;
+    private selectRole(id: number, roleType: RoleType): Role {
+        if (!this.hero) return null;
+
+        if (roleType == RoleType.PLAYER && id == this.hero.id) {
+            return this.hero;
+        } else if (roleType == RoleType.PLAYER) {
+            return this.playerRole(id);
+        } else if (roleType == RoleType.MONSTER) {
+            return this.monsterRole(id);
+        }
     }
 
-    public updateMonsterLocation(location: Location) {
-        let monster: Role = this.monsterRole(location.id);
-        monster.location = location;
-        monster.location.isUpdate = true;
+    public updateLocation(location: Location) {
+        let role: Role = this.selectRole(location.id, location.roleType);
+        role.location = location;
+        role.location.isUpdate = true;
     }
 
-    public updateMonsterFightStatus(fightStatus: FightStatus) {
-        let monster: Role = this.monsterRole(fightStatus.id);
-        monster.fightStatus = fightStatus;
-        monster.fightStatus.isUpdate = true;
+    public updateHeroAttribute(attribute: Attribute) {
+        this.hero.id = attribute.id;
+        this.updateAttribute(attribute);
     }
 
-    public monsterDie(roleDie: RoleDie) {
-        this.deadMonsters.push(roleDie.id);
+    public updateAttribute(attribute: Attribute) {
+        let role: Role = this.selectRole(attribute.id, attribute.roleType);
+        role.attribute = attribute;
+        role.attribute.isUpdate = true;
     }
 
-    public monsterCastSkill(castskill: CastSkill) {
-        let monstser: Role = this.monsterRole(castskill.sourceId);
-        this.monstersService.castSkill(castskill, monstser);
+    public roleDie(roleDie: RoleDie) {
+        if (roleDie.roleType == RoleType.PLAYER) {
+            this.deadPlayers.push(roleDie.id);
+        } else if (roleDie.roleType == RoleType.MONSTER) {
+            this.deadMonsters.push(roleDie.id);
+        }
     }
 
+    public updateFightStatus(fightStatus: FightStatus) {
+        let role: Role = this.selectRole(fightStatus.id, fightStatus.roleType);
+        role.fightStatus = fightStatus;
+        role.fightStatus.isUpdate = true;
+    }
+
+    public roleCastSkill(castskill: CastSkill) {
+        if (castskill.sourceType == RoleType.PLAYER && castskill.sourceId == this.hero.id) {
+            this.heroService.castSkill(castskill);
+        } else if (castskill.sourceType == RoleType.PLAYER) {
+            let player: Role = this.playerRole(castskill.sourceId);
+            this.playersService.castSkill(castskill, player);
+        } else if (castskill.sourceType == RoleType.MONSTER) {
+            let monstser: Role = this.monsterRole(castskill.sourceId);
+            this.monstersService.castSkill(castskill, monstser);
+        }
+    }
+
+    public fightDamage(fightDamageMsg: FightDamageMsg) {
+        if (fightDamageMsg.targetType == RoleType.PLAYER && fightDamageMsg.targetId == this.hero.id) {
+            this.heroService.showDamage(fightDamageMsg);
+        } else if (fightDamageMsg.targetType == RoleType.PLAYER) {
+            let player: Role = this.playerRole(fightDamageMsg.targetId);
+            this.playersService.showDamage(fightDamageMsg, player);
+        } else if (fightDamageMsg.targetType == RoleType.MONSTER) {
+            let monstser: Role = this.monsterRole(fightDamageMsg.targetId);
+            this.monstersService.showDamage(fightDamageMsg, monstser);
+        }
+    }
 }

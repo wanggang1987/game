@@ -1,4 +1,4 @@
-import { CastSkill, FightDamageMsg, Location, Role, SkillType } from "../func/BasicObjects";
+import { Attribute, CastSkill, FightDamageMsg, FightStatus, Location, Role, SkillType } from "../func/BasicObjects";
 
 export class RoleAction {
 
@@ -26,12 +26,47 @@ export class RoleAction {
     }
 
     public static showDamage(damageMsg: FightDamageMsg, roleNode: cc.Node, lableNode: cc.Node) {
+        let str: string = damageMsg.damage.toFixed(0).toString();
+        this.showFightInfo(str, roleNode, lableNode);
+    }
+
+    public static showSkill(castskill: CastSkill, roleNode: cc.Node, lableNode: cc.Node) {
+        let str: string = castskill.skillName;
+        this.showFightInfo(str, roleNode, lableNode);
+    }
+
+    private static showFightInfo(str: string, roleNode: cc.Node, lableNode: cc.Node) {
         roleNode.addChild(lableNode);
         let lable: cc.Label = lableNode.getComponent(cc.Label);
-        lable.string = damageMsg.damage.toFixed(0).toString();
+        lable.string = str;
         cc.tween(lableNode)
             .by(2, { position: cc.v3(0, 30), opacity: -100 }, { easing: 'cubicOut' })
             .call(() => { lableNode.destroy() })
             .start();
+    }
+
+    public static updateLocation(roleNode: cc.Node, location: Location) {
+        if (location && location.isUpdate) {
+            roleNode.setPosition(location.x * 50, location.y * 50);
+            location.isUpdate = false;
+        }
+    }
+
+    public static updateAttribute(roleNode: cc.Node, attribute: Attribute) {
+        if (attribute && attribute.isUpdate) {
+            let nameNode: cc.Node = roleNode.getChildByName("Name");
+            let name = nameNode.getComponent(cc.Label);
+            name.string = attribute.name + ":" + attribute.id + "(lv" + attribute.level + ")";
+            attribute.isUpdate = false;
+        }
+    }
+
+    public static updateFightStatus(roleNode: cc.Node, fightStatus: FightStatus) {
+        if (fightStatus && fightStatus.isUpdate) {
+            let hpNode: cc.Node = roleNode.getChildByName("Hp");
+            let hp: cc.ProgressBar = hpNode.getComponent(cc.ProgressBar);
+            hp.progress = fightStatus.healthPoint / fightStatus.healthMax;
+            fightStatus.isUpdate = false;
+        }
     }
 }

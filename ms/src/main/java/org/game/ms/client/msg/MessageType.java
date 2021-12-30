@@ -10,22 +10,16 @@ package org.game.ms.client.msg;
  * @author wanggang
  */
 public enum MessageType {
-    //send
-    HERO_ATTRIBUTE,
-    HERO_LOCATION,
-    HERO_DAMAGE,
-    HERO_BE_DAMAGED,
-    PLAYER_ATTRIBUTE,
-    PLAYER_LOCATION,
-    PLAYER_DIE,
-    PLAYER_FIGHTSTATUS,
-    PLAYER_CASTSKILL,
-    MONSTER_ATTRIBUTE,
-    MONSTER_LOCATION,
-    MONSTER_DIE,
-    MONSTER_FIGHTSTATUS,
-    MONSTER_CASTSKILL,
-    //reveive
+    // send
+    HERO_UPDATE,
+    ATTRIBUTE,
+    LOCATION,
+    ROLE_DIE,
+    FIGHTSTATUS,
+    CASTSKILL,
+    FIGHTDAMAGE,
+
+    // reveive
     PLAYER_CREATE,
     LOGIN,
     ATTRIBUTE_REQUEST,

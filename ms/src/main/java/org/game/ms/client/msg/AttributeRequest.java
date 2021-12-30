@@ -6,8 +6,10 @@
 package org.game.ms.client.msg;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
+
 import org.game.ms.role.RoleType;
+
+import lombok.Data;
 
 /**
  *
