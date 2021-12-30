@@ -1,4 +1,4 @@
-import { Attribute, CastSkill, FightDamageMsg, FightStatus, Location, Role, SkillType } from "../func/BasicObjects";
+import { Attribute, CastSkill, FightDamageMsg, FightStatus, LivingStatus, Location, Role, SkillType } from "../func/BasicObjects";
 
 export class RoleAction {
 
@@ -67,6 +67,14 @@ export class RoleAction {
             let hp: cc.ProgressBar = hpNode.getComponent(cc.ProgressBar);
             hp.progress = fightStatus.healthPoint / fightStatus.healthMax;
             fightStatus.isUpdate = false;
+        }
+    }
+
+    public static checkDeath(roleNode: cc.Node, fightStatus: FightStatus) {
+        if (fightStatus && fightStatus.livingStatus == LivingStatus.DEAD) {
+            roleNode.active = false;
+        } else if (fightStatus && fightStatus.livingStatus == LivingStatus.LIVING) {
+            roleNode.active = true;
         }
     }
 }

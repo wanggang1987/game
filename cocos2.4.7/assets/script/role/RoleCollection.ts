@@ -22,22 +22,14 @@ export default class RoleCollection extends cc.Component {
     @property({ type: Monsters })
     private monstersService: Monsters = null;
     public monsters: Map<number, Role> = null;
-    private deadMonsters: number[] = null;
-    public clearMonster: number[] = null;
     @property({ type: Players })
     private playersService: Players = null;
     public players: Map<number, Role> = null;
-    private deadPlayers: number[] = null;
-    public clearPlayers: number[] = null;
 
     protected onLoad(): void {
         this.hero = this.heroService.hero;
         this.monsters = this.monstersService.monsters;
-        this.deadMonsters = this.monstersService.deadMonsters;
-        this.clearMonster = this.monstersService.clearMonster;
         this.players = this.playersService.players;
-        this.deadPlayers = this.playersService.deadPlayers;
-        this.clearPlayers = this.playersService.clearPlayers;
     }
 
     private gridStr(x: number, y: number): string {
@@ -61,34 +53,20 @@ export default class RoleCollection extends cc.Component {
         return grids;
     }
 
-    public resourceClear() {
+    public outGridsCheck() {
         if (this.hero.location) {
             let nearGrids: string[] = this.nearGrids(this.hero.location);
-
             this.players.forEach((player, playerId) => {
-                if (player.location && !nearGrids.includes(player.location.grid)) {
-
-                console.log(player.location, '1111111111111')
-                console.log(this.hero.location, '22222222222')
-
-
-                    this.clearPlayers.push(playerId);
-                }
+                if (player.location && nearGrids.includes(player.location.grid)) {
+                    player.isOutGrids = true;
+                } else player.isOutGrids = false;
             });
             this.monsters.forEach((monster, monsterId) => {
-                if (monster.location && !nearGrids.includes(monster.location.grid)) {
-
-
-                console.log(monster.location, '1111111111111')
-                console.log(this.hero.location, '22222222222')
-
-
-                    this.clearPlayers.push(monsterId);
-                }
+                if (monster.location && nearGrids.includes(monster.location.grid)) {
+                    monster.isOutGrids = true;
+                } else monster.isOutGrids = false;
             });
-
         }
-
     }
 
     private playerRole(id: number): Role {
@@ -160,14 +138,6 @@ export default class RoleCollection extends cc.Component {
         role.fightStatus = fightStatus;
         role.fightStatus.isUpdate = true;
         role.updateTime = fightStatus.updateTime;
-    }
-
-    public roleDie(roleDie: RoleDie) {
-        if (roleDie.roleType == RoleType.PLAYER) {
-            this.deadPlayers.push(roleDie.id);
-        } else if (roleDie.roleType == RoleType.MONSTER) {
-            this.deadMonsters.push(roleDie.id);
-        }
     }
 
     public roleCastSkill(castskill: CastSkill) {

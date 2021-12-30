@@ -10,7 +10,6 @@ export enum MessageType {
     HERO_UPDATE = 'HERO_UPDATE',
     ATTRIBUTE = 'ATTRIBUTE',
     LOCATION = 'LOCATION',
-    ROLE_DIE = 'ROLE_DIE',
     FIGHTSTATUS = 'FIGHTSTATUS',
     CASTSKILL = 'CASTSKILL',
     FIGHTDAMAGE = 'FIGHTDAMAGE',
@@ -30,6 +29,11 @@ export enum SkillType {
     SOURCE_MOVE_SKILL = 'SOURCE_MOVE_SKILL',
     BUFFER_SKILL = 'BUFFER_SKILL',
     CONTROL_SKILL = 'CONTROL_SKILL',
+}
+
+export enum LivingStatus {
+    LIVING = 'LIVING',
+    DEAD = 'DEAD',
 }
 
 export interface CreatePlayerMsg {
@@ -109,10 +113,12 @@ export interface FightStatus {
     roleType: RoleType;
     healthPoint: number;
     healthMax: number;
+    livingStatus: LivingStatus;
 }
 
 export class Role {
-    public updateTime;
+    public updateTime: number;
+    public isOutGrids: boolean;
     public id: number;
     public isAttackAction = false;
     public attribute: Attribute;

@@ -149,11 +149,12 @@ public class BuildMessageService {
                     continue;
                 }
                 WsMessage message = new WsMessage();
-                message.setMessageType(MessageType.ROLE_DIE);
+                message.setMessageType(MessageType.FIGHTSTATUS);
                 message.setSeesionId(messageService.getPlayerSession().get(revceiver.getId()));
-                RoleDieMsg roleDieMsg = new RoleDieMsg();
-                FuncUtils.copyProperties(role, roleDieMsg);
-                message.setRoleDieMsg(roleDieMsg);
+                FightStatusMsg fightStatusMsg = new FightStatusMsg();
+                FuncUtils.copyProperties(role, fightStatusMsg);
+                fightStatusMsg.setUpdateTime(FuncUtils.currentTime().getTime());
+                message.setFightStatusMsg(fightStatusMsg);
                 messageService.getSendQueue().offer(message);
             }
         }

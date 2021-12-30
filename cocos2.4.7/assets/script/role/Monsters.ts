@@ -4,7 +4,7 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
 // Learn life-cycle callbacks:
 
-import { CastSkill, FightDamageMsg, Role } from "../func/BasicObjects";
+import { CastSkill, FightDamageMsg, LivingStatus, Role } from "../func/BasicObjects";
 import { RoleAction } from "./RoleAction";
 
 const { ccclass, property } = cc._decorator;
@@ -18,33 +18,15 @@ export default class Monsters extends cc.Component {
     @property({ type: cc.Prefab })
     private damageNumber: cc.Prefab = null;
     public monsters: Map<number, Role> = new Map();
-    public deadMonsters: number[] = new Array();
-    public clearMonster: number[] = new Array();
 
     protected update(dt: number): void {
-        for (let monsterId of this.deadMonsters) {
-            let monsterNode: cc.Node = this.node.getChildByName(monsterId.toString());
-            if (monsterNode && monsterNode.active) {
-                monsterNode.active = false;
-            }
-        }
-        this.deadMonsters.length = 0;
-
-        for (let monsterId of this.clearMonster) {
-            let monsterNode: cc.Node = this.node.getChildByName(monsterId.toString());
-            if (monsterNode) {
-                monsterNode.destroy();
-                console.log("destory monsterNode " + monsterNode.name);
-            }
-        }
-        this.clearMonster.length = 0;
-
         this.monsters.forEach((monster, monsterId) => {
             let monsterNode: cc.Node = this.monsterNode(monsterId);
-
             RoleAction.updateLocation(monsterNode, monster.location);
             RoleAction.updateAttribute(monsterNode, monster.attribute);
             RoleAction.updateFightStatus(monsterNode, monster.fightStatus);
+
+            RoleAction.checkDeath(monsterNode, monster.fightStatus);
         });
     }
 
