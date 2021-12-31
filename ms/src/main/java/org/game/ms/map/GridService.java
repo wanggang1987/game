@@ -97,10 +97,10 @@ public class GridService {
     public void removeRoleFromGrid(Role role) {
         if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
             Player player = lifeCycle.onlinePlayer(role.getId());
-            addPlayerToGrid(player);
+            removePlayerFromGrid(player);
         } else if (FuncUtils.equals(role.getRoleType(), RoleType.MONSTER)) {
             Monster monster = lifeCycle.onlineMonster(role.getId());
-            addMonsterToGrid(monster);
+            removeMonsterFromGrid(monster);
         }
     }
 

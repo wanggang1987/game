@@ -5,9 +5,11 @@
  */
 package org.game.ms.skill.buffer;
 
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.role.Role;
+import org.game.ms.skill.AnomalyStatus;
 import org.game.ms.skill.Skill;
 import org.springframework.stereotype.Service;
 
@@ -57,7 +59,22 @@ public class BufferService {
     }
 
     public Buffer createBuffer(Role source, Role target, Skill skill, BufferType type) {
-        return new Buffer(type, skill, source, target);
+        Buffer buffer = new Buffer();
+        buffer.setSource(source);
+        buffer.setTarget(target);
+        buffer.setSkill(skill);
+        buffer.setType(type);
+        return buffer;
+    }
+
+    public Buffer createBuffer(Role source, Role target, Skill skill, AnomalyStatus status) {
+        Buffer buffer = new Buffer();
+        buffer.setSource(source);
+        buffer.setTarget(target);
+        buffer.setSkill(skill);
+        buffer.setType(BufferType.ANOMALY);
+        buffer.setAnomalyStatus(status);
+        return buffer;
     }
 
     public boolean containsBuffer(Buffer buffer) {

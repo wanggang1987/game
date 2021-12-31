@@ -6,9 +6,10 @@
 package org.game.ms.skill.buffer;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import org.game.ms.role.Role;
+import org.game.ms.skill.AnomalyStatus;
 import org.game.ms.skill.Skill;
 
 /**
@@ -16,14 +17,14 @@ import org.game.ms.skill.Skill;
  * @author wanggang
  */
 @Data
-@AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Buffer {
 
     private BufferType type;
+    private AnomalyStatus anomalyStatus;
     private Skill skill;
     @JsonIgnore
     private Role source;
     @JsonIgnore
     private Role target;
-
 }

@@ -5,19 +5,23 @@
  */
 package org.game.ms.fight;
 
+import java.util.Collection;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.client.MessageService;
 import org.game.ms.func.FuncUtils;
+import org.game.ms.func.JsonUtils;
+import org.game.ms.monster.Monster;
 import org.game.ms.role.AttackStatus;
 import org.game.ms.role.LivingStatus;
 import org.game.ms.role.MoveStatus;
 import org.game.ms.role.Role;
 import org.game.ms.role.Attribute;
+import org.game.ms.skill.AnomalyStatus;
 import org.game.ms.skill.DamageBase;
+import org.game.ms.skill.EffectType;
 import org.game.ms.skill.LoopDamage;
 import org.game.ms.skill.RangeType;
 import org.game.ms.skill.Skill;
-import org.game.ms.skill.SkillType;
 import org.game.ms.skill.buffer.Buffer;
 import org.game.ms.skill.buffer.BufferService;
 import org.game.ms.skill.buffer.BufferType;
@@ -49,30 +53,19 @@ public class FightService {
 
     public void autoFight(Role role) {
         ranageCompare(role);
-        meleeDamage(role);
+        skillAttack(role);
         normalAttack(role);
-        moveSkill(role);
     }
 
-    private void moveSkill(Role role) {
+    private void skillAttack(Role role) {
         for (Skill skill : role.getSkills()) {
             if (!resourceService.generalSkillCoolDownReady(role.getResource())) {
                 break;
             }
-            if (FuncUtils.notEquals(skill.getSkillType(), SkillType.SOURCE_MOVE_SKILL)
-                    || !resourceService.skillCoolDownReady(skill)) {
+            if (!resourceService.castSkillReady(role.getResource(), skill)) {
                 continue;
             }
-            if (!resourceService.skillCostResourceEnough(role.getResource(), skill)) {
-                continue;
-            }
-
-            if (FuncUtils.equals(skill.getRangeType(), RangeType.REMOTE)
-                    && skill.getRangeMax() > role.getTargetDistance()
-                    && skill.getRangeMin() < role.getTargetDistance()) {
-                Buffer buffer = bufferService.createBuffer(role, role, skill, BufferType.ANOMALY);
-                bufferService.addBuffer(buffer);
-                role.setMoveStatus(MoveStatus.MOVEING);
+            if (castSkillEligible(role, skill) && castSkill(role, skill)) {
                 resourceService.castSkill(role.getResource(), skill);
                 messageService.addCastSkill(role, skill, role.getTarget());
                 log.debug("{} {} cast skill {} to {} {}",
@@ -82,48 +75,69 @@ public class FightService {
         }
     }
 
-    private void meleeDamage(Role role) {
-        if (FuncUtils.equals(role.getAttackStatus(), AttackStatus.OUT_RANGE)) {
-            return;
+    private boolean castSkillEligible(Role role, Skill skill) {
+        if (FuncUtils.equals(skill.getRangeType(), RangeType.MELEE)
+                && FuncUtils.equals(role.getAttackStatus(), AttackStatus.AUTO_ATTACK)) {
+            return true;
         }
-        for (Skill skill : role.getSkills()) {
-            if (!resourceService.generalSkillCoolDownReady(role.getResource())) {
-                break;
-            }
-            if (FuncUtils.notEquals(skill.getSkillType(), SkillType.DAMAGE_SKILL)
-                    || FuncUtils.notEquals(skill.getRangeType(), RangeType.MELEE)
-                    || !resourceService.skillCoolDownReady(skill)) {
-                continue;
-            }
-            if (!resourceService.skillCostResourceEnough(role.getResource(), skill)) {
-                continue;
-            }
-
-            if (FuncUtils.notEmpty(skill.getLoopDamage())) {
-                Buffer deBuffer = bufferService.createBuffer(role, role.getTarget(), skill, BufferType.DE_BUFFER);
-                if (bufferService.containsBuffer(deBuffer)) {
-                    continue;
-                }
-                bufferService.addBuffer(deBuffer);
-
-                LoopDamage loopDamage = skill.getLoopDamage();
-                double damage = skillDamageCaculate(role, loopDamage);
-                int n = loopDamage.getLastTime() / loopDamage.getLoopTime();
-                for (int i = 1; i <= n; i++) {
-                    taskService.addTask(new LoopDamageTask(deBuffer, damage / n, i * loopDamage.getLoopTime()));
-                }
-                taskService.addTask(new BufferManagerTask(deBuffer, false, loopDamage.getLastTime()));
-            }
-
-            if (FuncUtils.notEmpty(skill.getDirectDamage())) {
-                double damage = skillDamageCaculate(role, skill.getDirectDamage());
-                damageTarget(role, damage, skill, role.getTarget());
-            }
-            resourceService.castSkill(role.getResource(), skill);
-            messageService.addCastSkill(role, skill,role.getTarget());
-            log.debug("{} {} cast skill {} to {} {}",
-                    role.getRoleType(), role.getId(), skill.getName(), role.getTarget().getRoleType(), role.getTarget().getId());
+        if (FuncUtils.equals(skill.getRangeType(), RangeType.REMOTE)
+                && skill.getRangeMax() > role.getTargetDistance()
+                && skill.getRangeMin() < role.getTargetDistance()) {
+            return true;
         }
+        return false;
+    }
+
+    private boolean castSkill(Role role, Skill skill) {
+        if (FuncUtils.equals(skill.getEffectType(), EffectType.SOURCE_RANGE)) {
+            Collection<Monster> monsters = role.getMap().findMonstersInDistance(role, skill.getEffictRange());
+            monsters.forEach(monster -> castSkill(role, skill, monster));
+            return true;
+        } else if (FuncUtils.equals(skill.getEffectType(), EffectType.SINGE)
+                || FuncUtils.isEmpty(skill.getEffectType())) {
+            Role target = role.getTarget();
+            return castSkill(role, skill, target);
+        }
+        return false;
+    }
+
+    private boolean castSkill(Role source, Skill skill, Role target) {
+        if (FuncUtils.notEmpty(skill.getDirectDamage())) {
+            double damage = skillDamageCaculate(source, skill.getDirectDamage());
+            damageTarget(source, damage, skill, target);
+        }
+
+        if (FuncUtils.notEmpty(skill.getLoopDamage())) {
+            Buffer deBuffer = bufferService.createBuffer(source, target, skill, BufferType.DE_BUFFER);
+            if (bufferService.containsBuffer(deBuffer)) {
+                return false;
+            }
+            bufferService.addBuffer(deBuffer);
+
+            LoopDamage loopDamage = skill.getLoopDamage();
+            double damage = skillDamageCaculate(source, loopDamage);
+            int n = loopDamage.getLastTime() / loopDamage.getLoopTime();
+            for (int i = 1; i <= n; i++) {
+                taskService.addTask(new LoopDamageTask(deBuffer, damage / n, i * loopDamage.getLoopTime()));
+            }
+            taskService.addTask(new BufferManagerTask(deBuffer, false, loopDamage.getLastTime()));
+        }
+
+        if (FuncUtils.notEmpty(skill.getSourceControl())) {
+            Buffer buffer = bufferService.createBuffer(source, source, skill, skill.getSourceControl().getAnomalyStatus());
+            bufferService.addBuffer(buffer);
+            if (FuncUtils.equals(skill.getSourceControl().getAnomalyStatus(), AnomalyStatus.CHARGING)) {
+                source.setMoveStatus(MoveStatus.MOVEING);
+            }
+        }
+
+        if (FuncUtils.notEmpty(skill.getTargetControl())) {
+            Buffer debuffer = bufferService.createBuffer(source, target, skill, skill.getTargetControl().getAnomalyStatus());
+            bufferService.addBuffer(debuffer);
+            battleService.addFightStatus(source, target);
+            taskService.addTask(new BufferManagerTask(debuffer, false, skill.getTargetControl().getLastTime()));
+        }
+        return true;
     }
 
     private void normalAttack(Role role) {

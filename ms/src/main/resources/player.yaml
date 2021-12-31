@@ -2,7 +2,7 @@ player:
     speed: 2
     attackRange: 1.5
     attackCooldown: 1.5
-    staminaGrow: 1
+    staminaGrow: 20
     strengtGrow: 1
     agilityGrow: 1
     intellectGrow: 1

@@ -31,14 +31,16 @@ public class AnomalyService {
     private TaskService taskService;
 
     public boolean anomalyPass(Role role) {
-        for (Buffer debuffer : role.getBuffers().getAnomalies()) {
-            if (FuncUtils.equals(debuffer.getSkill().getAnomalyStatus(), AnomalyStatus.CHARGING)) {
+        for (Buffer buffer : role.getBuffers().getAnomalies()) {
+            if (FuncUtils.equals(buffer.getAnomalyStatus(), AnomalyStatus.CHARGING)) {
                 if (FuncUtils.equals(role.getMoveStatus(), MoveStatus.STANDING)) {
-                    taskService.addTask(new BufferManagerTask(debuffer, false, 0));
+                    taskService.addTask(new BufferManagerTask(buffer, false, 0));
                 } else if (FuncUtils.equals(role.getMoveStatus(), MoveStatus.MOVEING)) {
                     rootMap.roleChargeToTargetInTick(role);
                     return true;
                 }
+            } else if (FuncUtils.equals(buffer.getAnomalyStatus(), AnomalyStatus.DIZZINESS)) {
+                return true;
             }
         }
 

@@ -14,4 +14,5 @@ public enum SkillType {
     SOURCE_MOVE_SKILL,
     BUFFER_SKILL,
     CONTROL_SKILL,
+    NORMAL_ATTACK,
 }

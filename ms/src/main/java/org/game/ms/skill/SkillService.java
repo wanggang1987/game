@@ -29,8 +29,8 @@ public class SkillService {
     private SkillTemplateCollection skillTemplateCollection;
     private Skill physicalAttack;
 
-    private Map<Profession, List<Skill>> professionSkill = new HashMap<>();
-    private Map<Long, Skill> idSkillMap = new HashMap<>();
+    private final Map<Profession, List<Skill>> professionSkill = new HashMap<>();
+    private final Map<Long, Skill> idSkillMap = new HashMap<>();
 
     @PostConstruct
     private void initSkillTemplate() {
@@ -45,7 +45,7 @@ public class SkillService {
         });
 
         professionSkill.get(Profession.BASIC).forEach(skill -> {
-            if (FuncUtils.equals(skill.getId(), 1110010401000000L)) {
+            if (FuncUtils.equals(skill.getId(), 1110010501000000L)) {
                 physicalAttack = skill;
             }
         });

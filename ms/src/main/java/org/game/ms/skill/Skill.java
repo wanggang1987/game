@@ -19,19 +19,26 @@ import org.springframework.stereotype.Component;
 @Component
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Skill {
-    
+
     private long id;
     private String name;
     private Profession profession;
     private SkillType skillType;
+
+    private RangeType rangeType;
+    private int rangeMin;
+    private int rangeMax;
+    private EffectType effectType;
+    private int effictRange;
+
     private ResourceType resourceType;
     private int cost;
     private double coolDown;
     private double coolDownMax;
-    private int rangeMin;
-    private int rangeMax;
-    private RangeType rangeType;
+
     private DirectDamage directDamage;
     private LoopDamage loopDamage;
-    private AnomalyStatus anomalyStatus;
+    private ControlEffect sourceControl;
+    private ControlEffect targetControl;
+
 }

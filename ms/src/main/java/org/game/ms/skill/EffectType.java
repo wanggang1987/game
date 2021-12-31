@@ -9,11 +9,7 @@ package org.game.ms.skill;
  *
  * @author wanggang
  */
-public enum AnomalyStatus {
-    //冲锋
-    CHARGING,
-    //晕迷
-    DIZZINESS,
-    //减速
-    SPEED_DOWN,
+public enum EffectType {
+    SINGE,
+    SOURCE_RANGE,
 }

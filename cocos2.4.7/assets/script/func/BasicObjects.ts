@@ -29,6 +29,7 @@ export enum SkillType {
     SOURCE_MOVE_SKILL = 'SOURCE_MOVE_SKILL',
     BUFFER_SKILL = 'BUFFER_SKILL',
     CONTROL_SKILL = 'CONTROL_SKILL',
+    NORMAL_ATTACK = 'NORMAL_ATTACK',
 }
 
 export enum LivingStatus {

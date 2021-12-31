@@ -94,7 +94,4 @@ public class MonsterService {
         return levelTemples.get(index);
     }
     
-    public void removeFromMap(Monster monster) {
-        monster.getMap().removeMonsterFromMap(monster);
-    }
 }

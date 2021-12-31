@@ -6,7 +6,7 @@ export class RoleAction {
         if (!castskill || !roleNode || !target || !target.location || target.isAttackAction) {
             return;
         }
-        if (castskill.skillType != SkillType.DAMAGE_SKILL) {
+        if (castskill.skillType != SkillType.NORMAL_ATTACK) {
             return;
         }
 

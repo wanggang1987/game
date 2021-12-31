@@ -121,11 +121,11 @@ public class PlayerService {
         player.setAttackRange(playerTemplate.getAttackRange());
 
         Attribute attribute = player.getAttribute();
-        attribute.setStamina(10 + playerTemplate.getStaminaGrow() * player.getLevel());
-        attribute.setStrengt(10 + playerTemplate.getStrengtGrow() * player.getLevel());
-        attribute.setAgility(10 + playerTemplate.getAgilityGrow() * player.getLevel());
-        attribute.setIntellect(10 + playerTemplate.getIntellectGrow() * player.getLevel());
-        attribute.setSpirit(10 + playerTemplate.getSpiritGrow() * player.getLevel());
+        attribute.setStamina(20 + playerTemplate.getStaminaGrow() * player.getLevel());
+        attribute.setStrengt(20 + playerTemplate.getStrengtGrow() * player.getLevel());
+        attribute.setAgility(20 + playerTemplate.getAgilityGrow() * player.getLevel());
+        attribute.setIntellect(20 + playerTemplate.getIntellectGrow() * player.getLevel());
+        attribute.setSpirit(20 + playerTemplate.getSpiritGrow() * player.getLevel());
 
         player.setHealthMax(attribute.getStamina() * 10);
         player.setHealthPoint(player.getHealthMax());
@@ -144,8 +144,6 @@ public class PlayerService {
     private void skillInit(Player player) {
         player.getSkills().clear();
         player.setNormalAttack(skillService.physicalAttack());
-        player.getSkills().add(skillService.getSkillById(1110020401000000L));
-        player.getSkills().add(skillService.getSkillById(1110020101000000L));
-        player.getSkills().add(skillService.getSkillById(1110020402000000L));
+        player.getSkills().add(skillService.getSkillById(1110020302000000L));
     }
 }

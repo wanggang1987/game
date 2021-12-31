@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.func.FuncUtils;
+import org.game.ms.func.JsonUtils;
 import org.game.ms.id.IdService;
 import org.game.ms.lifecycle.LifeCycle;
 import org.game.ms.monster.Monster;
@@ -128,5 +129,17 @@ public class BattleService {
             });
         }
         log.debug("battle {} players {} monsters {}", newBattle.getId(), newBattle.getPlayers().size(), newBattle.getMonsters().size());
+    }
+
+    public Monster findMonsterFromBattle(Battle battle) {
+        if (FuncUtils.isEmpty(battle)) {
+            return null;
+        }
+
+        log.info("11111111111111 {} {} ", battle.getPlayers().size(), battle.getMonsters().size());
+        battle.getMonsters().forEach(monster -> log.debug(JsonUtils.bean2json(monster)));
+        
+
+        return battle.getMonsters().stream().findAny().orElse(null);
     }
 }

@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.game.ms.client.MessageService;
 import org.game.ms.fight.BattleService;
 import org.game.ms.func.FuncUtils;
+import org.game.ms.map.RootMap;
 import org.game.ms.monster.Monster;
 import org.game.ms.monster.MonsterService;
 import org.game.ms.player.Player;
@@ -42,6 +43,8 @@ public class LifeCycle {
     private BattleService battleService;
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private RootMap rootMap;
 
     private final Map<Long, Player> onlinePlayers = new ConcurrentHashMap<>();
     private final Map<Long, Monster> onlineMonsters = new ConcurrentHashMap<>();
@@ -95,7 +98,7 @@ public class LifeCycle {
                 .collect(Collectors.toList());
         deadList.forEach(monster -> {
             monster.setLivingStatus(LivingStatus.DEAD);
-            monsterService.removeFromMap(monster);
+            rootMap.removeMonsterFromMap(monster);
             onlineMonsters.remove(monster.getId());
             monsterReward(monster);
             battleService.removeMonsterFromBattle(monster);

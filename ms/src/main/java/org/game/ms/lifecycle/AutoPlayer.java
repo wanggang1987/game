@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.fight.AnomalyService;
+import org.game.ms.fight.BattleService;
 import org.game.ms.fight.FightService;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.map.RootMap;
@@ -36,6 +37,8 @@ public class AutoPlayer {
     private RootMap rootMap;
     @Autowired
     private AnomalyService anomalyService;
+    @Autowired
+    private BattleService battleService;
 
     private final List<Player> autoPlayers = new ArrayList<>();
 
@@ -56,6 +59,9 @@ public class AutoPlayer {
         }
         if (FuncUtils.isEmpty(player.getTarget())) {
             player.setAttackStatus(AttackStatus.NOT_ATTACK);
+            player.setTarget(battleService.findMonsterFromBattle(player.getBattle()));
+        }
+        if (FuncUtils.isEmpty(player.getTarget())) {
             player.setTarget(rootMap.findNearByMonsterIdForPlayer(player));
             return;
         }
@@ -66,10 +72,10 @@ public class AutoPlayer {
             player.setTarget(null);
             return;
         }
+
         if (anomalyService.anomalyPass(player)) {
             return;
         }
-
         autoAttack(player);
         autoMove(player);
     }

@@ -43,7 +43,7 @@ public class ResourceService {
         return FuncUtils.numberCompare(resource.getSkillCooldown(), 0) == 0;
     }
 
-    public boolean skillCoolDownReady(Skill skill) {
+    private boolean skillCoolDownReady(Skill skill) {
         return FuncUtils.numberCompare(skill.getCoolDown(), 0) == 0;
     }
 
@@ -72,7 +72,13 @@ public class ResourceService {
         }
     }
 
-    public boolean skillCostResourceEnough(Resource resource, Skill skill) {
+    public boolean castSkillReady(Resource resource, Skill skill) {
+        return skillCostResourceEnough(resource, skill)
+                && generalSkillCoolDownReady(resource)
+                && skillCoolDownReady(skill);
+    }
+
+    private boolean skillCostResourceEnough(Resource resource, Skill skill) {
         if (FuncUtils.isEmpty(skill.getResourceType())) {
             return true;
         } else if (FuncUtils.equals(skill.getResourceType(), ResourceType.ANGER)

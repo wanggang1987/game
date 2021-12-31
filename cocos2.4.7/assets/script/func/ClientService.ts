@@ -48,7 +48,7 @@ export default class ClientService extends cc.Component {
         messageStack.forEach(wsMessage => {
             let message: WsMessage = wsMessage;
             if (message.messageType == MessageType.HERO_UPDATE) {
-                // console.log(message, message.messageType);
+                console.log(message, message.messageType);
                 this.roleCollection.updateHeroAttribute(message.attributeMsg);
                 this.roleCollection.updateFightStatus(message.fightStatusMsg);
             }
@@ -57,7 +57,7 @@ export default class ClientService extends cc.Component {
                 this.roleCollection.updateLocation(message.locationMsg);
             }
             else if (message.messageType == MessageType.ATTRIBUTE) {
-                // console.log(message, message.messageType);
+                console.log(message, message.messageType);
                 this.roleCollection.updateAttribute(message.attributeMsg);
             }
             else if (message.messageType == MessageType.FIGHTSTATUS) {
@@ -65,11 +65,11 @@ export default class ClientService extends cc.Component {
                 this.roleCollection.updateFightStatus(message.fightStatusMsg);
             }
             else if (message.messageType == MessageType.CASTSKILL) {
-                // console.log(message, message.messageType);
+                console.log(message, message.messageType);
                 this.roleCollection.roleCastSkill(message.castSkillMsg);
             }
             else if (message.messageType == MessageType.FIGHTDAMAGE) {
-                // console.log(message, message.messageType);
+                console.log(message, message.messageType);
                 this.roleCollection.fightDamage(message.fightDamageMsg);
                 this.uiCollection.addDamageMsg(message.fightDamageMsg);
             }

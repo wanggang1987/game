@@ -6,6 +6,7 @@
 package org.game.ms.lifecycle;
 
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.fight.AnomalyService;
 import org.game.ms.fight.FightService;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.map.RootMap;
@@ -23,7 +24,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class AutoMonster {
-    
+
     @Autowired
     private FightService fightService;
     @Autowired
@@ -32,7 +33,9 @@ public class AutoMonster {
     private MonsterService monsterService;
     @Autowired
     private RootMap rootMap;
-    
+    @Autowired
+    private AnomalyService anomalyService;
+
     private void MonsterAuto(Monster monster) {
         if (FuncUtils.isEmpty(monster.getBattle()) && FuncUtils.notEmpty(monster.getTarget())) {
             monsterService.initMonster(monster);
@@ -46,18 +49,23 @@ public class AutoMonster {
         if (FuncUtils.isEmpty(monster.getTarget())) {
             return;
         }
+
+        if (anomalyService.anomalyPass(monster)) {
+            return;
+        }
+
         autoAttack(monster);
         autoMove(monster);
     }
-    
+
     private void autoAttack(Monster monster) {
         fightService.autoFight(monster);
     }
-    
+
     public void autoMonsterForTick() {
         lifeCycle.onlineMonsters().forEach(monster -> MonsterAuto(monster));
     }
-    
+
     private void autoMove(Monster monster) {
         if (FuncUtils.equals(monster.getAttackStatus(), AttackStatus.OUT_RANGE)
                 && FuncUtils.equals(monster.getMoveStatus(), MoveStatus.STANDING)) {
