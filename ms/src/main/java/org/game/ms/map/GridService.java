@@ -7,6 +7,7 @@ package org.game.ms.map;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.func.JsonUtils;
 
 /**
  *
@@ -105,11 +107,27 @@ public class GridService {
     }
 
     public void removePlayerFromGrid(Player player) {
-        playersInGrid(player.getLocation().getGrid()).remove(player);
+        List<Player> players = playersInGrid(player.getLocation().getGrid());
+        Iterator it = players.iterator();
+        while (it.hasNext()) {
+            Player next = (Player) it.next();
+            if (FuncUtils.equals(next.getId(), player.getId())) {
+                it.remove();
+                break;
+            }
+        }
     }
 
     public void removeMonsterFromGrid(Monster monster) {
-        monstersInGrid(monster.getLocation().getGrid()).remove(monster);
+        List<Monster> monsters = monstersInGrid(monster.getLocation().getGrid());
+        Iterator it = monsters.iterator();
+        while (it.hasNext()) {
+            Monster next = (Monster) it.next();
+            if (FuncUtils.equals(next.getId(), monster.getId())) {
+                it.remove();
+                break;
+            }
+        }
     }
 
     public List<Monster> monstersInGrid(String grid) {

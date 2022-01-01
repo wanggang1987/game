@@ -6,6 +6,7 @@
 package org.game.ms.lifecycle;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.fight.AnomalyService;
@@ -48,7 +49,14 @@ public class AutoPlayer {
     }
 
     public void removePlayerAutoPlay(Player player) {
-        autoPlayers.remove(player);
+        Iterator it = autoPlayers.iterator();
+        while (it.hasNext()) {
+            Player next = (Player) it.next();
+            if (FuncUtils.equals(next.getId(), player.getId())) {
+                it.remove();
+                break;
+            }
+        }
     }
 
     private void playerAuto(Player player) {

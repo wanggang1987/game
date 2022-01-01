@@ -6,15 +6,15 @@
 package org.game.ms.fight;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.func.FuncUtils;
-import org.game.ms.func.JsonUtils;
 import org.game.ms.id.IdService;
 import org.game.ms.lifecycle.LifeCycle;
 import org.game.ms.monster.Monster;
 import org.game.ms.player.Player;
+import org.game.ms.role.LivingStatus;
 import org.game.ms.role.Role;
 import org.game.ms.role.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,18 +42,22 @@ public class BattleService {
     }
 
     public void removeEndBattle() {
-        List<Battle> removeList = battles.stream()
-                .filter(battle -> battle.getPlayers().isEmpty() || battle.getMonsters().isEmpty())
-                .collect(Collectors.toList());
-        removeList.forEach(battle -> {
-            battle.getPlayers().forEach(player -> player.setBattle(null));
-            battle.getMonsters().forEach(monster -> monster.setBattle(null));
-            log.debug("battle end {}", battle);
-        });
-        battles.removeAll(removeList);
+        Iterator it = battles.iterator();
+        while (it.hasNext()) {
+            Battle battle = (Battle) it.next();
+            if (battle.getPlayers().isEmpty() || battle.getMonsters().isEmpty()) {
+                battle.getPlayers().forEach(player -> player.setBattle(null));
+                battle.getMonsters().forEach(monster -> monster.setBattle(null));
+                it.remove();
+                log.debug("battle end {}", battle);
+            }
+        }
     }
 
     private void addRoleToBattle(Role role, Battle battle) {
+        if (FuncUtils.notEquals(role.getLivingStatus(), LivingStatus.LIVING)) {
+            return;
+        }
         role.setBattle(battle);
         if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
             Player player = lifeCycle.onlinePlayer(role.getId());
@@ -64,26 +68,6 @@ public class BattleService {
         }
     }
 
-    public void removePlayerFromBattle(Player player) {
-        Battle battle = player.getBattle();
-        if (battle == null) {
-            return;
-        }
-        battle.getPlayers().remove(player);
-        player.setBattle(null);
-        log.debug("battle {} players {} monsters {}", battle.getId(), battle.getPlayers().size(), battle.getMonsters().size());
-    }
-
-    public void removeMonsterFromBattle(Monster monster) {
-        Battle battle = monster.getBattle();
-        if (battle == null) {
-            return;
-        }
-        battle.getMonsters().remove(monster);
-        monster.setBattle(null);
-        log.debug("battle {} players {} monsters {}", battle.getId(), battle.getPlayers().size(), battle.getMonsters().size());
-    }
-
     public void removeRoleFromBattle(Role role) {
         Battle battle = role.getBattle();
         if (battle == null) {
@@ -91,12 +75,26 @@ public class BattleService {
         }
         if (FuncUtils.equals(role.getRoleType(), RoleType.PLAYER)) {
             Player player = lifeCycle.onlinePlayer(role.getId());
-            battle.getPlayers().remove(player);
-            player.setBattle(null);
+            Iterator it = battle.getPlayers().iterator();
+            while (it.hasNext()) {
+                Player next = (Player) it.next();
+                if (FuncUtils.equals(next.getId(), player.getId())) {
+                    it.remove();
+                    player.setBattle(null);
+                    break;
+                }
+            }
         } else if (FuncUtils.equals(role.getRoleType(), RoleType.MONSTER)) {
             Monster monster = lifeCycle.onlineMonster(role.getId());
-            battle.getMonsters().remove(monster);
-            monster.setBattle(null);
+            Iterator it = battle.getMonsters().iterator();
+            while (it.hasNext()) {
+                Monster next = (Monster) it.next();
+                if (FuncUtils.equals(next.getId(), monster.getId())) {
+                    it.remove();
+                    monster.setBattle(null);
+                    break;
+                }
+            }
         }
         log.debug("battle {} players {} monsters {}", battle.getId(), battle.getPlayers().size(), battle.getMonsters().size());
     }
@@ -135,11 +133,6 @@ public class BattleService {
         if (FuncUtils.isEmpty(battle)) {
             return null;
         }
-
-        log.info("11111111111111 {} {} ", battle.getPlayers().size(), battle.getMonsters().size());
-        battle.getMonsters().forEach(monster -> log.debug(JsonUtils.bean2json(monster)));
-        
-
         return battle.getMonsters().stream().findAny().orElse(null);
     }
 }

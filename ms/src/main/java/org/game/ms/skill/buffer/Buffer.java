@@ -27,4 +27,5 @@ public class Buffer {
     private Role source;
     @JsonIgnore
     private Role target;
+
 }

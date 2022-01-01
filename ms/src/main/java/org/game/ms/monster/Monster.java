@@ -17,4 +17,5 @@ import org.game.ms.role.Role;
 public class Monster extends Role {
 
     private MonsterTemplate template;
+    
 }

@@ -5,6 +5,7 @@
  */
 package org.game.ms.skill.buffer;
 
+import java.util.Iterator;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.game.ms.func.FuncUtils;
@@ -28,33 +29,46 @@ public class BufferService {
                 return;
             }
             buffers.getBuffers().add(buffer);
-            log.debug("addBuffer {} ", buffer);
+            log.debug("addBuffer {} {} {}", buffer.getSource().getId(), buffer.getSkill().getName(), buffer.getTarget().getId());
         } else if (FuncUtils.equals(buffer.getType(), BufferType.DE_BUFFER)) {
             if (buffers.getDeBuffers().contains(buffer)) {
                 return;
             }
             buffers.getDeBuffers().add(buffer);
-            log.debug("addDeBuffer {}", buffer);
+            log.debug("addDeBuffer {} {} {}", buffer.getSource().getId(), buffer.getSkill().getName(), buffer.getTarget().getId());
         } else if (FuncUtils.equals(buffer.getType(), BufferType.ANOMALY)) {
             if (buffers.getAnomalies().contains(buffer)) {
                 return;
             }
             buffers.getAnomalies().add(buffer);
-            log.debug("addAnomaly {}", buffer);
+            log.debug("addAnomaly {} {} {}", buffer.getSource().getId(), buffer.getSkill().getName(), buffer.getTarget().getId());
+        }
+    }
+
+    private void removeBuffer(List<Buffer> list, Buffer buffer) {
+        Iterator it = list.iterator();
+        while (it.hasNext()) {
+            Buffer next = (Buffer) it.next();
+            if (FuncUtils.equals(next.getSource().getId(), buffer.getSource().getId())
+                    && FuncUtils.equals(next.getTarget().getId(), buffer.getTarget().getId())
+                    && FuncUtils.equals(next.getSkill().getId(), buffer.getSkill().getId())) {
+                it.remove();
+                break;
+            }
         }
     }
 
     public void removeBuffer(Buffer buffer) {
         Buffers buffers = buffer.getTarget().getBuffers();
         if (FuncUtils.equals(buffer.getType(), BufferType.BUFFER)) {
-            buffers.getBuffers().remove(buffer);
-            log.debug("removeBuffer {} ", buffer);
+            removeBuffer(buffers.getBuffers(), buffer);
+            log.debug("removeBuffer {} {} {}", buffer.getSource().getId(), buffer.getSkill().getName(), buffer.getTarget().getId());
         } else if (FuncUtils.equals(buffer.getType(), BufferType.DE_BUFFER)) {
-            buffers.getDeBuffers().remove(buffer);
-            log.debug("removeDeBuffer {}", buffer);
+            removeBuffer(buffers.getDeBuffers(), buffer);
+            log.debug("removeDeBuffer {} {} {}", buffer.getSource().getId(), buffer.getSkill().getName(), buffer.getTarget().getId());
         } else if (FuncUtils.equals(buffer.getType(), BufferType.ANOMALY)) {
-            buffers.getAnomalies().remove(buffer);
-            log.debug("removeAnomaly {}", buffer);
+            removeBuffer(buffers.getAnomalies(), buffer);
+            log.debug("removeAnomaly {} {} {}", buffer.getSource().getId(), buffer.getSkill().getName(), buffer.getTarget().getId());
         }
     }
 

@@ -98,10 +98,10 @@ public class LifeCycle {
                 .collect(Collectors.toList());
         deadList.forEach(monster -> {
             monster.setLivingStatus(LivingStatus.DEAD);
-            rootMap.removeMonsterFromMap(monster);
-            onlineMonsters.remove(monster.getId());
             monsterReward(monster);
-            battleService.removeMonsterFromBattle(monster);
+            rootMap.removeMonsterFromMap(monster);
+            battleService.removeRoleFromBattle(monster);
+            onlineMonsters.remove(monster.getId());
             messageService.addRoleDieMsg(monster);
             log.debug("monster {} die", monster.getId());
         });
@@ -128,7 +128,7 @@ public class LifeCycle {
                 .collect(Collectors.toList());
         deadList.forEach(player -> {
             player.setLivingStatus(LivingStatus.DEAD);
-            battleService.removePlayerFromBattle(player);
+            battleService.removeRoleFromBattle(player);
             messageService.addRoleDieMsg(player);
             log.debug("player {} die", player.getId());
         });
