@@ -10,4 +10,5 @@ public class ControlEffect {
 
     private AnomalyStatus anomalyStatus;
     private int lastTime;
+    private int persent;
 }

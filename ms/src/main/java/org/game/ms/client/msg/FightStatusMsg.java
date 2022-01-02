@@ -22,6 +22,7 @@ public class FightStatusMsg {
     private long updateTime;
     private long id;
     private RoleType roleType;
+    private double finalSpeed;
     private double healthPoint;
     private double healthMax;
     private LivingStatus livingStatus;

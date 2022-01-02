@@ -24,6 +24,5 @@ public class AttributeMsg {
     private RoleType roleType;
     private String name;
     private int level;
-    private double speed;
 
 }

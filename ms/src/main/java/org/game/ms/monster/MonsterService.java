@@ -61,7 +61,8 @@ public class MonsterService {
         monster.setId(idService.newId());
         monster.setName(template.getName());
         monster.setLevel(template.getLevel());
-        monster.setSpeed(template.getSpeed() / 1000);
+        monster.setBaseSpeed(template.getSpeed() / 1000);
+        monster.setFinalSpeed(monster.getBaseSpeed());
         monster.setAttackRange(template.getAttackRange());
         
         Attribute roleAttribute = monster.getAttribute();

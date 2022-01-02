@@ -12,5 +12,4 @@ package org.game.ms.skill.buffer;
 public enum BufferType {
     BUFFER,
     DE_BUFFER,
-    ANOMALY
 }

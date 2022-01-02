@@ -104,7 +104,6 @@ export interface Attribute {
     roleType: RoleType;
     name: string;
     level: number;
-    speed: number;
 }
 
 export interface FightStatus {

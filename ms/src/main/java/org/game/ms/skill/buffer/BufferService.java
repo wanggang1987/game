@@ -8,10 +8,12 @@ package org.game.ms.skill.buffer;
 import java.util.Iterator;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.game.ms.fight.AnomalyService;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.role.Role;
-import org.game.ms.skill.AnomalyStatus;
+import org.game.ms.skill.ControlEffect;
 import org.game.ms.skill.Skill;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -22,27 +24,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class BufferService {
 
+    @Autowired
+    private AnomalyService anomalyService;
+
     public void addBuffer(Buffer buffer) {
         Buffers buffers = buffer.getTarget().getBuffers();
+        if (containsBuffer(buffer)) {
+            return;
+        }
         if (FuncUtils.equals(buffer.getType(), BufferType.BUFFER)) {
-            if (buffers.getBuffers().contains(buffer)) {
-                return;
-            }
             buffers.getBuffers().add(buffer);
             log.debug("addBuffer {} {} {}", buffer.getSource().getId(), buffer.getSkill().getName(), buffer.getTarget().getId());
         } else if (FuncUtils.equals(buffer.getType(), BufferType.DE_BUFFER)) {
-            if (buffers.getDeBuffers().contains(buffer)) {
-                return;
-            }
             buffers.getDeBuffers().add(buffer);
             log.debug("addDeBuffer {} {} {}", buffer.getSource().getId(), buffer.getSkill().getName(), buffer.getTarget().getId());
-        } else if (FuncUtils.equals(buffer.getType(), BufferType.ANOMALY)) {
-            if (buffers.getAnomalies().contains(buffer)) {
-                return;
-            }
-            buffers.getAnomalies().add(buffer);
-            log.debug("addAnomaly {} {} {}", buffer.getSource().getId(), buffer.getSkill().getName(), buffer.getTarget().getId());
         }
+        anomalyService.attributeUpdate(buffer);
     }
 
     private void removeBuffer(List<Buffer> list, Buffer buffer) {
@@ -66,10 +63,8 @@ public class BufferService {
         } else if (FuncUtils.equals(buffer.getType(), BufferType.DE_BUFFER)) {
             removeBuffer(buffers.getDeBuffers(), buffer);
             log.debug("removeDeBuffer {} {} {}", buffer.getSource().getId(), buffer.getSkill().getName(), buffer.getTarget().getId());
-        } else if (FuncUtils.equals(buffer.getType(), BufferType.ANOMALY)) {
-            removeBuffer(buffers.getAnomalies(), buffer);
-            log.debug("removeAnomaly {} {} {}", buffer.getSource().getId(), buffer.getSkill().getName(), buffer.getTarget().getId());
         }
+        anomalyService.attributeUpdate(buffer);
     }
 
     public Buffer createBuffer(Role source, Role target, Skill skill, BufferType type) {
@@ -81,24 +76,34 @@ public class BufferService {
         return buffer;
     }
 
-    public Buffer createBuffer(Role source, Role target, Skill skill, AnomalyStatus status) {
+    public Buffer createBuffer(Role source, Role target, Skill skill, BufferType type, ControlEffect control) {
         Buffer buffer = new Buffer();
         buffer.setSource(source);
         buffer.setTarget(target);
         buffer.setSkill(skill);
-        buffer.setType(BufferType.ANOMALY);
-        buffer.setAnomalyStatus(status);
+        buffer.setType(type);
+        buffer.setControl(control);
         return buffer;
     }
 
     public boolean containsBuffer(Buffer buffer) {
         Buffers buffers = buffer.getTarget().getBuffers();
         if (FuncUtils.equals(buffer.getType(), BufferType.BUFFER)) {
-            return buffers.getBuffers().contains(buffer);
+            for (Buffer next : buffers.getBuffers()) {
+                if (FuncUtils.equals(next.getSource().getId(), buffer.getSource().getId())
+                        && FuncUtils.equals(next.getTarget().getId(), buffer.getTarget().getId())
+                        && FuncUtils.equals(next.getSkill().getId(), buffer.getSkill().getId())) {
+                    return true;
+                }
+            }
         } else if (FuncUtils.equals(buffer.getType(), BufferType.DE_BUFFER)) {
-            return buffers.getDeBuffers().contains(buffer);
-        } else if (FuncUtils.equals(buffer.getType(), BufferType.ANOMALY)) {
-            return buffers.getAnomalies().contains(buffer);
+            for (Buffer next : buffers.getDeBuffers()) {
+                if (FuncUtils.equals(next.getSource().getId(), buffer.getSource().getId())
+                        && FuncUtils.equals(next.getTarget().getId(), buffer.getTarget().getId())
+                        && FuncUtils.equals(next.getSkill().getId(), buffer.getSkill().getId())) {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -106,7 +111,5 @@ public class BufferService {
     public void clear(Buffers buffers) {
         buffers.getBuffers().clear();
         buffers.getDeBuffers().clear();
-        buffers.getAnomalies().clear();
     }
-
 }

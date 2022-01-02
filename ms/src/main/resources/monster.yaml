@@ -12,7 +12,7 @@ template:
             speed: 1,
             attackRange: 1,
             attackCooldown: 2,
-            health: 50,
+            health: 300,
             attackPower: 20,
         }
         - { name: 狼,
@@ -20,6 +20,6 @@ template:
             speed: 1,
             attackRange: 1,
             attackCooldown: 2,
-            health: 50,
+            health: 200,
             attackPower: 30,
         }

@@ -20,5 +20,4 @@ public class Buffers {
 
     private List<Buffer> buffers = new ArrayList<>();
     private List<Buffer> deBuffers = new ArrayList<>();
-    private List<Buffer> anomalies = new ArrayList<>();
 }

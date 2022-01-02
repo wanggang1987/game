@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import org.game.ms.role.Role;
-import org.game.ms.skill.AnomalyStatus;
+import org.game.ms.skill.ControlEffect;
 import org.game.ms.skill.Skill;
 
 /**
@@ -21,7 +21,7 @@ import org.game.ms.skill.Skill;
 public class Buffer {
 
     private BufferType type;
-    private AnomalyStatus anomalyStatus;
+    private ControlEffect control;
     private Skill skill;
     @JsonIgnore
     private Role source;

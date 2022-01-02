@@ -30,7 +30,8 @@ public class Role {
     private RoleType roleType;
     private String name;
     private int level;
-    private double speed;
+    private double baseSpeed;
+    private double finalSpeed;
     private double attackRange;
     private Attribute attribute = new Attribute();
 

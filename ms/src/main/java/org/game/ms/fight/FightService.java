@@ -124,7 +124,7 @@ public class FightService {
         }
 
         if (FuncUtils.notEmpty(skill.getSourceControl())) {
-            Buffer buffer = bufferService.createBuffer(source, source, skill, skill.getSourceControl().getAnomalyStatus());
+            Buffer buffer = bufferService.createBuffer(source, source, skill, BufferType.DE_BUFFER, skill.getSourceControl());
             bufferService.addBuffer(buffer);
             if (FuncUtils.equals(skill.getSourceControl().getAnomalyStatus(), AnomalyStatus.CHARGING)) {
                 source.setMoveStatus(MoveStatus.MOVEING);
@@ -132,7 +132,7 @@ public class FightService {
         }
 
         if (FuncUtils.notEmpty(skill.getTargetControl())) {
-            Buffer debuffer = bufferService.createBuffer(source, target, skill, skill.getTargetControl().getAnomalyStatus());
+            Buffer debuffer = bufferService.createBuffer(source, target, skill, BufferType.DE_BUFFER, skill.getTargetControl());
             bufferService.addBuffer(debuffer);
             battleService.addFightStatus(source, target);
             taskService.addTask(new BufferManagerTask(debuffer, false, skill.getTargetControl().getLastTime()));

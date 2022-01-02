@@ -101,6 +101,7 @@ template:
             targetControl: {
                 anomalyStatus: SPEED_DOWN,
                 lastTime: 6000,
+                persent: 50,
             },
         }
     #    乘胜追击，杀死能获得经验值的目标后效果还未实现,先设置冷却时间30秒
