@@ -68,7 +68,8 @@ public class MonsterService {
         Attribute roleAttribute = monster.getAttribute();
         monster.setHealthMax(template.getHealth());
         monster.setHealthPoint(monster.getHealthMax());
-        roleAttribute.setAttackPower(template.getAttackPower());
+        roleAttribute.setBaseAttackPower(template.getAttackPower());
+        roleAttribute.setFinalAttackPower(roleAttribute.getBaseAttackPower());
         
         monster.setAttackStatus(AttackStatus.NOT_ATTACK);
         monster.setMoveStatus(MoveStatus.STANDING);

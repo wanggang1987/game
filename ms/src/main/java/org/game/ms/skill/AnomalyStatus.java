@@ -14,8 +14,8 @@ public enum AnomalyStatus {
     CHARGING,
     //晕迷
     DIZZINESS,
-    //加速
-    SPEED_UP,
-    //减速
-    SPEED_DOWN,
+    //速度
+    SPEED,
+    //攻击强度 
+    ATTACK_POWER,
 }

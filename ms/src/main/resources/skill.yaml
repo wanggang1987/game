@@ -55,6 +55,24 @@ template:
                 attackPowerRate: 1,
             }
         }
+    #    乘胜追击，杀死能获得经验值的目标后效果还未实现,先设置冷却时间10秒
+        - { id: 1110020402000000,
+            name: Victory Rush,
+            profession: WARRIOR,
+            skillType: DAMAGE_SKILL,
+            rangeType: MELEE,
+            coolDownMax: 10000,
+            directDamage: {
+                damageType: PHYSICAL,
+                attackPowerRate: 1,
+            }
+        }
+    #    盾牌猛击
+        - { id: 1110020403000000,
+            name: Shield Slam,
+            profession: WARRIOR,
+            skillType: DAMAGE_SKILL,
+        }
     #    冲锋
         - { id: 1110020101000000,
             name: Charge,
@@ -65,7 +83,7 @@ template:
             rangeMax: 10,
             resourceType: ANGER,
             cost: -9,
-            coolDownMax: 30000,
+            coolDownMax: 15000,
             sourceControl: {
                 anomalyStatus: CHARGING,
             },
@@ -77,6 +95,18 @@ template:
     #    暴怒
         - { id: 1110020201000000,
             name: Rampage,
+            profession: WARRIOR,
+            skillType: BUFFER_SKILL,
+        }
+    #    盾牌格挡
+        - { id: 1110020202000000,
+            name: Shield Block,
+            profession: WARRIOR,
+            skillType: BUFFER_SKILL,
+        }
+    #    盾墙
+        - { id: 1110020203000000,
+            name: Shield Wall,
             profession: WARRIOR,
             skillType: BUFFER_SKILL,
         }
@@ -99,20 +129,46 @@ template:
             cost: 10,
             coolDownMax: 6000,
             targetControl: {
-                anomalyStatus: SPEED_DOWN,
+                anomalyStatus: SPEED,
                 lastTime: 6000,
-                persent: 50,
+                persent: -50,
             },
         }
-    #    乘胜追击，杀死能获得经验值的目标后效果还未实现,先设置冷却时间30秒
-        - { id: 1110020402000000,
-            name: Victory Rush,
+    #    挫志怒吼
+        - { id: 1110020303000000,
+            name: Demoralizing Shout,
             profession: WARRIOR,
-            skillType: DAMAGE_SKILL,
+            skillType: CONTROL_SKILL,
+            rangeType: REMOTE,
+            rangeMax: 5,
+            effectType: SOURCE_RANGE,
+            effictRange: 5,
+            resourceType: ANGER,
+            cost: 10,
+            coolDownMax: 6000,
+            targetControl: {
+                anomalyStatus: ATTACK_POWER,
+                lastTime: 6000,
+                persent: -35,
+            },
+        }
+    #    断筋 
+        - { id: 1110020304000000,
+            name: Hamstring,
+            profession: WARRIOR,
+            skillType: CONTROL_SKILL,
             rangeType: MELEE,
-            coolDownMax: 30000,
-            directDamage: {
-                damageType: PHYSICAL,
-                attackPowerRate: 1,
-            }
+            resourceType: ANGER,
+            cost: 10,
+            targetControl: {
+                anomalyStatus: SPEED,
+                lastTime: 15000,
+                persent: -50,
+            },
+        }
+    #    盾击 
+        - { id: 1110020305000000,
+            name: Shield Bash,
+            profession: WARRIOR,
+            skillType: CONTROL_SKILL,
         }

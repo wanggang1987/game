@@ -125,6 +125,9 @@ public class FightService {
 
         if (FuncUtils.notEmpty(skill.getSourceControl())) {
             Buffer buffer = bufferService.createBuffer(source, source, skill, BufferType.DE_BUFFER, skill.getSourceControl());
+            if (bufferService.containsBuffer(buffer)) {
+                return false;
+            }
             bufferService.addBuffer(buffer);
             if (FuncUtils.equals(skill.getSourceControl().getAnomalyStatus(), AnomalyStatus.CHARGING)) {
                 source.setMoveStatus(MoveStatus.MOVEING);
@@ -133,6 +136,9 @@ public class FightService {
 
         if (FuncUtils.notEmpty(skill.getTargetControl())) {
             Buffer debuffer = bufferService.createBuffer(source, target, skill, BufferType.DE_BUFFER, skill.getTargetControl());
+            if (bufferService.containsBuffer(debuffer)) {
+                return false;
+            }
             bufferService.addBuffer(debuffer);
             battleService.addFightStatus(source, target);
             taskService.addTask(new BufferManagerTask(debuffer, false, skill.getTargetControl().getLastTime()));
@@ -166,7 +172,7 @@ public class FightService {
 
     private double skillDamageCaculate(Role source, DamageBase damageBase) {
         Attribute sourceAttribute = source.getAttribute();
-        double damage = sourceAttribute.getAttackPower() * damageBase.getAttackPowerRate();
+        double damage = sourceAttribute.getFinalAttackPower() * damageBase.getAttackPowerRate();
         if (damage < 1) {
             damage = 1;
         }

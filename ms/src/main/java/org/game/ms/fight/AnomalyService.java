@@ -25,14 +25,14 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class AnomalyService {
-    
+
     @Autowired
     private RootMap rootMap;
     @Autowired
     private TaskService taskService;
     @Autowired
     private RoleService roleService;
-    
+
     public boolean anomalyPass(Role role) {
         for (Buffer buffer : role.getBuffers().getDeBuffers()) {
             if (FuncUtils.isEmpty(buffer.getControl())) {
@@ -49,17 +49,19 @@ public class AnomalyService {
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
     public void attributeUpdate(Buffer buffer) {
         if (FuncUtils.isEmpty(buffer.getControl())) {
             return;
         }
-        if (FuncUtils.equals(buffer.getControl().getAnomalyStatus(), AnomalyStatus.SPEED_DOWN)) {
+        if (FuncUtils.equals(buffer.getControl().getAnomalyStatus(), AnomalyStatus.SPEED)) {
             roleService.updateSpeed(buffer.getTarget());
+        } else if (FuncUtils.equals(buffer.getControl().getAnomalyStatus(), AnomalyStatus.ATTACK_POWER)) {
+            roleService.updateAttackPower(buffer.getTarget());
         }
     }
-    
+
 }

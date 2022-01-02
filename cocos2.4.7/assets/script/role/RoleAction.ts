@@ -36,6 +36,10 @@ export class RoleAction {
     }
 
     public static showSkill(castskill: CastSkill, roleNode: cc.Node, lableNode: cc.Node) {
+        if (castskill.skillType == SkillType.NORMAL_ATTACK) {
+            return;
+        }
+
         roleNode.addChild(lableNode);
         let lable: cc.Label = lableNode.getComponent(cc.Label);
         lable.string = castskill.skillName;

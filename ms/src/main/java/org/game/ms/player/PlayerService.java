@@ -32,7 +32,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class PlayerService {
-    
+
     @Autowired
     private IdService idService;
     @Autowired
@@ -47,14 +47,14 @@ public class PlayerService {
     private SkillService skillService;
     @Autowired
     private BufferService bufferService;
-    
+
     private final Map<Profession, PlayerTemplate> professionMap = new HashMap<>();
-    
+
     @PostConstruct
     private void init() {
         professionMap.put(Profession.WARRIOR, warriorTample);
     }
-    
+
     public Player createPlayer(String name) {
         //init role
         Player player = new Player();
@@ -68,11 +68,11 @@ public class PlayerService {
         PlayerPO ppo = new PlayerPO();
         ppo.setStr(JsonUtils.bean2json(player));
         playerMapper.insert(ppo);
-        
+
         log.debug("init player {} ", player.getId());
         return player;
     }
-    
+
     public void playerReborn(Player player) {
         initPlayer(player);
         player.getMap().playerLeaveMap(player);
@@ -81,7 +81,7 @@ public class PlayerService {
         messageService.heroUpdate(player);
         log.debug("playerReborn {} {}", player.getId(), player.getLocation());
     }
-    
+
     public void playerGetExp(Player player, int exp) {
         int now = player.getExperience() + exp;
         int need = Experience.UpgradeNead(player.getLevel());
@@ -94,13 +94,13 @@ public class PlayerService {
         }
         player.setExperience(now);
     }
-    
+
     public void playerGetCoin(Player player, int coin) {
         int now = player.getCoin() + coin;
         player.setCoin(now);
         log.info("player {} coin {}", player.getId(), now);
     }
-    
+
     private void initPlayer(Player player) {
         player.setRoleType(RoleType.PLAYER);
         player.setAttackStatus(AttackStatus.NOT_ATTACK);
@@ -111,43 +111,46 @@ public class PlayerService {
         skillInit(player);
         bufferInit(player);
     }
-    
+
     private void bufferInit(Player player) {
         bufferService.clear(player.getBuffers());
     }
-    
+
     private void attributeInit(Player player) {
         player.setBaseSpeed(playerTemplate.getSpeed() / 1000);
         player.setFinalSpeed(player.getBaseSpeed());
         player.setAttackRange(playerTemplate.getAttackRange());
-        
+
         Attribute attribute = player.getAttribute();
         attribute.setStamina(20 + playerTemplate.getStaminaGrow() * player.getLevel());
         attribute.setStrengt(20 + playerTemplate.getStrengtGrow() * player.getLevel());
         attribute.setAgility(20 + playerTemplate.getAgilityGrow() * player.getLevel());
         attribute.setIntellect(20 + playerTemplate.getIntellectGrow() * player.getLevel());
         attribute.setSpirit(20 + playerTemplate.getSpiritGrow() * player.getLevel());
-        
+
         player.setHealthMax(attribute.getStamina() * 10);
         player.setHealthPoint(player.getHealthMax());
-        attribute.setAttackPower(attribute.getStrengt() * 1 + attribute.getAgility() * 1);
+        attribute.setBaseAttackPower(attribute.getStrengt() * 1 + attribute.getAgility() * 1);
+        attribute.setFinalAttackPower(attribute.getBaseAttackPower());
         attribute.setDodge(attribute.getAgility() * playerTemplate.getDodgeRate());
         attribute.setParry(attribute.getStrengt() * playerTemplate.getParryRate());
         attribute.setCritical(attribute.getAgility() * playerTemplate.getCiticalRate());
-        
+
         Resource resource = player.getResource();
         resource.setAttackCooldownMax(playerTemplate.getAttackCooldown() * 1000);
         resource.setSkillCooldownMax(1.5 * 1000);
         resource.setAngerMax(100);
         resource.setAngerPoint(resource.getAngerMax());
     }
-    
+
     private void skillInit(Player player) {
         player.getSkills().clear();
         player.setNormalAttack(skillService.physicalAttack());
-        player.getSkills().add(skillService.getSkillById(1110020401000000L));
-        player.getSkills().add(skillService.getSkillById(1110020101000000L));
+//        player.getSkills().add(skillService.getSkillById(1110020401000000L));
+//        player.getSkills().add(skillService.getSkillById(1110020402000000L));
+//        player.getSkills().add(skillService.getSkillById(1110020101000000L));
         player.getSkills().add(skillService.getSkillById(1110020302000000L));
-        player.getSkills().add(skillService.getSkillById(1110020402000000L));
+//          player.getSkills().add(skillService.getSkillById(1110020303000000L));
+        player.getSkills().add(skillService.getSkillById(1110020304000000L));
     }
 }
