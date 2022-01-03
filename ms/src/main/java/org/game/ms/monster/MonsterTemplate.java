@@ -19,6 +19,5 @@ public class MonsterTemplate {
     private double attackRange;
     private double attackCooldown;
     private double health;
-    private double attackPower;
-    private double magicPower;
+    private int armor;
 }

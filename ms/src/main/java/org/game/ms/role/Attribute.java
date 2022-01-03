@@ -16,16 +16,19 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Attribute {
 
-    private double baseAttackPower;
-    private double finalAttackPower;
-    private double magicPower;
-
     private int stamina;
     private int strengt;
     private int agility;
     private int intellect;
     private int spirit;
+
+    private double baseAttackPower;
+    private double finalAttackPower;
+    private double magicPower;
+
     private double hurt;
+    private double physicalHurt;
+
     //闪避
     private double dodge;
     //招架
@@ -38,4 +41,6 @@ public class Attribute {
     private double mastery;
     //全能
     private double versatility;
+
+    private int armor;
 }

@@ -73,6 +73,23 @@ template:
             profession: WARRIOR,
             skillType: DAMAGE_SKILL,
         }
+    #    复仇
+        - { id: 1110020404000000,
+            name: Revenge,
+            profession: WARRIOR,
+            skillType: DAMAGE_SKILL,
+        }
+    #    横扫攻击
+        - { id: 1110020405000000,
+            name: Sweeping Strikes,
+            profession: WARRIOR,
+            skillType: DAMAGE_SKILL,
+        }
+    #    毁灭打击
+        - { id: 1110020406000000,
+            name: Devastate,
+            profession: WARRIOR,
+            skillType: DAMAGE_SKILL,
     #    冲锋
         - { id: 1110020101000000,
             name: Charge,

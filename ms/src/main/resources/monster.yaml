@@ -13,6 +13,7 @@ template:
             attackRange: 1,
             attackCooldown: 2,
             health: 300,
+            armor: 200,
             attackPower: 20,
         }
         - { name: 狼,
@@ -21,5 +22,6 @@ template:
             attackRange: 1,
             attackCooldown: 2,
             health: 200,
+            armor: 150,
             attackPower: 30,
         }
