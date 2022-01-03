@@ -20,4 +20,6 @@ public enum EffectStatus {
     ATTACK_POWER,
     //伤害减免
     HURT,
+    //反击
+    COUNTER_ATTACK,
 }

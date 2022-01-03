@@ -62,7 +62,9 @@ public class SkillService {
     }
 
     public Skill physicalAttack() {
-        return physicalAttack;
+        Skill skill = new Skill();
+        FuncUtils.copyProperties(physicalAttack, skill);
+        return skill;
     }
 
     public Skill getSkillById(long id) {

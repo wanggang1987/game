@@ -117,6 +117,25 @@ template:
                 persent: -60,
             },
         }
+    #    法术反射
+        - { id: 1110020204000000,
+            name: Spell Reflection,
+            profession: WARRIOR,
+            skillType: BUFFER_SKILL,
+        }
+    #    反击风暴
+        - { id: 1110020205000000,
+            name: Retaliation,
+            profession: WARRIOR,
+            skillType: BUFFER_SKILL,
+            rangeType: NONE,
+            coolDownMax: 300000,
+            sourceBuffer: {
+                effectStatus: COUNTER_ATTACK,
+                lastTime: 12000,
+                count: 20,
+            },
+        }
     #    嘲讽
         - { id: 1110010301000000,
             name: Taunt,

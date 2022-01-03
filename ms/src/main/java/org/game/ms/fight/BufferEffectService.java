@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class AnomalyService {
+public class BufferEffectService {
     
     @Autowired
     private RootMap rootMap;
@@ -32,6 +32,8 @@ public class AnomalyService {
     private TaskService taskService;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private FightService fightService;
     
     public boolean anomalyPass(Role role) {
         for (Buffer buffer : role.getBuffers().getDeBuffers()) {
@@ -65,4 +67,16 @@ public class AnomalyService {
         }
     }
     
+    public void attackFeedBack(Role role, Role target) {
+        for (Buffer buffer : target.getBuffers().getBuffers()) {
+            if (FuncUtils.isEmpty(buffer.getEffect())) {
+                continue;
+            }
+            if (FuncUtils.equals(buffer.getEffect().getEffectStatus(), EffectStatus.COUNTER_ATTACK)
+                    && buffer.getEffect().getCount() > 0
+                    && fightService.counterAttack(target, role)) {
+                buffer.getEffect().setCount(buffer.getEffect().getCount() - 1);
+            }
+        }
+    }
 }

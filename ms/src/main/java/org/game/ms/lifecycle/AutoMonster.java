@@ -6,7 +6,7 @@
 package org.game.ms.lifecycle;
 
 import lombok.extern.slf4j.Slf4j;
-import org.game.ms.fight.AnomalyService;
+import org.game.ms.fight.BufferEffectService;
 import org.game.ms.fight.FightService;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.map.RootMap;
@@ -34,7 +34,7 @@ public class AutoMonster {
     @Autowired
     private RootMap rootMap;
     @Autowired
-    private AnomalyService anomalyService;
+    private BufferEffectService bufferEffectService;
 
     private void MonsterAuto(Monster monster) {
         if (FuncUtils.isEmpty(monster.getBattle()) && FuncUtils.notEmpty(monster.getTarget())) {
@@ -50,7 +50,7 @@ public class AutoMonster {
             return;
         }
 
-        if (anomalyService.anomalyPass(monster)) {
+        if (bufferEffectService.anomalyPass(monster)) {
             return;
         }
 

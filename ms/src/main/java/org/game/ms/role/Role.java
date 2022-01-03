@@ -52,6 +52,7 @@ public class Role {
 
     //skill
     private Skill normalAttack;
+    private Skill counterAttack;
     private List<Skill> skills = new ArrayList<>();
     private RootMap map;
     private Location location;

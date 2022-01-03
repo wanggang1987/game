@@ -15,4 +15,5 @@ public enum SkillType {
     BUFFER_SKILL,
     CONTROL_SKILL,
     NORMAL_ATTACK,
+    COUNTER_ATTACK,
 }

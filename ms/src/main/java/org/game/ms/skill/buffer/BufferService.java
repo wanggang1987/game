@@ -8,7 +8,7 @@ package org.game.ms.skill.buffer;
 import java.util.Iterator;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.game.ms.fight.AnomalyService;
+import org.game.ms.fight.BufferEffectService;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.role.Role;
 import org.game.ms.skill.BufferEffect;
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 public class BufferService {
 
     @Autowired
-    private AnomalyService anomalyService;
+    private BufferEffectService anomalyService;
 
     public void addBuffer(Buffer buffer) {
         Buffers buffers = buffer.getTarget().getBuffers();

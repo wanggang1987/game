@@ -10,5 +10,6 @@ public class BufferEffect {
 
     private EffectStatus effectStatus;
     private int lastTime;
+    private int count;
     private int persent;
 }

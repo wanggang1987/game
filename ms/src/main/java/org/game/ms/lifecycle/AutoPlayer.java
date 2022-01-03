@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.game.ms.fight.AnomalyService;
+import org.game.ms.fight.BufferEffectService;
 import org.game.ms.fight.BattleService;
 import org.game.ms.fight.FightService;
 import org.game.ms.func.FuncUtils;
@@ -37,7 +37,7 @@ public class AutoPlayer {
     @Autowired
     private RootMap rootMap;
     @Autowired
-    private AnomalyService anomalyService;
+    private BufferEffectService bufferEffectService;
     @Autowired
     private BattleService battleService;
 
@@ -81,7 +81,7 @@ public class AutoPlayer {
             return;
         }
 
-        if (anomalyService.anomalyPass(player)) {
+        if (bufferEffectService.anomalyPass(player)) {
             return;
         }
         autoAttack(player);
