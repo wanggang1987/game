@@ -10,6 +10,7 @@ package org.game.ms.skill;
  * @author wanggang
  */
 public enum EffectType {
-    SINGE,
+    SOURCE,
+    TARGET,
     SOURCE_RANGE,
 }

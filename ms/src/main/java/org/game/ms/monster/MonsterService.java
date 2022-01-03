@@ -65,11 +65,12 @@ public class MonsterService {
         monster.setFinalSpeed(monster.getBaseSpeed());
         monster.setAttackRange(template.getAttackRange());
         
-        Attribute roleAttribute = monster.getAttribute();
+        Attribute attribute = monster.getAttribute();
         monster.setHealthMax(template.getHealth());
         monster.setHealthPoint(monster.getHealthMax());
-        roleAttribute.setBaseAttackPower(template.getAttackPower());
-        roleAttribute.setFinalAttackPower(roleAttribute.getBaseAttackPower());
+        attribute.setBaseAttackPower(template.getAttackPower());
+        attribute.setFinalAttackPower(attribute.getBaseAttackPower());
+        attribute.setHurt(1);
         
         monster.setAttackStatus(AttackStatus.NOT_ATTACK);
         monster.setMoveStatus(MoveStatus.STANDING);

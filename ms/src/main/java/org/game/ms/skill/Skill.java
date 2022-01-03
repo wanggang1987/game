@@ -38,7 +38,8 @@ public class Skill {
 
     private DirectDamage directDamage;
     private LoopDamage loopDamage;
-    private ControlEffect sourceControl;
-    private ControlEffect targetControl;
+    private BufferEffect sourceBuffer;
+    private BufferEffect sourceControl;
+    private BufferEffect targetControl;
 
 }

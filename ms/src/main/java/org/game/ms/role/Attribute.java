@@ -25,6 +25,7 @@ public class Attribute {
     private int agility;
     private int intellect;
     private int spirit;
+    private double hurt;
     //闪避
     private double dodge;
     //招架

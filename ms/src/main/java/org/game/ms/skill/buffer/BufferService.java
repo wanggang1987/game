@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.game.ms.fight.AnomalyService;
 import org.game.ms.func.FuncUtils;
 import org.game.ms.role.Role;
-import org.game.ms.skill.ControlEffect;
+import org.game.ms.skill.BufferEffect;
 import org.game.ms.skill.Skill;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,13 +76,13 @@ public class BufferService {
         return buffer;
     }
 
-    public Buffer createBuffer(Role source, Role target, Skill skill, BufferType type, ControlEffect control) {
+    public Buffer createBuffer(Role source, Role target, Skill skill, BufferType type, BufferEffect effect) {
         Buffer buffer = new Buffer();
         buffer.setSource(source);
         buffer.setTarget(target);
         buffer.setSkill(skill);
         buffer.setType(type);
-        buffer.setControl(control);
+        buffer.setEffect(effect);
         return buffer;
     }
 

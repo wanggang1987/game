@@ -63,6 +63,7 @@ public class PlayerService {
         player.getProfession().add(Profession.WARRIOR);
         player.setLevel(1);
         initPlayer(player);
+        skillInit(player);
 
         //insert to db
         PlayerPO ppo = new PlayerPO();
@@ -108,7 +109,6 @@ public class PlayerService {
         player.setLivingStatus(LivingStatus.LIVING);
         player.setTarget(null);
         attributeInit(player);
-        skillInit(player);
         bufferInit(player);
     }
 
@@ -131,6 +131,7 @@ public class PlayerService {
         player.setHealthMax(attribute.getStamina() * 10);
         player.setHealthPoint(player.getHealthMax());
         attribute.setBaseAttackPower(attribute.getStrengt() * 1 + attribute.getAgility() * 1);
+        attribute.setHurt(1);
         attribute.setFinalAttackPower(attribute.getBaseAttackPower());
         attribute.setDodge(attribute.getAgility() * playerTemplate.getDodgeRate());
         attribute.setParry(attribute.getStrengt() * playerTemplate.getParryRate());
@@ -146,11 +147,12 @@ public class PlayerService {
     private void skillInit(Player player) {
         player.getSkills().clear();
         player.setNormalAttack(skillService.physicalAttack());
-//        player.getSkills().add(skillService.getSkillById(1110020401000000L));
-//        player.getSkills().add(skillService.getSkillById(1110020402000000L));
-//        player.getSkills().add(skillService.getSkillById(1110020101000000L));
+        player.getSkills().add(skillService.getSkillById(1110020401000000L));
+        player.getSkills().add(skillService.getSkillById(1110020402000000L));
+        player.getSkills().add(skillService.getSkillById(1110020101000000L));
+        player.getSkills().add(skillService.getSkillById(1110020203000000L));
         player.getSkills().add(skillService.getSkillById(1110020302000000L));
-//          player.getSkills().add(skillService.getSkillById(1110020303000000L));
+        player.getSkills().add(skillService.getSkillById(1110020303000000L));
         player.getSkills().add(skillService.getSkillById(1110020304000000L));
     }
 }

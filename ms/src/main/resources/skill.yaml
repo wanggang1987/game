@@ -85,10 +85,10 @@ template:
             cost: -9,
             coolDownMax: 15000,
             sourceControl: {
-                anomalyStatus: CHARGING,
+                effectStatus: CHARGING,
             },
             targetControl: {
-                anomalyStatus: DIZZINESS,
+                effectStatus: DIZZINESS,
                 lastTime: 1000,
             },
         }
@@ -109,6 +109,13 @@ template:
             name: Shield Wall,
             profession: WARRIOR,
             skillType: BUFFER_SKILL,
+            rangeType: NONE,
+            coolDownMax: 300000,
+            sourceBuffer: {
+                effectStatus: HURT,
+                lastTime: 12000,
+                persent: -60,
+            },
         }
     #    嘲讽
         - { id: 1110010301000000,
@@ -129,7 +136,7 @@ template:
             cost: 10,
             coolDownMax: 6000,
             targetControl: {
-                anomalyStatus: SPEED,
+                effectStatus: SPEED,
                 lastTime: 6000,
                 persent: -50,
             },
@@ -147,7 +154,7 @@ template:
             cost: 10,
             coolDownMax: 6000,
             targetControl: {
-                anomalyStatus: ATTACK_POWER,
+                effectStatus: ATTACK_POWER,
                 lastTime: 6000,
                 persent: -35,
             },
@@ -161,7 +168,7 @@ template:
             resourceType: ANGER,
             cost: 10,
             targetControl: {
-                anomalyStatus: SPEED,
+                effectStatus: SPEED,
                 lastTime: 15000,
                 persent: -50,
             },

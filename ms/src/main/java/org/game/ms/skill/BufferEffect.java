@@ -6,9 +6,9 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ControlEffect {
+public class BufferEffect {
 
-    private AnomalyStatus anomalyStatus;
+    private EffectStatus effectStatus;
     private int lastTime;
     private int persent;
 }

@@ -11,7 +11,7 @@ import org.game.ms.map.RootMap;
 import org.game.ms.role.MoveStatus;
 import org.game.ms.role.Role;
 import org.game.ms.role.RoleService;
-import org.game.ms.skill.AnomalyStatus;
+import org.game.ms.skill.EffectStatus;
 import org.game.ms.skill.buffer.Buffer;
 import org.game.ms.timeline.BufferManagerTask;
 import org.game.ms.timeline.TaskService;
@@ -25,43 +25,44 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class AnomalyService {
-
+    
     @Autowired
     private RootMap rootMap;
     @Autowired
     private TaskService taskService;
     @Autowired
     private RoleService roleService;
-
+    
     public boolean anomalyPass(Role role) {
         for (Buffer buffer : role.getBuffers().getDeBuffers()) {
-            if (FuncUtils.isEmpty(buffer.getControl())) {
+            if (FuncUtils.isEmpty(buffer.getEffect())) {
                 continue;
             }
-            if (FuncUtils.equals(buffer.getControl().getAnomalyStatus(), AnomalyStatus.CHARGING)) {
+            if (FuncUtils.equals(buffer.getEffect().getEffectStatus(), EffectStatus.CHARGING)) {
                 if (FuncUtils.equals(role.getMoveStatus(), MoveStatus.STANDING)) {
                     taskService.addTask(new BufferManagerTask(buffer, false, 0));
                 } else if (FuncUtils.equals(role.getMoveStatus(), MoveStatus.MOVEING)) {
                     rootMap.roleChargeToTargetInTick(role);
                     return true;
                 }
-            } else if (FuncUtils.equals(buffer.getControl().getAnomalyStatus(), AnomalyStatus.DIZZINESS)) {
+            } else if (FuncUtils.equals(buffer.getEffect().getEffectStatus(), EffectStatus.DIZZINESS)) {
                 return true;
             }
         }
-
         return false;
     }
-
+    
     public void attributeUpdate(Buffer buffer) {
-        if (FuncUtils.isEmpty(buffer.getControl())) {
+        if (FuncUtils.isEmpty(buffer.getEffect())) {
             return;
         }
-        if (FuncUtils.equals(buffer.getControl().getAnomalyStatus(), AnomalyStatus.SPEED)) {
+        if (FuncUtils.equals(buffer.getEffect().getEffectStatus(), EffectStatus.SPEED)) {
             roleService.updateSpeed(buffer.getTarget());
-        } else if (FuncUtils.equals(buffer.getControl().getAnomalyStatus(), AnomalyStatus.ATTACK_POWER)) {
+        } else if (FuncUtils.equals(buffer.getEffect().getEffectStatus(), EffectStatus.ATTACK_POWER)) {
             roleService.updateAttackPower(buffer.getTarget());
+        } else if (FuncUtils.equals(buffer.getEffect().getEffectStatus(), EffectStatus.HURT)) {
+            roleService.updateHurt(buffer.getTarget());
         }
     }
-
+    
 }
